@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Attendance — Purple Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #0B1F3A;
+    --deep:   #071429;
+    --blue:   #1565C0;
+    --mid:    #2196F3;
+    --light:  #64B5F6;
+    --pale:   #BBDEFB;
+    --white:  #F0F6FF;
+    --grey:   #8BA3C0;
+    --gold:   #F9A825;
+    --green:  #2E7D32;
+    --green2: #43A047;
+    --red:    #C62828;
+    --red2:   #EF5350;
+    --lane3:  #1F4E79;
+    --lane3b: #D6E4F0;
+    --lane2:  #1976D2;
+    --lane2b: #E3F2FD;
+    --lane1:  #0277BD;
+    --lane1b: #E1F5FE;
+    --present-bg: rgba(46,125,50,0.18);
+    --present-border: #43A047;
+    --absent-bg: rgba(198,40,40,0.18);
+    --absent-border: #EF5350;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+  body {
+    background: var(--deep);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding-bottom: 6rem;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      180deg, transparent 0px, transparent 58px,
+      rgba(33,150,243,0.03) 58px, rgba(33,150,243,0.03) 60px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ───────────────────────────────────────────────────────── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(7,20,41,0.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(33,150,243,0.15);
+    padding: 0.75rem 1rem;
+  }
+
+  .topbar-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    color: var(--grey);
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px;
+    transition: color 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { color: var(--light); border-color: rgba(33,150,243,0.3); }
+  .back-btn svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; }
+
+  .topbar-title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .topbar-title h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-top: 0.15rem;
+  }
+
+  .save-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--green2);
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.4s;
+    flex-shrink: 0;
+  }
+  .save-status.visible { opacity: 1; }
+
+  /* ── DATE PICKER ──────────────────────────────────────────────────── */
+  .date-bar {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 1rem 1rem 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .date-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .date-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--grey);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .date-input {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 2px;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.45rem 0.75rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .date-input:focus { border-color: var(--mid); }
+
+  .day-quick-btns {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .day-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--grey);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .day-btn:hover { border-color: var(--mid); color: var(--light); }
+  .day-btn.active { background: rgba(33,150,243,0.15); border-color: var(--mid); color: var(--light); }
+
+  /* ── STATS BAR ────────────────────────────────────────────────────── */
+  .stats-bar {
+    max-width: 680px;
+    margin: 0.75rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .stat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  /* ── MARK ALL ─────────────────────────────────────────────────────── */
+  .mark-all-bar {
+    max-width: 680px;
+    margin: 0.75rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .mark-all-btn {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: transparent;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .mark-all-btn.present {
+    color: var(--green2);
+    border-color: rgba(67,160,71,0.3);
+  }
+  .mark-all-btn.present:hover {
+    background: rgba(46,125,50,0.15);
+    border-color: var(--green2);
+  }
+  .mark-all-btn.absent {
+    color: var(--red2);
+    border-color: rgba(239,83,80,0.3);
+  }
+  .mark-all-btn.absent:hover {
+    background: rgba(198,40,40,0.15);
+    border-color: var(--red2);
+  }
+  .mark-all-btn.clear {
+    color: var(--grey);
+    border-color: rgba(255,255,255,0.08);
+    flex: 0 0 auto;
+    padding: 0.6rem 1rem;
+  }
+  .mark-all-btn.clear:hover {
+    border-color: rgba(255,255,255,0.2);
+    color: var(--white);
+  }
+
+  /* ── LANE SECTION ─────────────────────────────────────────────────── */
+  .content {
+    max-width: 680px;
+    margin: 1rem auto 0;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .lane-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 2px 2px 0 0;
+    margin-top: 1.25rem;
+    margin-bottom: 1px;
+  }
+
+  .lane-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+    flex: 1;
+  }
+
+  .lane-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  /* ── SWIMMER ROW ──────────────────────────────────────────────────── */
+  .swimmer-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.9rem;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .swimmer-row:last-child { border-bottom: none; border-radius: 0 0 2px 2px; }
+  .swimmer-row:hover { background: rgba(255,255,255,0.04); }
+
+  .swimmer-row.is-present {
+    background: var(--present-bg);
+    border-left: 3px solid var(--present-border);
+  }
+  .swimmer-row.is-absent {
+    background: var(--absent-bg);
+    border-left: 3px solid var(--absent-border);
+  }
+  .swimmer-row.unset { border-left: 3px solid transparent; }
+
+  .swimmer-info { flex: 1; min-width: 0; }
+
+  .swimmer-name {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .swimmer-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-top: 0.1rem;
+  }
+
+  /* ── TAP BUTTONS ──────────────────────────────────────────────────── */
+  .att-btns {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .att-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .att-btn.present-btn { color: var(--green2); border-color: rgba(67,160,71,0.25); }
+  .att-btn.absent-btn  { color: var(--red2);   border-color: rgba(239,83,80,0.25); }
+  .att-btn.note-btn    { color: var(--grey);   border-color: rgba(255,255,255,0.08); font-size:0.9rem; }
+
+  .att-btn.present-btn.active {
+    background: rgba(46,125,50,0.3);
+    border-color: var(--green2);
+    box-shadow: 0 0 0 2px rgba(67,160,71,0.2);
+  }
+  .att-btn.absent-btn.active {
+    background: rgba(198,40,40,0.3);
+    border-color: var(--red2);
+    box-shadow: 0 0 0 2px rgba(239,83,80,0.2);
+  }
+  .att-btn.note-btn.has-note {
+    color: var(--gold);
+    border-color: rgba(249,168,37,0.4);
+  }
+
+  /* ── NOTE PANEL ───────────────────────────────────────────────────── */
+  .note-panel {
+    display: none;
+    padding: 0.5rem 0.9rem 0.75rem 0.9rem;
+    background: rgba(249,168,37,0.05);
+    border-left: 3px solid var(--gold);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .note-panel.open { display: block; }
+
+  .note-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(249,168,37,0.2);
+    border-radius: 2px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    padding: 0.5rem 0.75rem;
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s;
+    min-height: 60px;
+  }
+  .note-input:focus { border-color: var(--gold); }
+  .note-input::placeholder { color: rgba(139,163,192,0.5); }
+
+  /* ── HISTORY PANEL ────────────────────────────────────────────────── */
+  .history-section {
+    max-width: 680px;
+    margin: 2rem auto 0;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .history-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .history-card {
+    background: var(--deep);
+    padding: 0.9rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .history-card:hover { background: rgba(33,150,243,0.06); }
+
+  .history-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--light);
+    margin-bottom: 0.3rem;
+  }
+
+  .history-summary {
+    font-size: 0.8rem;
+    color: var(--grey);
+    line-height: 1.5;
+  }
+
+  .history-bar {
+    display: flex;
+    gap: 2px;
+    margin-top: 0.5rem;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .history-bar-present { background: var(--green2); }
+  .history-bar-absent  { background: var(--red2); }
+  .history-bar-unset   { background: rgba(255,255,255,0.1); }
+
+  /* ── EXPORT ───────────────────────────────────────────────────────── */
+  .export-bar {
+    max-width: 680px;
+    margin: 1.5rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .export-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: transparent;
+    color: var(--grey);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .export-btn:hover { border-color: var(--mid); color: var(--light); }
+
+  /* ── EMPTY HISTORY ────────────────────────────────────────────────── */
+  .empty-history {
+    padding: 1.5rem;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: rgba(139,163,192,0.4);
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ──────────────────────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="back-btn" href="index.html">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Home
+    </a>
+    <div class="topbar-title">
+      <h1>Attendance</h1>
+      <div class="topbar-date" id="topbar-date">Purple Group</div>
+    </div>
+    <div class="save-status" id="save-status">Saved ✓</div>
+  </div>
+</div>
+
+<!-- ── DATE PICKER ────────────────────────────────────────────────────────── -->
+<div class="date-bar">
+  <div class="date-row">
+    <span class="date-label">Date</span>
+    <input type="date" class="date-input" id="date-picker">
+    <div class="day-quick-btns" id="week-btns"></div>
+  </div>
+</div>
+
+<!-- ── STATS ──────────────────────────────────────────────────────────────── -->
+<div class="stats-bar">
+  <div class="stat-pill">
+    <div class="stat-dot" style="background:var(--green2)"></div>
+    <span class="stat-num" id="stat-present">0</span>
+    <span style="color:var(--grey)">Present</span>
+  </div>
+  <div class="stat-pill">
+    <div class="stat-dot" style="background:var(--red2)"></div>
+    <span class="stat-num" id="stat-absent">0</span>
+    <span style="color:var(--grey)">Absent</span>
+  </div>
+  <div class="stat-pill">
+    <div class="stat-dot" style="background:rgba(255,255,255,0.15)"></div>
+    <span class="stat-num" id="stat-unset">35</span>
+    <span style="color:var(--grey)">Unmarked</span>
+  </div>
+</div>
+
+<!-- ── MARK ALL ───────────────────────────────────────────────────────────── -->
+<div class="mark-all-bar">
+  <button class="mark-all-btn present" onclick="markAll('present')">✓ Mark All Present</button>
+  <button class="mark-all-btn absent"  onclick="markAll('absent')">✗ Mark All Absent</button>
+  <button class="mark-all-btn clear"   onclick="markAll('clear')">Clear</button>
+</div>
+
+<!-- ── ROSTER ─────────────────────────────────────────────────────────────── -->
+<div class="content" id="roster-content"></div>
+
+<!-- ── HISTORY ────────────────────────────────────────────────────────────── -->
+<div class="history-section">
+  <div class="history-label">Past Sessions</div>
+  <div id="history-container"></div>
+  <div class="export-bar">
+    <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="export-btn" onclick="exportSummary()">📋 Copy Summary</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const SWIMMERS = [
+  // Lane 3
+  { name:"Lorenzo Navarro",  age:11, gen:"M", lane:3 },
+  { name:"Woody Li",         age:13, gen:"M", lane:3 },
+  { name:"Aiden Kiatrungrit",age:10, gen:"M", lane:3 },
+  { name:"Priscilla Silva",  age:13, gen:"F", lane:3 },
+  { name:"Ashley Hong",      age:13, gen:"F", lane:3 },
+  { name:"Aiden Kong",       age:12, gen:"M", lane:3 },
+  { name:"Gisele Barbosa",   age:14, gen:"F", lane:3 },
+  { name:"Edison Cheung",    age:12, gen:"M", lane:3 },
+  { name:"Nathan Cheung",    age:13, gen:"M", lane:3 },
+  { name:"Lucciana Cisneros",age:12, gen:"F", lane:3 },
+  // Lane 2
+  { name:"Noah Gonzales",    age:10, gen:"M", lane:2 },
+  { name:"Kellen Luk",       age:13, gen:"M", lane:2 },
+  { name:"Sean Jiang",       age:11, gen:"M", lane:2 },
+  { name:"Abraham Boukai",   age:12, gen:"M", lane:2 },
+  { name:"Ian An",           age:12, gen:"M", lane:2 },
+  { name:"Kirsten Peredo",   age:8,  gen:"F", lane:2 },
+  { name:"Jaden Manalastas", age:9,  gen:"M", lane:2 },
+  { name:"Ellie Lung",       age:9,  gen:"F", lane:2 },
+  { name:"Natalie Kitchen",  age:13, gen:"F", lane:2 },
+  { name:"Emily Cheung",     age:9,  gen:"F", lane:2 },
+  { name:"Logan Yip",        age:10, gen:"M", lane:2 },
+  { name:"Maya Hall",        age:10, gen:"F", lane:2 },
+  // Lane 1
+  { name:"Tessa Chun",       age:11, gen:"F", lane:1 },
+  { name:"Ellisha Fu",       age:11, gen:"F", lane:1 },
+  { name:"Milana Ludan",     age:11, gen:"F", lane:1 },
+  { name:"Wilson Zhou",      age:10, gen:"M", lane:1 },
+  { name:"Rachel Cheng",     age:13, gen:"F", lane:1 },
+  { name:"Isabelle Leung",   age:9,  gen:"F", lane:1 },
+  { name:"Evanna Jiang",     age:10, gen:"F", lane:1 },
+  { name:"Leah Wang",        age:9,  gen:"F", lane:1 },
+  { name:"Eli Wu",           age:10, gen:"M", lane:1 },
+  { name:"Maeko Lam",        age:11, gen:"F", lane:1 },
+  { name:"Jadon Jiang",      age:13, gen:"M", lane:1 },
+  { name:"Allison Chan",     age:12, gen:"F", lane:1 },
+  { name:"Ayrton Lee",       age:12, gen:"M", lane:1 },
+];
+
+const LANE_COLORS = { 3:"#1F4E79", 2:"#1976D2", 1:"#0277BD" };
+const LANE_LABELS = { 3:"Lane 3 — Fast", 2:"Lane 2 — Mid", 1:"Lane 1 — Developmental" };
+const STORAGE_KEY = "purple_attendance";
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let currentDate = todayStr();
+let attendance  = {};   // { "YYYY-MM-DD": { "Name": { status:"present"|"absent"|null, note:"" } } }
+
+function todayStr() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function loadStorage() {
+  try { attendance = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch(e) { attendance = {}; }
+}
+
+function saveStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(attendance));
+  const el = document.getElementById('save-status');
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 1800);
+}
+
+function ensureDate(d) {
+  if (!attendance[d]) {
+    attendance[d] = {};
+    SWIMMERS.forEach(s => { attendance[d][s.name] = { status: null, note: "" }; });
+  }
+}
+
+function getRecord(d, name) {
+  ensureDate(d);
+  if (!attendance[d][name]) attendance[d][name] = { status: null, note: "" };
+  return attendance[d][name];
+}
+
+// ── DATE QUICK BUTTONS ────────────────────────────────────────────────────────
+function buildWeekBtns() {
+  const container = document.getElementById('week-btns');
+  const days = ['Mon','Tue','Wed','Thu','Fri'];
+  // Find the Monday of the current week based on today
+  const today = new Date();
+  const dow = today.getDay(); // 0=Sun
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+
+  container.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const str = d.toISOString().split('T')[0];
+    const btn = document.createElement('button');
+    btn.className = 'day-btn' + (str === currentDate ? ' active' : '');
+    btn.textContent = days[i];
+    btn.dataset.date = str;
+    btn.onclick = () => switchDate(str);
+    container.appendChild(btn);
+  }
+}
+
+function switchDate(d) {
+  currentDate = d;
+  document.getElementById('date-picker').value = d;
+  document.querySelectorAll('.day-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.date === d);
+  });
+  updateTopbarDate();
+  renderRoster();
+  updateStats();
+}
+
+function updateTopbarDate() {
+  const d = new Date(currentDate + 'T12:00:00');
+  const opts = { weekday:'long', month:'long', day:'numeric' };
+  document.getElementById('topbar-date').textContent = d.toLocaleDateString('en-US', opts);
+}
+
+// ── ROSTER RENDER ─────────────────────────────────────────────────────────────
+function renderRoster() {
+  ensureDate(currentDate);
+  const container = document.getElementById('roster-content');
+  container.innerHTML = '';
+
+  [3, 2, 1].forEach(lane => {
+    const swimmers = SWIMMERS.filter(s => s.lane === lane);
+
+    // Lane header
+    const hdr = document.createElement('div');
+    hdr.className = 'lane-header';
+    hdr.style.background = `${LANE_COLORS[lane]}22`;
+    hdr.style.borderLeft = `4px solid ${LANE_COLORS[lane]}`;
+    hdr.innerHTML = `
+      <h2 style="color:${LANE_COLORS[lane] === '#1F4E79' ? '#90CAF9' : '#90CAF9'}">${LANE_LABELS[lane]}</h2>
+      <span class="lane-count">${swimmers.length} swimmers</span>
+    `;
+    container.appendChild(hdr);
+
+    // Swimmer rows
+    const group = document.createElement('div');
+    group.style.borderRadius = '0 0 2px 2px';
+    group.style.overflow = 'hidden';
+    group.style.border = '1px solid rgba(255,255,255,0.06)';
+    group.style.borderTop = 'none';
+
+    swimmers.forEach(sw => {
+      const rec = getRecord(currentDate, sw.name);
+
+      // Row
+      const row = document.createElement('div');
+      row.className = `swimmer-row ${rec.status ? 'is-' + rec.status : 'unset'}`;
+      row.id = `row-${sw.name.replace(/\s+/g,'_')}`;
+
+      row.innerHTML = `
+        <div class="swimmer-info">
+          <div class="swimmer-name">${sw.name}</div>
+          <div class="swimmer-meta">Age ${sw.age} · ${sw.gen} · Lane ${sw.lane}</div>
+        </div>
+        <div class="att-btns">
+          <button class="att-btn present-btn ${rec.status==='present'?'active':''}"
+            onclick="setStatus('${sw.name}','present')" title="Present">✓</button>
+          <button class="att-btn absent-btn ${rec.status==='absent'?'active':''}"
+            onclick="setStatus('${sw.name}','absent')" title="Absent">✗</button>
+          <button class="att-btn note-btn ${rec.note?'has-note':''}"
+            onclick="toggleNote('${sw.name}')" title="Add note">📝</button>
+        </div>
+      `;
+
+      group.appendChild(row);
+
+      // Note panel
+      const notePanel = document.createElement('div');
+      notePanel.className = 'note-panel';
+      notePanel.id = `note-panel-${sw.name.replace(/\s+/g,'_')}`;
+      notePanel.innerHTML = `
+        <textarea class="note-input" placeholder="Note for ${sw.name.split(' ')[0]}…"
+          oninput="saveNote('${sw.name}', this.value)"
+        >${rec.note || ''}</textarea>
+      `;
+      group.appendChild(notePanel);
+    });
+
+    container.appendChild(group);
+  });
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+function setStatus(name, status) {
+  ensureDate(currentDate);
+  const rec = getRecord(currentDate, name);
+
+  // Toggle off if already set
+  if (rec.status === status) {
+    rec.status = null;
+  } else {
+    rec.status = status;
+  }
+
+  saveStorage();
+  updateRowUI(name);
+  updateStats();
+  renderHistory();
+}
+
+function toggleNote(name) {
+  const key = name.replace(/\s+/g,'_');
+  const panel = document.getElementById(`note-panel-${key}`);
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    panel.querySelector('textarea').focus();
+  }
+}
+
+function saveNote(name, value) {
+  ensureDate(currentDate);
+  getRecord(currentDate, name).note = value;
+  saveStorage();
+  // Update note button indicator
+  const key = name.replace(/\s+/g,'_');
+  const row = document.getElementById(`row-${key}`);
+  if (row) {
+    const noteBtn = row.querySelector('.note-btn');
+    if (noteBtn) noteBtn.classList.toggle('has-note', value.trim().length > 0);
+  }
+}
+
+function updateRowUI(name) {
+  const key = name.replace(/\s+/g,'_');
+  const row = document.getElementById(`row-${key}`);
+  if (!row) return;
+  const rec = getRecord(currentDate, name);
+
+  row.className = `swimmer-row ${rec.status ? 'is-' + rec.status : 'unset'}`;
+  const pBtn = row.querySelector('.present-btn');
+  const aBtn = row.querySelector('.absent-btn');
+  if (pBtn) pBtn.classList.toggle('active', rec.status === 'present');
+  if (aBtn) aBtn.classList.toggle('active', rec.status === 'absent');
+}
+
+function markAll(status) {
+  ensureDate(currentDate);
+  SWIMMERS.forEach(sw => {
+    const rec = getRecord(currentDate, sw.name);
+    rec.status = status === 'clear' ? null : status;
+  });
+  saveStorage();
+  renderRoster();
+  updateStats();
+  renderHistory();
+}
+
+function updateStats() {
+  ensureDate(currentDate);
+  const data = attendance[currentDate];
+  let present = 0, absent = 0, unset = 0;
+  SWIMMERS.forEach(sw => {
+    const s = data[sw.name]?.status;
+    if (s === 'present') present++;
+    else if (s === 'absent') absent++;
+    else unset++;
+  });
+  document.getElementById('stat-present').textContent = present;
+  document.getElementById('stat-absent').textContent  = absent;
+  document.getElementById('stat-unset').textContent   = unset;
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function renderHistory() {
+  const container = document.getElementById('history-container');
+  const dates = Object.keys(attendance)
+    .filter(d => {
+      const data = attendance[d];
+      return SWIMMERS.some(sw => data[sw.name]?.status);
+    })
+    .sort((a,b) => b.localeCompare(a))
+    .slice(0, 20);
+
+  if (dates.length === 0) {
+    container.innerHTML = '<div class="empty-history">No sessions recorded yet</div>';
+    return;
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'history-grid';
+
+  dates.forEach(d => {
+    const data = attendance[d];
+    let present = 0, absent = 0, unset = 0;
+    SWIMMERS.forEach(sw => {
+      const s = data[sw.name]?.status;
+      if (s === 'present') present++;
+      else if (s === 'absent') absent++;
+      else unset++;
+    });
+
+    const total = SWIMMERS.length;
+    const pct_p = (present / total * 100).toFixed(0);
+    const pct_a = (absent  / total * 100).toFixed(0);
+    const pct_u = (unset   / total * 100).toFixed(0);
+
+    const dateObj = new Date(d + 'T12:00:00');
+    const label = dateObj.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+
+    const card = document.createElement('div');
+    card.className = 'history-card';
+    card.onclick = () => switchDate(d);
+    card.innerHTML = `
+      <div class="history-date">${label}</div>
+      <div class="history-summary">
+        <span style="color:var(--green2)">${present} present</span><br>
+        <span style="color:var(--red2)">${absent} absent</span>
+      </div>
+      <div class="history-bar">
+        <div class="history-bar-present" style="flex:${pct_p}"></div>
+        <div class="history-bar-absent"  style="flex:${pct_a}"></div>
+        <div class="history-bar-unset"   style="flex:${pct_u}"></div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  container.innerHTML = '';
+  container.appendChild(grid);
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function exportCSV() {
+  const dates = Object.keys(attendance).sort();
+  if (dates.length === 0) { alert('No data to export yet.'); return; }
+
+  let csv = 'Name,Lane,Age,Gen,' + dates.join(',') + '\n';
+  SWIMMERS.forEach(sw => {
+    const row = [sw.name, sw.lane, sw.age, sw.gen];
+    dates.forEach(d => {
+      const s = attendance[d]?.[sw.name]?.status;
+      row.push(s === 'present' ? 'P' : s === 'absent' ? 'A' : '');
+    });
+    csv += row.map(v => `"${v}"`).join(',') + '\n';
+  });
+
+  const blob = new Blob([csv], { type:'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `purple_attendance_${todayStr()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportSummary() {
+  ensureDate(currentDate);
+  const data = attendance[currentDate];
+  const d = new Date(currentDate + 'T12:00:00');
+  const label = d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+
+  let present = [], absent = [], notes = [];
+  SWIMMERS.forEach(sw => {
+    const rec = data[sw.name];
+    if (rec?.status === 'present') present.push(sw.name.split(' ')[0]);
+    else if (rec?.status === 'absent') absent.push(sw.name.split(' ')[0]);
+    if (rec?.note) notes.push(`${sw.name.split(' ')[0]}: ${rec.note}`);
+  });
+
+  let text = `Purple Group Attendance — ${label}\n`;
+  text += `Present (${present.length}): ${present.join(', ') || '—'}\n`;
+  text += `Absent (${absent.length}): ${absent.join(', ') || '—'}\n`;
+  if (notes.length) text += `Notes:\n${notes.map(n=>'  '+n).join('\n')}`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  }).catch(() => {
+    prompt('Copy this summary:', text);
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+loadStorage();
+currentDate = todayStr();
+document.getElementById('date-picker').value = currentDate;
+document.getElementById('date-picker').addEventListener('change', e => switchDate(e.target.value));
+
+buildWeekBtns();
+updateTopbarDate();
+ensureDate(currentDate);
+renderRoster();
+updateStats();
+renderHistory();
+</script>
+</body>
+</html>
