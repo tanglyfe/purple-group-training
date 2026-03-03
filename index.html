@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purple Group — SSF Swim Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #0B1F3A;
+    --deep:    #071429;
+    --blue:    #1565C0;
+    --mid:     #2196F3;
+    --light:   #64B5F6;
+    --pale:    #BBDEFB;
+    --purple:  #7B1FA2;
+    --teal:    #00897B;
+    --gold:    #F9A825;
+    --white:   #F0F6FF;
+    --grey:    #8BA3C0;
+    --free:    #2196F3;
+    --back:    #43A047;
+    --breast:  #FB8C00;
+    --fly:     #8E24AA;
+    --im:      #E53935;
+    --rec:     #546E7A;
+    --en1:     #1565C0;
+    --en2:     #2E7D32;
+    --sp1:     #BF360C;
+    --sp3:     #6A1B9A;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── LANE LINES BACKGROUND ─────────────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 58px,
+        rgba(33,150,243,0.04) 58px,
+        rgba(33,150,243,0.04) 60px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── WATER SHIMMER ─────────────────────────────────────────────────── */
+  .shimmer-bg {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(21,101,192,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(123,31,162,0.10) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── LAYOUT ────────────────────────────────────────────────────────── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HERO ──────────────────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    padding: 6rem 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    color: var(--light);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 14vw, 12rem);
+    line-height: 0.88;
+    letter-spacing: 0.01em;
+    color: var(--white);
+    margin: 1rem 0 0;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.4s forwards;
+  }
+
+  .hero-title span {
+    color: var(--mid);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--grey);
+    margin-top: 1.5rem;
+    max-width: 480px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.6s forwards;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.8s forwards;
+  }
+
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    color: var(--mid);
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .hero-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.1);
+    align-self: stretch;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.2s forwards;
+  }
+
+  .scroll-hint span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .scroll-arrow {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--grey), transparent);
+    animation: scrollPulse 2s ease-in-out 1.5s infinite;
+  }
+
+  /* ── SECTION TITLES ────────────────────────────────────────────────── */
+  .section {
+    padding: 5rem 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    color: var(--light);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── MEET COUNTDOWN ────────────────────────────────────────────────── */
+  .countdown-bar {
+    background: linear-gradient(135deg, rgba(21,101,192,0.15), rgba(123,31,162,0.15));
+    border: 1px solid rgba(33,150,243,0.2);
+    border-radius: 2px;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .countdown-bar::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, var(--mid), var(--purple));
+  }
+
+  .countdown-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .countdown-date {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  .countdown-days {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .countdown-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .countdown-days .countdown-label {
+    display: block;
+  }
+
+  /* ── PHASE CARDS ───────────────────────────────────────────────────── */
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4rem;
+  }
+
+  .phase {
+    background: var(--deep);
+    padding: 1.5rem 1.25rem;
+    transition: background 0.2s;
+  }
+
+  .phase:hover { background: rgba(33,150,243,0.06); }
+
+  .phase-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: rgba(255,255,255,0.06);
+    margin-bottom: 0.5rem;
+  }
+
+  .phase-week {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .phase-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+
+  .phase-dates {
+    font-size: 0.75rem;
+    color: var(--grey);
+    margin-bottom: 0.75rem;
+  }
+
+  .phase-yardage {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--light);
+  }
+
+  .phase.active .phase-name { color: var(--mid); }
+  .phase.active .phase-num { color: rgba(33,150,243,0.15); }
+  .phase.active { background: rgba(33,150,243,0.05); }
+
+  .phase-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .badge-active { background: rgba(33,150,243,0.2); color: var(--light); }
+  .badge-upcoming { background: rgba(255,255,255,0.06); color: var(--grey); }
+  .badge-done { background: rgba(67,160,71,0.2); color: #81C784; }
+
+  /* ── SET TYPE KEY ──────────────────────────────────────────────────── */
+  .set-types {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+
+  .set-chip {
+    padding: 0.35rem 0.75rem;
+    border-radius: 1px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ── FILE CARDS ────────────────────────────────────────────────────── */
+  .files-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .file-card {
+    background: var(--deep);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .file-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .file-card:hover { background: rgba(33,150,243,0.07); }
+  .file-card:hover::after { transform: scaleX(1); }
+
+  .file-card.xlsx::after { background: var(--en2); }
+  .file-card.docx::after { background: var(--mid); }
+  .file-card.print::after { background: var(--gold); }
+
+  .file-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .file-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1px;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .file-type.xlsx { background: rgba(46,125,50,0.2); color: #81C784; }
+  .file-type.docx { background: rgba(33,150,243,0.2); color: var(--light); }
+  .file-type.print { background: rgba(249,168,37,0.2); color: var(--gold); }
+
+  .file-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--white);
+    line-height: 1.4;
+  }
+
+  .file-desc {
+    font-size: 0.78rem;
+    color: var(--grey);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .file-download {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    color: var(--light);
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  .file-download svg {
+    width: 12px; height: 12px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2;
+  }
+
+  /* ── WEEK SCHEDULE ─────────────────────────────────────────────────── */
+  .week-block {
+    margin-bottom: 1px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .week-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.75rem;
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+  }
+
+  .week-header:hover { background: rgba(33,150,243,0.06); }
+
+  .week-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: rgba(255,255,255,0.12);
+    line-height: 1;
+    min-width: 3rem;
+  }
+
+  .week-info { flex: 1; }
+
+  .week-phase {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  .week-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.03em;
+  }
+
+  .week-dates {
+    font-size: 0.75rem;
+    color: var(--grey);
+  }
+
+  .week-yardage {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--light);
+    text-align: right;
+  }
+
+  .week-chevron {
+    width: 18px; height: 18px;
+    stroke: var(--grey); fill: none;
+    stroke-width: 2;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .week-block.open .week-chevron { transform: rotate(180deg); }
+
+  .week-days {
+    display: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .week-block.open .week-days { display: block; }
+
+  .day-row {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.9rem 1.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.15s;
+  }
+
+  .day-row:last-child { border-bottom: none; }
+  .day-row:hover { background: rgba(33,150,243,0.04); }
+
+  .day-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .day-theme {
+    font-size: 0.85rem;
+    color: var(--white);
+    font-weight: 400;
+  }
+
+  .day-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .set-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .day-yds {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--grey);
+    white-space: nowrap;
+  }
+
+  /* ── SWIMMER HIGHLIGHTS ────────────────────────────────────────────── */
+  .highlights {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .highlight-card {
+    background: var(--deep);
+    padding: 1.25rem 1.5rem;
+    transition: background 0.2s;
+  }
+
+  .highlight-card:hover { background: rgba(255,255,255,0.02); }
+
+  .highlight-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+
+  .highlight-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .highlight-note {
+    font-size: 0.75rem;
+    color: var(--grey);
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ────────────────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 2rem 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-left {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .footer-method {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--grey);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-method span {
+    color: var(--light);
+  }
+
+  /* ── ANIMATIONS ────────────────────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+    50%       { opacity: 1;   transform: scaleY(1); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ────────────────────────────────────────────────────── */
+  @media (max-width: 700px) {
+    .phases { grid-template-columns: repeat(2, 1fr); }
+    .hero-title { font-size: clamp(4rem, 18vw, 8rem); }
+    .countdown-days { margin-left: 0; }
+    .day-row { grid-template-columns: 80px 1fr; }
+    .day-meta { display: none; }
+    .hero-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shimmer-bg"></div>
+
+<!-- ── HERO ──────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <p class="hero-eyebrow">SSF Swim Team &nbsp;·&nbsp; Ages 9–13 &nbsp;·&nbsp; SCY</p>
+    <h1 class="hero-title">
+      Purple
+      <span>Group</span>
+    </h1>
+    <p class="hero-sub">
+      4-week periodized training block — Weeks 26 through 29.
+      Build, Peak, Taper, Race. All workouts, pace tables, and lane
+      assignments in one place.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-stat">
+        <span class="hero-stat-num">35</span>
+        <span class="hero-stat-label">Swimmers</span>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">3</span>
+        <span class="hero-stat-label">Lanes</span>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">10</span>
+        <span class="hero-stat-label">Events tracked</span>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">~57K</span>
+        <span class="hero-stat-label">Total yards</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ── MEET COUNTDOWN ──────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+
+    <div class="countdown-bar reveal">
+      <div>
+        <div class="countdown-label">Target Meet</div>
+        <div class="countdown-date">March 28, 2026 — Saturday</div>
+      </div>
+      <div>
+        <div class="countdown-label">Location</div>
+        <div style="font-size:0.85rem; color:var(--white); margin-top:0.2rem;">SSF Swim Team</div>
+      </div>
+      <div class="countdown-days">
+        <div class="countdown-num" id="days-remaining">—</div>
+        <span class="countdown-label">Days to race</span>
+      </div>
+    </div>
+
+    <!-- PHASE OVERVIEW -->
+    <p class="section-label reveal">Training Block</p>
+    <h2 class="section-title reveal">4-Week Plan</h2>
+
+    <div class="phases reveal">
+      <div class="phase active">
+        <div class="phase-badge badge-active">Current</div>
+        <div class="phase-num">26</div>
+        <div class="phase-week">Week 26</div>
+        <div class="phase-name">Build</div>
+        <div class="phase-dates">Mar 2 – 6</div>
+        <div class="phase-yardage">~14,200 yds</div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge badge-upcoming">Upcoming</div>
+        <div class="phase-num">27</div>
+        <div class="phase-week">Week 27</div>
+        <div class="phase-name">Peak</div>
+        <div class="phase-dates">Mar 9 – 13</div>
+        <div class="phase-yardage">~15,500 yds</div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge badge-upcoming">Upcoming</div>
+        <div class="phase-num">28</div>
+        <div class="phase-week">Week 28</div>
+        <div class="phase-name">Taper</div>
+        <div class="phase-dates">Mar 16 – 20</div>
+        <div class="phase-yardage">~12,000 yds</div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge badge-upcoming">Upcoming</div>
+        <div class="phase-num">29</div>
+        <div class="phase-week">Week 29</div>
+        <div class="phase-name">Race Week</div>
+        <div class="phase-dates">Mar 23 – 27</div>
+        <div class="phase-yardage">~6,200 yds</div>
+      </div>
+    </div>
+
+    <!-- SET TYPE KEY -->
+    <p class="section-label reveal">Methodology</p>
+    <h2 class="section-title reveal">Set Type Key</h2>
+    <div class="set-types reveal">
+      <div class="set-chip" style="background:rgba(84,110,122,0.2);color:#90A4AE;">REC — Recovery / Drill</div>
+      <div class="set-chip" style="background:rgba(21,101,192,0.2);color:#90CAF9;">EN1 — 90–95% Critical Pace</div>
+      <div class="set-chip" style="background:rgba(46,125,50,0.2);color:#A5D6A7;">EN2 — ~Critical Pace</div>
+      <div class="set-chip" style="background:rgba(191,54,12,0.2);color:#FFAB91;">SP1 — 95% Max / Lactate</div>
+      <div class="set-chip" style="background:rgba(106,27,154,0.2);color:#CE93D8;">SP3 — Max Effort / Full Rest</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FILES ──────────────────────────────────────────────────────────────── -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <p class="section-label reveal">Downloads</p>
+    <h2 class="section-title reveal">Files</h2>
+
+    <div class="files-grid reveal">
+
+      <a class="file-card xlsx"
+         href="https://github.com/tanglyfe/purple-group-training/raw/main/purple_group_master_v2.xlsx"
+         download>
+        <div class="file-icon">📊</div>
+        <div class="file-type xlsx">XLSX</div>
+        <div class="file-name">Master Pace Table</div>
+        <div class="file-desc">All 35 swimmers × 10 events. EN2, EN1, SP1, SP3 send-offs calculated per swimmer per stroke. 4 tabs: Master Table, Poolside Cards, Specialties, Missing Times.</div>
+        <div class="file-download">
+          <svg viewBox="0 0 24 24"><path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
+          Download
+        </div>
+      </a>
+
+      <a class="file-card docx"
+         href="https://github.com/tanglyfe/purple-group-training/raw/main/purple_week26_v2.docx"
+         download>
+        <div class="file-icon">📋</div>
+        <div class="file-type docx">DOCX</div>
+        <div class="file-name">Week 26 — Full Workout Plan</div>
+        <div class="file-desc">All 5 days (Mon–Fri) with color-coded set blocks, per-lane send-off tables, coaching cues, and methodology notes for each session.</div>
+        <div class="file-download">
+          <svg viewBox="0 0 24 24"><path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
+          Download
+        </div>
+      </a>
+
+      <a class="file-card print"
+         href="https://github.com/tanglyfe/purple-group-training/raw/main/tuesday_mar3_v2.docx"
+         download>
+        <div class="file-icon">🖨️</div>
+        <div class="file-type print">PRINT</div>
+        <div class="file-name">Tuesday Mar 3 — Print Sheet</div>
+        <div class="file-desc">Single-page landscape print sheet. Full workout on the left, all 3 lane assignments on the right with stroke-specific times. Ready to bring to the pool.</div>
+        <div class="file-download">
+          <svg viewBox="0 0 24 24"><path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
+          Download
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── WEEKLY SCHEDULE ────────────────────────────────────────────────────── -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <p class="section-label reveal">Schedule</p>
+    <h2 class="section-title reveal">Week by Week</h2>
+
+    <!-- WEEK 26 -->
+    <div class="week-block open reveal">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-num">26</div>
+        <div class="week-info">
+          <div class="week-phase">Build — Technique Foundation</div>
+          <div class="week-title">March 2 – 6, 2026</div>
+        </div>
+        <div class="week-yardage">
+          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--mid)">14,200</div>
+          <div>yards</div>
+        </div>
+        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="week-days">
+        <div class="day-row">
+          <div class="day-label">Mon 3/2</div>
+          <div class="day-theme">Freestyle &amp; Turns</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--rec)"></div>
+            <div class="set-dot" style="background:var(--en2)"></div>
+            <div class="set-dot" style="background:var(--sp3)"></div>
+            <div class="day-yds">~2,800</div>
+          </div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Tue 3/3</div>
+          <div class="day-theme">Butterfly &amp; Breaststroke — 8×100 IM</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--rec)"></div>
+            <div class="set-dot" style="background:var(--en1)"></div>
+            <div class="set-dot" style="background:var(--en2)"></div>
+            <div class="day-yds">~3,200</div>
+          </div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Wed 3/4</div>
+          <div class="day-theme">Backstroke &amp; Kick Power</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--rec)"></div>
+            <div class="set-dot" style="background:var(--en1)"></div>
+            <div class="set-dot" style="background:var(--sp1)"></div>
+            <div class="set-dot" style="background:var(--sp3)"></div>
+            <div class="day-yds">~2,500</div>
+          </div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Thu 3/5</div>
+          <div class="day-theme">Freestyle Endurance — EN1 / EN2 Bookends</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--rec)"></div>
+            <div class="set-dot" style="background:var(--en1)"></div>
+            <div class="set-dot" style="background:var(--en2)"></div>
+            <div class="day-yds">~3,500</div>
+          </div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Fri 3/6</div>
+          <div class="day-theme">Speed &amp; Fun — Blastoffs &amp; Relay</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--en1)"></div>
+            <div class="set-dot" style="background:var(--sp1)"></div>
+            <div class="set-dot" style="background:var(--sp3)"></div>
+            <div class="day-yds">~2,200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 27 -->
+    <div class="week-block reveal" style="margin-top:1px">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-num" style="color:rgba(255,255,255,0.06)">27</div>
+        <div class="week-info">
+          <div class="week-phase">Peak — Race Pace &amp; Power</div>
+          <div class="week-title" style="color:var(--grey)">March 9 – 13, 2026</div>
+        </div>
+        <div class="week-yardage">
+          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--grey)">15,500</div>
+          <div>yards</div>
+        </div>
+        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="week-days">
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Mon 3/9</div>
+          <div class="day-theme" style="color:var(--grey)">Race Pace Freestyle — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~3,200</div></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Tue 3/10</div>
+          <div class="day-theme" style="color:var(--grey)">Butterfly Peak — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~3,000</div></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Wed 3/11</div>
+          <div class="day-theme" style="color:var(--grey)">Breaststroke &amp; Turns — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~2,800</div></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Thu 3/12</div>
+          <div class="day-theme" style="color:var(--grey)">Big Endurance Day — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~4,000</div></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Fri 3/13</div>
+          <div class="day-theme" style="color:var(--grey)">Speed Day — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~2,500</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 28 -->
+    <div class="week-block reveal" style="margin-top:1px">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-num" style="color:rgba(255,255,255,0.06)">28</div>
+        <div class="week-info">
+          <div class="week-phase">Taper — Sharpen &amp; Speed</div>
+          <div class="week-title" style="color:var(--grey)">March 16 – 20, 2026</div>
+        </div>
+        <div class="week-yardage">
+          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--grey)">12,000</div>
+          <div>yards</div>
+        </div>
+        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="week-days">
+        <div class="day-row" style="opacity:0.4">
+          <div class="day-label">Mon–Fri</div>
+          <div class="day-theme">Workouts coming in Week 27</div>
+          <div class="day-meta"><div class="day-yds">~12,000 total</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 29 -->
+    <div class="week-block reveal" style="margin-top:1px">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-num" style="color:rgba(255,255,255,0.06)">29</div>
+        <div class="week-info">
+          <div class="week-phase">Race Week</div>
+          <div class="week-title" style="color:var(--grey)">March 23 – 27, 2026</div>
+        </div>
+        <div class="week-yardage">
+          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--gold)">6,200</div>
+          <div>yards</div>
+        </div>
+        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="week-days">
+        <div class="day-row" style="opacity:0.4">
+          <div class="day-label">Mon–Fri</div>
+          <div class="day-theme">Race week activation &amp; sharpening — coming soon</div>
+          <div class="day-meta"><div class="day-yds">~6,200 total</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── SWIMMER HIGHLIGHTS ─────────────────────────────────────────────────── -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <p class="section-label reveal">Roster Intel</p>
+    <h2 class="section-title reveal">Key Coaching Flags</h2>
+
+    <div class="highlights reveal">
+
+      <div class="highlight-card">
+        <div class="highlight-name">Ashley Hong</div>
+        <div class="highlight-tag" style="background:rgba(142,36,170,0.2);color:#CE93D8;">Fly Specialist</div>
+        <div class="highlight-note">100 Fly 1:23 — fastest in group. Leads all fly drill sets.</div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-name">Woody Li</div>
+        <div class="highlight-tag" style="background:rgba(251,140,0,0.2);color:#FFCC80;">Breast Specialist</div>
+        <div class="highlight-note">50 Breast :38.72 — strongest breaststroker by a wide margin.</div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-name">Lucciana Cisneros</div>
+        <div class="highlight-tag" style="background:rgba(67,160,71,0.2);color:#A5D6A7;">Back Specialist</div>
+        <div class="highlight-note">50 Back :37.62 — fastest backstroke split in the entire group.</div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-name">Lorenzo Navarro</div>
+        <div class="highlight-tag" style="background:rgba(229,57,53,0.2);color:#EF9A9A;">IM Strength</div>
+        <div class="highlight-note">100 IM 1:25 — his best event. Most complete swimmer in the group.</div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-name">Aiden Kiatrungrit</div>
+        <div class="highlight-tag" style="background:rgba(249,168,37,0.2);color:#FFE082;">Breast A-Std</div>
+        <div class="highlight-note">Only A-standard time in group. Benchmark for breast technique cues.</div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-name">Sean Jiang / Ian An</div>
+        <div class="highlight-tag" style="background:rgba(0,137,123,0.2);color:#80CBC4;">Back Movers</div>
+        <div class="highlight-note">Both significantly faster in back than their free lane. Move up on back sets.</div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-name">Ellisha Fu / Jadon Jiang</div>
+        <div class="highlight-tag" style="background:rgba(191,54,12,0.2);color:#FFAB91;">Aerobic Gap</div>
+        <div class="highlight-note">Large fade from 50→100 Free. EN1/EN2 aerobic work is the priority.</div>
+      </div>
+
+      <div class="highlight-card">
+        <div class="highlight-name">Aiden Kong</div>
+        <div class="highlight-tag" style="background:rgba(33,150,243,0.2);color:#90CAF9;">Balanced / IM</div>
+        <div class="highlight-note">All 4 strokes competitive. Best IM candidate in the group.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-left">Purple Group &nbsp;·&nbsp; SSF Swim Team &nbsp;·&nbsp; 2026</div>
+      <div class="footer-method">Methodology: <span>Acadian Endurance EN1 / EN2 / SP1 / SP3</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Countdown ──────────────────────────────────────────────────────────────
+  const meetDate = new Date('2026-03-28T00:00:00');
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const diff = Math.ceil((meetDate - today) / (1000 * 60 * 60 * 24));
+  document.getElementById('days-remaining').textContent = diff > 0 ? diff : 'Race Day!';
+
+  // ── Week accordion ─────────────────────────────────────────────────────────
+  function toggleWeek(header) {
+    const block = header.closest('.week-block');
+    block.classList.toggle('open');
+  }
+
+  // ── Scroll reveal ──────────────────────────────────────────────────────────
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
