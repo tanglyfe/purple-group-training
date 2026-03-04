@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dryland Coach View — Purple Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#071429;--navy:#0B1F3A;--mid:#2196F3;--light:#64B5F6;
+    --white:#F0F6FF;--grey:#8BA3C0;--gold:#F9A825;
+    --green2:#43A047;--green3:#A5D6A7;
+    --lane3:#1F4E79;--lane2:#1976D2;--lane1:#0277BD;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;
+    font-weight:300;min-height:100vh;padding-bottom:4rem;}
+  body::before{content:'';position:fixed;inset:0;
+    background:repeating-linear-gradient(180deg,transparent 0,transparent 58px,
+      rgba(33,150,243,.03) 58px,rgba(33,150,243,.03) 60px);
+    pointer-events:none;z-index:0;}
+
+  .topbar{position:sticky;top:0;z-index:100;background:rgba(7,20,41,.97);
+    backdrop-filter:blur(12px);border-bottom:1px solid rgba(249,168,37,.2);padding:.75rem 1rem;}
+  .topbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:.75rem;}
+  .back-btn{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;
+    font-size:.62rem;letter-spacing:.14em;color:var(--grey);text-decoration:none;
+    text-transform:uppercase;padding:.4rem .6rem;border:1px solid rgba(255,255,255,.08);
+    border-radius:2px;transition:color .2s,border-color .2s;flex-shrink:0;}
+  .back-btn:hover{color:var(--light);border-color:rgba(33,150,243,.3);}
+  .back-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;}
+  .topbar-title{flex:1;}
+  .topbar-title h1{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.04em;line-height:1;}
+  .topbar-sub{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;
+    color:var(--gold);text-transform:uppercase;margin-top:.15rem;}
+
+  .wrap{max-width:1200px;margin:0 auto;padding:1rem;position:relative;z-index:1;}
+
+  /* CONTROLS */
+  .controls{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+  .ctrl-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;
+    color:var(--grey);text-transform:uppercase;flex-shrink:0;}
+  .week-input{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+    border-radius:2px;color:var(--white);font-family:'DM Mono',monospace;font-size:.85rem;
+    padding:.4rem .7rem;outline:none;transition:border-color .2s;-webkit-appearance:none;}
+  .week-input:focus{border-color:var(--mid);}
+  .nav-btn{padding:.4rem .75rem;background:transparent;border:1px solid rgba(255,255,255,.08);
+    border-radius:2px;color:var(--grey);font-family:'DM Mono',monospace;font-size:.7rem;
+    cursor:pointer;transition:all .15s;}
+  .nav-btn:hover{border-color:var(--mid);color:var(--light);}
+  .week-display{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--light);letter-spacing:.04em;}
+  .export-btn{margin-left:auto;padding:.4rem .9rem;background:transparent;
+    border:1px solid rgba(249,168,37,.25);border-radius:2px;color:var(--gold);
+    font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;
+    text-transform:uppercase;cursor:pointer;transition:all .15s;}
+  .export-btn:hover{background:rgba(249,168,37,.1);}
+
+  /* LEGEND */
+  .legend{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;margin-bottom:1.25rem;
+    font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--grey);
+    text-transform:uppercase;}
+  .legend-item{display:flex;align-items:center;gap:.35rem;}
+  .leg-dot{width:10px;height:10px;border-radius:1px;flex-shrink:0;}
+
+  /* SUMMARY */
+  .summary-row{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06);
+    border-radius:2px;overflow:hidden;margin-bottom:1.5rem;}
+  .sum-card{background:var(--deep);padding:.85rem 1rem;}
+  .sum-icon{font-size:1.1rem;margin-bottom:.25rem;}
+  .sum-name{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;
+    color:var(--grey);text-transform:uppercase;margin-bottom:.15rem;}
+  .sum-total{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1;}
+  .sum-unit{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);text-transform:uppercase;}
+  .sum-meta{font-size:.72rem;color:var(--grey);margin-top:.2rem;}
+  .sum-hit{display:flex;gap:.3rem;margin-top:.3rem;flex-wrap:wrap;}
+  .sum-hit-chip{font-family:'DM Mono',monospace;font-size:.55rem;padding:.15rem .4rem;
+    border-radius:1px;text-transform:uppercase;}
+
+  /* TABLE */
+  .table-wrap{overflow-x:auto;border:1px solid rgba(255,255,255,.06);border-radius:2px;}
+  table{width:100%;border-collapse:collapse;min-width:900px;}
+  thead tr{background:var(--navy);}
+  th{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;color:var(--grey);
+    text-transform:uppercase;padding:.6rem .75rem;text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap;}
+  th:first-child,th:nth-child(2){text-align:left;}
+  th.ex-hdr{border-left:1px solid rgba(255,255,255,.06);}
+  th.total-hdr{border-left:2px solid rgba(255,255,255,.12);}
+
+  td{padding:.5rem .75rem;border-bottom:1px solid rgba(255,255,255,.04);
+    vertical-align:middle;text-align:center;}
+  td:first-child,td:nth-child(2){text-align:left;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:rgba(255,255,255,.02);}
+
+  /* NAME */
+  .lane-dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+    margin-right:.45rem;vertical-align:middle;}
+  .swimmer-name{font-weight:500;white-space:nowrap;font-size:.82rem;}
+  .tier-chip{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.08em;
+    padding:.15rem .4rem;border-radius:1px;text-transform:uppercase;white-space:nowrap;}
+
+  /* LANE SEPARATOR */
+  .lane-row td{background:rgba(255,255,255,.03);font-family:'DM Mono',monospace;
+    font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--grey);
+    padding:.35rem .75rem;border-top:1px solid rgba(255,255,255,.06);}
+
+  /* EXERCISE CELL */
+  .ex-cell{display:flex;flex-direction:column;align-items:center;gap:.18rem;}
+  .ex-cell-top{display:flex;align-items:center;gap:.3rem;}
+  .ex-reps{font-family:'DM Mono',monospace;font-size:.75rem;letter-spacing:.04em;}
+  .ex-reps.stretch{color:var(--gold);}
+  .ex-reps.min{color:var(--green3);}
+  .ex-reps.partial{color:rgba(249,168,37,.6);}
+  .ex-reps.none{color:rgba(139,163,192,.22);}
+  .ex-sets{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);}
+  .ex-sets.four{color:var(--gold);}
+  .ex-sets.three{color:var(--green3);}
+  .ex-target-sub{font-family:'DM Mono',monospace;font-size:.5rem;color:rgba(139,163,192,.35);}
+  .mini-bar{width:38px;height:2px;background:rgba(255,255,255,.07);border-radius:1px;overflow:hidden;}
+  .mini-bar-fill{height:100%;border-radius:1px;}
+
+  /* STATUS CELL */
+  .status-cell{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.06em;
+    white-space:nowrap;border-left:1px solid rgba(255,255,255,.06);}
+  .status-cell.all-stretch{color:var(--gold);}
+  .status-cell.all-min{color:var(--green3);}
+  .status-cell.partial{color:rgba(249,168,37,.5);}
+  .status-cell.none{color:rgba(139,163,192,.22);}
+
+  /* TOTAL */
+  .total-cell{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;
+    border-left:2px solid rgba(255,255,255,.12);}
+  .total-cell.high{color:var(--gold);}
+  .total-cell.mid{color:var(--green3);}
+  .total-cell.low{color:rgba(139,163,192,.3);}
+
+  .no-data-row td{padding:2rem;text-align:center;font-family:'DM Mono',monospace;
+    font-size:.65rem;letter-spacing:.12em;color:rgba(139,163,192,.4);text-transform:uppercase;}
+
+  @media(max-width:700px){
+    .summary-row{grid-template-columns:repeat(3,1fr);}
+    .sum-card:nth-child(n+4){display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="back-btn" href="index.html">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Home
+    </a>
+    <div class="topbar-title">
+      <h1>Dryland — Coach View</h1>
+      <div class="topbar-sub">⭐ Coach Dashboard</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="controls">
+    <span class="ctrl-label">Week</span>
+    <input type="date" class="week-input" id="week-input" onchange="onWeekChange()">
+    <button class="nav-btn" onclick="shiftWeek(-1)">◀ Prev</button>
+    <button class="nav-btn" onclick="shiftWeek(1)">Next ▶</button>
+    <span class="week-display" id="week-display"></span>
+    <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><span class="leg-dot" style="background:#43A047"></span>Hit 3-set minimum</span>
+    <span class="legend-item"><span class="leg-dot" style="background:var(--gold)"></span>Hit 4-set stretch</span>
+    <span class="legend-item"><span class="leg-dot" style="background:rgba(249,168,37,.4)"></span>Partial</span>
+    <span class="legend-item"><span class="leg-dot" style="background:rgba(139,163,192,.2)"></span>Not logged</span>
+    <span style="margin-left:.5rem">Reps shown as actual / target</span>
+  </div>
+
+  <div class="summary-row" id="summary-row"></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Swimmer</th>
+          <th>Tier</th>
+          <th class="ex-hdr">🦵 Squats</th>
+          <th class="ex-hdr">⚡ Squat Jumps</th>
+          <th class="ex-hdr">💪 Push Ups</th>
+          <th class="ex-hdr">🏋️ Plank</th>
+          <th class="ex-hdr">🔥 Burpees</th>
+          <th class="status-cell">Sets Status</th>
+          <th class="total-hdr">Total</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const EXERCISES=[
+  {id:'squats', name:'Squats',     icon:'🦵',unit:'reps',color:'#1565C0',repsPerSet:[10,15,20],step:[2,3,5]},
+  {id:'sqjumps',name:'Squat Jumps',icon:'⚡',unit:'reps',color:'#7B1FA2',repsPerSet:[6,10,12], step:[1,2,3]},
+  {id:'pushups',name:'Push Ups',   icon:'💪',unit:'reps',color:'#00695C',repsPerSet:[5,10,12], step:[1,2,3]},
+  {id:'plank',  name:'Plank',      icon:'🏋️',unit:'sec', color:'#E65100',repsPerSet:[15,30,45],step:[5,5,10]},
+  {id:'burpees',name:'Burpees',    icon:'🔥',unit:'reps',color:'#B71C1C',repsPerSet:[4,6,8],   step:[1,1,2]},
+];
+const SWIMMERS=[
+  {name:"Lorenzo Navarro",  age:11,lane:3},{name:"Woody Li",         age:13,lane:3},
+  {name:"Aiden Kiatrungrit",age:10,lane:3},{name:"Priscilla Silva",  age:13,lane:3},
+  {name:"Ashley Hong",      age:13,lane:3},{name:"Aiden Kong",       age:12,lane:3},
+  {name:"Gisele Barbosa",   age:14,lane:3},{name:"Edison Cheung",    age:12,lane:3},
+  {name:"Nathan Cheung",    age:13,lane:3},{name:"Lucciana Cisneros",age:12,lane:3},
+  {name:"Noah Gonzales",    age:10,lane:2},{name:"Kellen Luk",       age:13,lane:2},
+  {name:"Sean Jiang",       age:11,lane:2},{name:"Abraham Boukai",   age:12,lane:2},
+  {name:"Ian An",           age:12,lane:2},{name:"Kirsten Peredo",   age:8, lane:2},
+  {name:"Jaden Manalastas", age:9, lane:2},{name:"Ellie Lung",       age:9, lane:2},
+  {name:"Natalie Kitchen",  age:13,lane:2},{name:"Emily Cheung",     age:9, lane:2},
+  {name:"Logan Yip",        age:10,lane:2},{name:"Maya Hall",        age:10,lane:2},
+  {name:"Tessa Chun",       age:11,lane:1},{name:"Ellisha Fu",       age:11,lane:1},
+  {name:"Milana Ludan",     age:11,lane:1},{name:"Wilson Zhou",      age:10,lane:1},
+  {name:"Rachel Cheng",     age:13,lane:1},{name:"Isabelle Leung",   age:9, lane:1},
+  {name:"Evanna Jiang",     age:10,lane:1},{name:"Leah Wang",        age:9, lane:1},
+  {name:"Eli Wu",           age:10,lane:1},{name:"Maeko Lam",        age:11,lane:1},
+  {name:"Jadon Jiang",      age:13,lane:1},{name:"Allison Chan",     age:12,lane:1},
+  {name:"Ayrton Lee",       age:12,lane:1},
+];
+const LANE_COLORS={3:'#1F4E79',2:'#1976D2',1:'#0277BD'};
+const LANE_LABELS={3:'Lane 3 — Fast',2:'Lane 2 — Mid',1:'Lane 1 — Dev'};
+const TIER_LABELS=['8–10','11–12','13+'];
+const TIER_BG=['rgba(2,119,189,.18)','rgba(21,101,192,.18)','rgba(69,39,160,.18)'];
+const TIER_FG=['#90CAF9','#90CAF9','#CE93D8'];
+const MIN_SETS=3,STRETCH_SETS=4;
+const STORAGE_KEY='purple_dryland',TARGETS_KEY='purple_dryland_targets';
+
+const loadAll    =()=>{try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch{return{};}};
+const loadTargets=()=>{try{return JSON.parse(localStorage.getItem(TARGETS_KEY))||{};}catch{return{};}};
+const getTier    =age=>age<=10?0:age<=12?1:2;
+const todayStr   =()=>new Date().toISOString().split('T')[0];
+
+function getMondayOf(ds){
+  const d=new Date(ds+'T12:00:00'),dow=d.getDay();
+  d.setDate(d.getDate()-(dow===0?6:dow-1));
+  return d.toISOString().split('T')[0];
+}
+function fmtWeek(mon){
+  const d=new Date(mon+'T12:00:00'),e=new Date(d);
+  e.setDate(d.getDate()+4);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+
+         e.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function getRepsPerSet(name,age,exId){
+  const t=loadTargets();
+  if(t[name]?.[exId]!==undefined) return t[name][exId];
+  return EXERCISES.find(e=>e.id===exId).repsPerSet[getTier(age)];
+}
+function getExTotal(data,exId){
+  if(!data?.[exId]) return 0;
+  return data[exId].reduce((s,v)=>s+(v||0),0);
+}
+function getSetCount(data,exId){
+  if(!data?.[exId]) return 0;
+  return data[exId].filter(v=>parseInt(v)>0).length;
+}
+
+let currentWeek=getMondayOf(todayStr());
+
+function onWeekChange(){
+  currentWeek=getMondayOf(document.getElementById('week-input').value);
+  document.getElementById('week-input').value=currentWeek;
+  render();
+}
+function shiftWeek(dir){
+  const d=new Date(currentWeek+'T12:00:00');
+  d.setDate(d.getDate()+dir*7);
+  currentWeek=d.toISOString().split('T')[0];
+  document.getElementById('week-input').value=currentWeek;
+  render();
+}
+
+function render(){
+  document.getElementById('week-display').textContent=fmtWeek(currentWeek);
+  const all=loadAll();
+  renderSummary(all);
+  renderTable(all);
+}
+
+function renderSummary(all){
+  const c=document.getElementById('summary-row');
+  c.innerHTML='';
+  EXERCISES.forEach(ex=>{
+    let total=0,minHit=0,stretchHit=0,logged=0;
+    SWIMMERS.forEach(sw=>{
+      const data=all[sw.name]?.[currentWeek];
+      const v=getExTotal(data,ex.id);
+      const rps=getRepsPerSet(sw.name,sw.age,ex.id);
+      if(v>0){total+=v;logged++;}
+      if(v>=MIN_SETS*rps) minHit++;
+      if(v>=STRETCH_SETS*rps) stretchHit++;
+    });
+    const card=document.createElement('div');
+    card.className='sum-card';
+    card.innerHTML=`
+      <div class="sum-icon">${ex.icon}</div>
+      <div class="sum-name">${ex.name}</div>
+      <div class="sum-total" style="color:${ex.color}">${total.toLocaleString()}</div>
+      <div class="sum-unit">${ex.unit} total</div>
+      <div class="sum-meta">${logged}/${SWIMMERS.length} logged</div>
+      <div class="sum-hit">
+        <span class="sum-hit-chip" style="background:rgba(46,125,50,.2);color:#A5D6A7">${minHit} hit 3×</span>
+        <span class="sum-hit-chip" style="background:rgba(249,168,37,.15);color:var(--gold)">${stretchHit} hit 4× ⭐</span>
+      </div>`;
+    c.appendChild(card);
+  });
+}
+
+function renderTable(all){
+  const tbody=document.getElementById('table-body');
+  tbody.innerHTML='';
+  let currLane=null;
+
+  SWIMMERS.forEach(sw=>{
+    if(sw.lane!==currLane){
+      currLane=sw.lane;
+      const sep=document.createElement('tr');
+      sep.className='lane-row';
+      sep.innerHTML=`<td colspan="9">${LANE_LABELS[sw.lane]}</td>`;
+      tbody.appendChild(sep);
+    }
+    const data=all[sw.name]?.[currentWeek]||null;
+    const tier=getTier(sw.age);
+    let rowTotal=0,minCount=0,stretchCount=0;
+
+    const row=document.createElement('tr');
+
+    // Name
+    const nameCell=document.createElement('td');
+    nameCell.innerHTML=`<span class="lane-dot" style="background:${LANE_COLORS[sw.lane]}"></span><span class="swimmer-name">${sw.name}</span>`;
+    row.appendChild(nameCell);
+
+    // Tier
+    const tierCell=document.createElement('td');
+    tierCell.innerHTML=`<span class="tier-chip" style="background:${TIER_BG[tier]};color:${TIER_FG[tier]}">${TIER_LABELS[tier]}</span>`;
+    row.appendChild(tierCell);
+
+    // Exercise cells
+    EXERCISES.forEach(ex=>{
+      const rps   =getRepsPerSet(sw.name,sw.age,ex.id);
+      const minTgt=MIN_SETS*rps;
+      const strTgt=STRETCH_SETS*rps;
+      const val   =getExTotal(data,ex.id);
+      const sets  =getSetCount(data,ex.id);
+      rowTotal+=val;
+
+      const hitStr=val>=strTgt&&val>0;
+      const hitMin=val>=minTgt&&val>0;
+      const partial=val>0&&!hitMin;
+      if(hitStr) stretchCount++;
+      else if(hitMin) minCount++;
+
+      const pct=Math.min(100,Math.round(val/strTgt*100));
+      let repsClass='none',display='—';
+      if(val>0){
+        display=hitStr?`${val} ⭐`:hitMin?`${val} ✓`:String(val);
+        repsClass=hitStr?'stretch':hitMin?'min':'partial';
+      }
+      let setsClass='';
+      if(sets>=STRETCH_SETS) setsClass='four';
+      else if(sets>=MIN_SETS) setsClass='three';
+
+      const td=document.createElement('td');
+      td.className='ex-hdr';
+      td.innerHTML=`
+        <div class="ex-cell">
+          <div class="ex-cell-top">
+            <div class="ex-reps ${repsClass}">${display}</div>
+          </div>
+          ${val>0?`<div class="ex-sets ${setsClass}">${sets} set${sets!==1?'s':''}</div>`:''}
+          <div class="ex-target-sub">3×${rps}=${minTgt} / 4×${rps}=${strTgt}</div>
+          ${val>0?`<div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%;background:${ex.color}"></div></div>`:''}
+        </div>`;
+      row.appendChild(td);
+    });
+
+    // Status
+    const statCell=document.createElement('td');
+    statCell.className='status-cell';
+    if(!data||rowTotal===0){statCell.className+=' none';statCell.textContent='—';}
+    else if(stretchCount===EXERCISES.length){statCell.className+=' all-stretch';statCell.textContent='All 4× ⭐';}
+    else if(minCount+stretchCount===EXERCISES.length){statCell.className+=' all-min';statCell.textContent='All 3× ✓';}
+    else if(stretchCount>0||minCount>0){
+      statCell.className+=' partial';
+      statCell.textContent=`${minCount+stretchCount}/${EXERCISES.length} complete`;
+    } else {statCell.className+=' partial';statCell.textContent='In progress';}
+    row.appendChild(statCell);
+
+    // Total
+    const totCell=document.createElement('td');
+    const allDone=minCount+stretchCount===EXERCISES.length;
+    totCell.className=`total-cell ${stretchCount===EXERCISES.length?'high':allDone?'mid':'low'}`;
+    totCell.textContent=rowTotal||'—';
+    row.appendChild(totCell);
+
+    tbody.appendChild(row);
+  });
+}
+
+function exportCSV(){
+  const all=loadAll();
+  let csv='Swimmer,Lane,Age,Tier,'+EXERCISES.map(e=>`${e.name} (reps),${e.name} (sets),${e.name} (min target),${e.name} (stretch target)`).join(',')+',Total Reps\n';
+  SWIMMERS.forEach(sw=>{
+    const data=all[sw.name]?.[currentWeek]||null;
+    const tier=getTier(sw.age);
+    let total=0;
+    const cols=EXERCISES.map(ex=>{
+      const rps=getRepsPerSet(sw.name,sw.age,ex.id);
+      const val=getExTotal(data,ex.id);
+      const sets=getSetCount(data,ex.id);
+      total+=val;
+      return `${val||0},${sets||0},${MIN_SETS*rps},${STRETCH_SETS*rps}`;
+    });
+    csv+=`"${sw.name}",${sw.lane},${sw.age},"${TIER_LABELS[tier]}",${cols.join(',')},${total}\n`;
+  });
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`purple_dryland_coach_${currentWeek}.csv`;a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('week-input').value=currentWeek;
+render();
+</script>
+</body>
+</html>

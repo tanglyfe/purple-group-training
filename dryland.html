@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dryland Log — Purple Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#071429;--navy:#0B1F3A;--mid:#2196F3;--light:#64B5F6;
+    --white:#F0F6FF;--grey:#8BA3C0;--gold:#F9A825;
+    --green2:#43A047;--green3:#A5D6A7;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;
+    font-weight:300;min-height:100vh;padding-bottom:5rem;}
+  body::before{content:'';position:fixed;inset:0;
+    background:repeating-linear-gradient(180deg,transparent 0,transparent 58px,
+      rgba(33,150,243,.03) 58px,rgba(33,150,243,.03) 60px);
+    pointer-events:none;z-index:0;}
+
+  .topbar{position:sticky;top:0;z-index:100;background:rgba(7,20,41,.97);
+    backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,.15);padding:.75rem 1rem;}
+  .topbar-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:.75rem;}
+  .back-btn{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;
+    font-size:.62rem;letter-spacing:.14em;color:var(--grey);text-decoration:none;
+    text-transform:uppercase;padding:.4rem .6rem;border:1px solid rgba(255,255,255,.08);
+    border-radius:2px;transition:color .2s,border-color .2s;flex-shrink:0;}
+  .back-btn:hover{color:var(--light);border-color:rgba(33,150,243,.3);}
+  .back-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;}
+  .topbar-title{flex:1;}
+  .topbar-title h1{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.04em;line-height:1;}
+  .topbar-sub{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;
+    color:var(--grey);text-transform:uppercase;margin-top:.15rem;}
+  .coach-link{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;
+    color:var(--gold);text-decoration:none;text-transform:uppercase;white-space:nowrap;
+    padding:.4rem .6rem;border:1px solid rgba(249,168,37,.25);border-radius:2px;transition:all .2s;}
+  .coach-link:hover{background:rgba(249,168,37,.1);}
+
+  .wrap{max-width:600px;margin:0 auto;padding:1rem;position:relative;z-index:1;}
+
+  /* PICKER */
+  .picker-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.18em;
+    color:var(--grey);text-transform:uppercase;margin-bottom:.6rem;}
+  .swimmer-select{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+    border-radius:2px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:1rem;
+    padding:.6rem .9rem;outline:none;cursor:pointer;transition:border-color .2s;
+    -webkit-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238BA3C0' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right .9rem center;}
+  .swimmer-select:focus{border-color:var(--mid);}
+  .swimmer-select option{background:#0B1F3A;}
+
+  /* GREETING */
+  .greeting{margin:1.25rem 0 1rem;display:none;}
+  .greeting.visible{display:block;}
+  .greeting-name{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;line-height:1;letter-spacing:.02em;}
+  .greeting-sub{font-size:.8rem;color:var(--grey);margin-top:.3rem;}
+  .tier-badge{display:inline-flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;
+    font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;padding:.25rem .6rem;
+    border-radius:1px;margin-top:.5rem;}
+
+  /* WEEK BAR */
+  .week-bar{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;}
+  .week-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;
+    color:var(--grey);text-transform:uppercase;flex-shrink:0;}
+  .week-input{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+    border-radius:2px;color:var(--white);font-family:'DM Mono',monospace;font-size:.85rem;
+    padding:.4rem .7rem;outline:none;transition:border-color .2s;-webkit-appearance:none;}
+  .week-input:focus{border-color:var(--mid);}
+
+  /* NOTICES */
+  .notice{display:none;padding:.7rem .9rem;border-radius:2px;margin-bottom:1rem;
+    font-size:.8rem;line-height:1.7;}
+  .notice.visible{display:block;}
+  .notice-unlock{background:rgba(46,125,50,.12);border-left:3px solid var(--green2);color:var(--green3);}
+  .notice-stretch{background:rgba(249,168,37,.08);border-left:3px solid rgba(249,168,37,.5);color:var(--gold);}
+
+  /* EXERCISE CARDS */
+  .exercises{display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+  .ex-card{background:var(--deep);padding:1.1rem 1.1rem .9rem;transition:background .15s;}
+  .ex-card:hover{background:rgba(255,255,255,.02);}
+  .ex-card.min-done{background:rgba(46,125,50,.05);}
+  .ex-card.stretch-done{background:rgba(249,168,37,.05);}
+
+  /* CARD HEADER */
+  .ex-top{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.9rem;}
+  .ex-icon{font-size:1.4rem;line-height:1;flex-shrink:0;margin-top:.1rem;}
+  .ex-info{flex:1;}
+  .ex-name{font-size:.95rem;font-weight:500;}
+  .ex-unit{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;
+    color:var(--grey);text-transform:uppercase;margin-top:.1rem;}
+
+  /* TARGET BLOCK */
+  .ex-targets{display:flex;flex-direction:column;align-items:flex-end;gap:.35rem;flex-shrink:0;}
+  .target-line{display:flex;align-items:center;gap:.5rem;}
+  .target-chip{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;
+    text-transform:uppercase;padding:.2rem .55rem;border-radius:1px;transition:all .3s;white-space:nowrap;}
+  .target-chip.min{background:rgba(255,255,255,.07);color:var(--grey);}
+  .target-chip.min.hit{background:rgba(46,125,50,.25);color:var(--green3);}
+  .target-chip.stretch{background:rgba(249,168,37,.08);color:rgba(249,168,37,.5);
+    border:1px dashed rgba(249,168,37,.25);}
+  .target-chip.stretch.hit{background:rgba(249,168,37,.2);color:var(--gold);
+    border-color:var(--gold);box-shadow:0 0 8px rgba(249,168,37,.2);}
+  .target-tier{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);
+    letter-spacing:.08em;text-transform:uppercase;}
+  .unlock-hint{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.06em;
+    color:var(--green3);opacity:0;transition:opacity .3s;margin-top:.1rem;text-align:right;}
+  .unlock-hint.visible{opacity:1;}
+
+  /* SET INPUTS */
+  .sets-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;
+    color:var(--grey);text-transform:uppercase;margin-bottom:.5rem;}
+  .sets-row{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap;}
+  .set-group{display:flex;flex-direction:column;align-items:center;gap:.3rem;}
+  .set-lbl{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;
+    color:var(--grey);text-transform:uppercase;}
+  .set-input{width:62px;height:52px;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);border-radius:2px;color:var(--white);
+    font-family:'Bebas Neue',sans-serif;font-size:1.5rem;text-align:center;
+    outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;
+    -moz-appearance:textfield;}
+  .set-input::-webkit-outer-spin-button,.set-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+  .set-input:focus{border-color:var(--mid);background:rgba(33,150,243,.08);}
+  .set-input.has-val{border-color:rgba(67,160,71,.4);background:rgba(46,125,50,.08);}
+  .set-input.stretch-set{border-color:rgba(249,168,37,.3);}
+  .set-input.stretch-set.has-val{border-color:var(--gold);background:rgba(249,168,37,.08);}
+
+  .add-set-btn{height:52px;width:38px;background:transparent;
+    border:1px dashed rgba(255,255,255,.12);border-radius:2px;color:var(--grey);
+    font-size:1.2rem;cursor:pointer;transition:all .15s;flex-shrink:0;align-self:flex-end;}
+  .add-set-btn:hover{border-color:var(--mid);color:var(--light);}
+
+  /* TOTAL DISPLAY */
+  .ex-footer{display:flex;align-items:center;gap:.75rem;margin-top:.75rem;}
+  .ex-progress{flex:1;height:5px;background:rgba(255,255,255,.06);
+    border-radius:2px;overflow:visible;position:relative;}
+  .ex-progress-min{height:100%;border-radius:2px;transition:width .35s ease;position:absolute;top:0;left:0;}
+  .ex-progress-stretch{height:100%;border-radius:2px;transition:width .35s ease;
+    position:absolute;top:0;left:0;opacity:.5;}
+  /* tick mark at 75% (3/4 sets = min target) */
+  .ex-progress-tick{position:absolute;top:-3px;height:11px;width:2px;
+    background:rgba(255,255,255,.2);border-radius:1px;}
+  .ex-total-wrap{text-align:right;flex-shrink:0;}
+  .ex-total{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;line-height:1;}
+  .ex-total-unit{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;
+    color:var(--grey);text-transform:uppercase;}
+
+  /* SETS COUNTER BADGE */
+  .sets-count-badge{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;
+    padding:.2rem .5rem;border-radius:1px;text-transform:uppercase;flex-shrink:0;}
+
+  /* SAVE */
+  .save-wrap{margin-top:1.25rem;}
+  .save-btn{width:100%;padding:.85rem;background:var(--mid);border:none;border-radius:2px;
+    color:#fff;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;
+    cursor:pointer;transition:background .2s,transform .1s;touch-action:manipulation;}
+  .save-btn:hover{background:#1976D2;}
+  .save-btn:active{transform:scale(.98);}
+  .save-btn.saved{background:var(--green2);}
+
+  /* HISTORY */
+  .history-section{margin-top:2rem;}
+  .section-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.18em;
+    color:var(--grey);text-transform:uppercase;margin-bottom:.75rem;}
+  .history-empty{padding:1rem;text-align:center;font-family:'DM Mono',monospace;
+    font-size:.62rem;letter-spacing:.12em;color:rgba(139,163,192,.4);text-transform:uppercase;
+    border:1px solid rgba(255,255,255,.06);border-radius:2px;}
+  .history-list{display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+  .history-row{background:var(--deep);padding:.85rem 1rem;display:grid;
+    grid-template-columns:1fr auto;gap:.5rem;align-items:start;transition:background .15s;}
+  .history-row:hover{background:rgba(255,255,255,.02);}
+  .history-date{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.1em;
+    color:var(--light);margin-bottom:.3rem;}
+  .history-exercises{display:flex;flex-direction:column;gap:.2rem;}
+  .history-ex-line{font-size:.76rem;color:var(--grey);display:flex;align-items:center;gap:.4rem;}
+  .history-sets{font-family:'DM Mono',monospace;font-size:.65rem;}
+  .history-total{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--mid);
+    line-height:1;text-align:right;}
+  .history-total-label{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);
+    text-transform:uppercase;text-align:right;}
+  .history-badges{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.35rem;}
+  .history-badge{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.06em;
+    padding:.15rem .4rem;border-radius:1px;text-transform:uppercase;}
+
+  .log-section{display:none;}
+  .log-section.visible{display:block;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="back-btn" href="index.html">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Home
+    </a>
+    <div class="topbar-title">
+      <h1>Dryland Log</h1>
+      <div class="topbar-sub">Purple Group</div>
+    </div>
+    <a class="coach-link" href="dryland-coach.html">Coach View ›</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div style="margin-top:.5rem">
+    <div class="picker-label">Who are you?</div>
+    <select class="swimmer-select" id="swimmer-select" onchange="onSelectSwimmer(this.value)">
+      <option value="">— Select your name —</option>
+      <optgroup label="Lane 3">
+        <option>Lorenzo Navarro</option><option>Woody Li</option>
+        <option>Aiden Kiatrungrit</option><option>Priscilla Silva</option>
+        <option>Ashley Hong</option><option>Aiden Kong</option>
+        <option>Gisele Barbosa</option><option>Edison Cheung</option>
+        <option>Nathan Cheung</option><option>Lucciana Cisneros</option>
+      </optgroup>
+      <optgroup label="Lane 2">
+        <option>Noah Gonzales</option><option>Kellen Luk</option>
+        <option>Sean Jiang</option><option>Abraham Boukai</option>
+        <option>Ian An</option><option>Kirsten Peredo</option>
+        <option>Jaden Manalastas</option><option>Ellie Lung</option>
+        <option>Natalie Kitchen</option><option>Emily Cheung</option>
+        <option>Logan Yip</option><option>Maya Hall</option>
+      </optgroup>
+      <optgroup label="Lane 1">
+        <option>Tessa Chun</option><option>Ellisha Fu</option>
+        <option>Milana Ludan</option><option>Wilson Zhou</option>
+        <option>Rachel Cheng</option><option>Isabelle Leung</option>
+        <option>Evanna Jiang</option><option>Leah Wang</option>
+        <option>Eli Wu</option><option>Maeko Lam</option>
+        <option>Jadon Jiang</option><option>Allison Chan</option>
+        <option>Ayrton Lee</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div class="greeting" id="greeting">
+    <div class="greeting-name" id="greeting-name"></div>
+    <div class="greeting-sub" id="greeting-sub"></div>
+    <div class="tier-badge" id="tier-badge"></div>
+  </div>
+
+  <div class="log-section" id="log-section">
+    <div class="week-bar">
+      <span class="week-label">Week of</span>
+      <input type="date" class="week-input" id="week-input" onchange="onWeekChange()">
+    </div>
+    <div class="notice notice-unlock" id="notice-unlock"></div>
+    <div class="exercises" id="exercises"></div>
+    <div class="save-wrap">
+      <button class="save-btn" id="save-btn" onclick="saveSession()">Save Session</button>
+    </div>
+    <div class="history-section">
+      <div class="section-label">Your History</div>
+      <div id="personal-history"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── ROSTER ────────────────────────────────────────────────────────────────────
+const SWIMMERS = {
+  "Lorenzo Navarro":{age:11,lane:3},"Woody Li":{age:13,lane:3},
+  "Aiden Kiatrungrit":{age:10,lane:3},"Priscilla Silva":{age:13,lane:3},
+  "Ashley Hong":{age:13,lane:3},"Aiden Kong":{age:12,lane:3},
+  "Gisele Barbosa":{age:14,lane:3},"Edison Cheung":{age:12,lane:3},
+  "Nathan Cheung":{age:13,lane:3},"Lucciana Cisneros":{age:12,lane:3},
+  "Noah Gonzales":{age:10,lane:2},"Kellen Luk":{age:13,lane:2},
+  "Sean Jiang":{age:11,lane:2},"Abraham Boukai":{age:12,lane:2},
+  "Ian An":{age:12,lane:2},"Kirsten Peredo":{age:8,lane:2},
+  "Jaden Manalastas":{age:9,lane:2},"Ellie Lung":{age:9,lane:2},
+  "Natalie Kitchen":{age:13,lane:2},"Emily Cheung":{age:9,lane:2},
+  "Logan Yip":{age:10,lane:2},"Maya Hall":{age:10,lane:2},
+  "Tessa Chun":{age:11,lane:1},"Ellisha Fu":{age:11,lane:1},
+  "Milana Ludan":{age:11,lane:1},"Wilson Zhou":{age:10,lane:1},
+  "Rachel Cheng":{age:13,lane:1},"Isabelle Leung":{age:9,lane:1},
+  "Evanna Jiang":{age:10,lane:1},"Leah Wang":{age:9,lane:1},
+  "Eli Wu":{age:10,lane:1},"Maeko Lam":{age:11,lane:1},
+  "Jadon Jiang":{age:13,lane:1},"Allison Chan":{age:12,lane:1},
+  "Ayrton Lee":{age:12,lane:1}
+};
+
+// ── EXERCISE CONFIG ───────────────────────────────────────────────────────────
+// repsPerSet[tier]: reps per set for 3-set minimum
+// step[tier]: rep increase per set when progression unlocks
+const EXERCISES = [
+  {id:'squats', name:'Squats',     icon:'🦵',unit:'reps',color:'#1565C0',repsPerSet:[10,15,20],step:[2,3,5]},
+  {id:'sqjumps',name:'Squat Jumps',icon:'⚡',unit:'reps',color:'#7B1FA2',repsPerSet:[6,10,12], step:[1,2,3]},
+  {id:'pushups',name:'Push Ups',   icon:'💪',unit:'reps',color:'#00695C',repsPerSet:[5,10,12], step:[1,2,3]},
+  {id:'plank',  name:'Plank',      icon:'🏋️',unit:'sec', color:'#E65100',repsPerSet:[15,30,45],step:[5,5,10]},
+  {id:'burpees',name:'Burpees',    icon:'🔥',unit:'reps',color:'#B71C1C',repsPerSet:[4,6,8],   step:[1,1,2]},
+];
+
+const MIN_SETS     = 3;
+const STRETCH_SETS = 4;
+const TIER_LABELS  = ['8–10','11–12','13+'];
+const TIER_COLORS  = ['#0277BD','#1565C0','#4527A0'];
+const TIER_BG      = ['rgba(2,119,189,.2)','rgba(21,101,192,.2)','rgba(69,39,160,.2)'];
+const TIER_FG      = ['#90CAF9','#90CAF9','#CE93D8'];
+
+const STORAGE_KEY  = 'purple_dryland';
+const TARGETS_KEY  = 'purple_dryland_targets'; // stores custom repsPerSet overrides
+const LAST_KEY     = 'purple_dryland_last';
+
+let currentSwimmer = '';
+let currentWeek    = '';
+let sessionSets    = {}; // { exId: [val, val, val, ...] }
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const getTier  = age => age<=10?0:age<=12?1:2;
+const todayStr = () => new Date().toISOString().split('T')[0];
+function getMondayOf(ds){
+  const d=new Date(ds+'T12:00:00'),dow=d.getDay();
+  d.setDate(d.getDate()-(dow===0?6:dow-1));
+  return d.toISOString().split('T')[0];
+}
+function fmtWeek(mon){
+  const d=new Date(mon+'T12:00:00'),e=new Date(d);
+  e.setDate(d.getDate()+4);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+
+         e.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+// ── STORAGE ───────────────────────────────────────────────────────────────────
+const loadAll     = ()=>{try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch{return{};}};
+const saveAll     = d=>localStorage.setItem(STORAGE_KEY,JSON.stringify(d));
+const loadTargets = ()=>{try{return JSON.parse(localStorage.getItem(TARGETS_KEY))||{};}catch{return{};}};
+const saveTargets = d=>localStorage.setItem(TARGETS_KEY,JSON.stringify(d));
+
+// Returns repsPerSet for this swimmer/exercise (may be unlocked higher)
+function getRepsPerSet(name, exId){
+  const t=loadTargets();
+  if(t[name]?.[exId]!==undefined) return t[name][exId];
+  const tier=getTier(SWIMMERS[name].age);
+  return EXERCISES.find(e=>e.id===exId).repsPerSet[tier];
+}
+
+// Min target = 3 sets × repsPerSet; stretch = 4 sets × repsPerSet
+function getMinTarget(name,exId){ return MIN_SETS*getRepsPerSet(name,exId); }
+function getStretchTarget(name,exId){ return STRETCH_SETS*getRepsPerSet(name,exId); }
+
+// Check last session — unlock repsPerSet if swimmer hit 3-set minimum on each exercise
+function checkAndUnlock(name){
+  const all=loadAll();
+  const weeks=Object.keys(all[name]||{}).sort();
+  if(!weeks.length) return [];
+  const lastWk=weeks[weeks.length-1];
+  if(lastWk===currentWeek) return [];
+
+  const targets=loadTargets();
+  if(!targets[name]) targets[name]={};
+  const unlocked=[];
+
+  EXERCISES.forEach(ex=>{
+    const sets  = all[name][lastWk]?.[ex.id]||[];
+    const total = sets.reduce((s,v)=>s+(v||0),0);
+    const minTgt= getMinTarget(name,ex.id);
+    if(total>=minTgt){
+      const tier   =getTier(SWIMMERS[name].age);
+      const current=getRepsPerSet(name,ex.id);
+      const next   =current+ex.step[tier];
+      targets[name][ex.id]=next;
+      unlocked.push({icon:ex.icon,name:ex.name,from:current,to:next,unit:ex.unit,
+        minTotal:MIN_SETS*next,stretchTotal:STRETCH_SETS*next});
+    }
+  });
+
+  saveTargets(targets);
+  return unlocked;
+}
+
+// ── SWIMMER SELECT ────────────────────────────────────────────────────────────
+function onSelectSwimmer(name){
+  currentSwimmer=name;
+  if(!name){
+    document.getElementById('greeting').classList.remove('visible');
+    document.getElementById('log-section').classList.remove('visible');
+    return;
+  }
+  localStorage.setItem(LAST_KEY,name);
+  const sw=SWIMMERS[name],tier=getTier(sw.age);
+
+  document.getElementById('greeting-name').textContent=`Hey, ${name.split(' ')[0]}!`;
+  const count=Object.keys(loadAll()[name]||{}).length;
+  document.getElementById('greeting-sub').textContent=count===0
+    ?'First dryland session — let\'s go!':`${count} session${count>1?'s':''} logged. Keep grinding.`;
+
+  const badge=document.getElementById('tier-badge');
+  badge.textContent=`Age ${sw.age}  ·  Tier ${TIER_LABELS[tier]}`;
+  badge.style.cssText=`background:${TIER_BG[tier]};color:${TIER_FG[tier]};border:1px solid ${TIER_COLORS[tier]}55;display:inline-flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;padding:.25rem .6rem;border-radius:1px;margin-top:.5rem;`;
+
+  document.getElementById('greeting').classList.add('visible');
+  document.getElementById('log-section').classList.add('visible');
+
+  currentWeek=getMondayOf(todayStr());
+  document.getElementById('week-input').value=currentWeek;
+
+  const unlocked=checkAndUnlock(name);
+  const notice=document.getElementById('notice-unlock');
+  if(unlocked.length){
+    notice.innerHTML=`🎯 <strong>Targets unlocked!</strong> You hit your 3-set minimum last session:<br>`+
+      unlocked.map(u=>`${u.icon} <strong>${u.name}</strong>: ${u.from}→<strong>${u.to} ${u.unit}/set</strong> &nbsp;(new: 3×${u.to}=${u.minTotal}, stretch: 4×${u.to}=${u.stretchTotal})`).join('<br>');
+    notice.classList.add('visible');
+  } else {
+    notice.classList.remove('visible');
+  }
+
+  loadSessionIntoForm();
+  renderHistory();
+}
+
+function onWeekChange(){
+  currentWeek=getMondayOf(document.getElementById('week-input').value);
+  document.getElementById('week-input').value=currentWeek;
+  loadSessionIntoForm();
+  renderHistory();
+}
+
+// ── FORM ──────────────────────────────────────────────────────────────────────
+function loadSessionIntoForm(){
+  const data=loadAll()[currentSwimmer]?.[currentWeek]||{};
+  sessionSets={};
+  // Default to 3 empty set slots
+  EXERCISES.forEach(ex=>{
+    sessionSets[ex.id]=data[ex.id]
+      ? [...data[ex.id], ...Array(Math.max(0,MIN_SETS-data[ex.id].length)).fill(null)]
+      : [null,null,null];
+  });
+  renderExercises();
+}
+
+function renderExercises(){
+  const c=document.getElementById('exercises');
+  c.innerHTML='';
+  EXERCISES.forEach(ex=>{
+    const rps     =getRepsPerSet(currentSwimmer,ex.id);
+    const tier    =getTier(SWIMMERS[currentSwimmer].age);
+    const minTgt  =MIN_SETS*rps;
+    const strTgt  =STRETCH_SETS*rps;
+    const sets    =sessionSets[ex.id];
+    const validSets=sets.filter(v=>parseInt(v)>0);
+    const total   =sets.reduce((s,v)=>s+(parseInt(v)||0),0);
+    const setCount=validSets.length;
+    const minDone =total>=minTgt;
+    const strDone =total>=strTgt;
+    const pct     =Math.min(100,Math.round(total/strTgt*100)); // bar goes to stretch
+    const minPct  =Math.min(100,Math.round(total/minTgt*100));
+
+    let cardClass='ex-card';
+    if(strDone) cardClass+=' stretch-done';
+    else if(minDone) cardClass+=' min-done';
+
+    // Set count badge
+    let badgeStyle='';
+    let badgeText='';
+    if(setCount===0){badgeStyle='background:rgba(255,255,255,.06);color:var(--grey)';badgeText='0 sets';}
+    else if(setCount<MIN_SETS){badgeStyle='background:rgba(249,168,37,.12);color:var(--gold)';badgeText=`${setCount}/${MIN_SETS} sets`;}
+    else if(setCount===MIN_SETS){badgeStyle='background:rgba(46,125,50,.2);color:#A5D6A7';badgeText='3 sets ✓';}
+    else{badgeStyle='background:rgba(249,168,37,.2);color:var(--gold)';badgeText='4 sets ⭐';}
+
+    const setsHTML=sets.map((v,i)=>{
+      const isStretch=i>=MIN_SETS;
+      return `<div class="set-group">
+        <div class="set-lbl">${isStretch?'Set 4 ⭐':'Set '+(i+1)}</div>
+        <input type="number" class="set-input${isStretch?' stretch-set':''}${v?' has-val':''}"
+          inputmode="numeric" value="${v||''}" min="0" max="999" placeholder="${rps}"
+          oninput="onSetInput('${ex.id}',${i},this)">
+      </div>`;}).join('');
+
+    // Tick position for min target on progress bar (minTgt/strTgt * 100)
+    const tickPct=Math.round(minTgt/strTgt*100);
+
+    const card=document.createElement('div');
+    card.className=cardClass;
+    card.id=`ex-card-${ex.id}`;
+    card.innerHTML=`
+      <div class="ex-top">
+        <div class="ex-icon">${ex.icon}</div>
+        <div class="ex-info">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-unit">${ex.unit} per set</div>
+        </div>
+        <div class="ex-targets">
+          <div class="target-line">
+            <div class="target-chip min${minDone?' hit':''}" id="min-chip-${ex.id}">
+              3×${rps} = ${minTgt} ${ex.unit}
+            </div>
+          </div>
+          <div class="target-line">
+            <div class="target-chip stretch${strDone?' hit':''}" id="str-chip-${ex.id}">
+              ⭐ 4×${rps} = ${strTgt}
+            </div>
+          </div>
+          <div class="target-tier">Tier ${TIER_LABELS[tier]}</div>
+          <div class="unlock-hint${minDone?' visible':''}" id="unlock-${ex.id}">
+            → unlocks higher target next week
+          </div>
+        </div>
+      </div>
+      <div class="sets-label">Sets <span class="sets-count-badge" id="set-badge-${ex.id}" style="${badgeStyle}">${badgeText}</span></div>
+      <div class="sets-row" id="sets-row-${ex.id}">
+        ${setsHTML}
+        ${sets.length<STRETCH_SETS?`<button class="add-set-btn" id="add-btn-${ex.id}" onclick="addSet('${ex.id}')" title="Add set 4">+</button>`:''}
+        <div class="ex-total-wrap">
+          <div class="ex-total" style="color:${ex.color}" id="total-${ex.id}">${total||'—'}</div>
+          <div class="ex-total-unit">${ex.unit} total</div>
+        </div>
+      </div>
+      <div class="ex-footer">
+        <div class="ex-progress" id="prog-wrap-${ex.id}">
+          <div class="ex-progress-stretch" id="prog-str-${ex.id}"
+            style="width:${pct}%;background:${ex.color};opacity:.3;"></div>
+          <div class="ex-progress-min" id="prog-min-${ex.id}"
+            style="width:${minPct}%;background:${ex.color};${minDone?'box-shadow:0 0 6px '+ex.color+'66;':''}"></div>
+          <div class="ex-progress-tick" style="left:${tickPct}%"></div>
+        </div>
+      </div>`;
+    c.appendChild(card);
+  });
+}
+
+// ── INPUT ─────────────────────────────────────────────────────────────────────
+function onSetInput(exId,idx,input){
+  sessionSets[exId][idx]=parseInt(input.value)||null;
+  input.classList.toggle('has-val',!!sessionSets[exId][idx]);
+  updateExUI(exId);
+}
+
+function updateExUI(exId){
+  const ex    =EXERCISES.find(e=>e.id===exId);
+  const rps   =getRepsPerSet(currentSwimmer,exId);
+  const tier  =getTier(SWIMMERS[currentSwimmer].age);
+  const minTgt=MIN_SETS*rps;
+  const strTgt=STRETCH_SETS*rps;
+  const sets  =sessionSets[exId];
+  const total =sets.reduce((s,v)=>s+(parseInt(v)||0),0);
+  const setCount=sets.filter(v=>parseInt(v)>0).length;
+  const minDone=total>=minTgt;
+  const strDone=total>=strTgt;
+  const minPct =Math.min(100,Math.round(total/minTgt*100));
+  const strPct =Math.min(100,Math.round(total/strTgt*100));
+
+  const t =document.getElementById(`total-${exId}`);
+  const pm=document.getElementById(`prog-min-${exId}`);
+  const ps=document.getElementById(`prog-str-${exId}`);
+  const mc=document.getElementById(`min-chip-${exId}`);
+  const sc=document.getElementById(`str-chip-${exId}`);
+  const ul=document.getElementById(`unlock-${exId}`);
+  const bd=document.getElementById(`set-badge-${exId}`);
+  const cd=document.getElementById(`ex-card-${exId}`);
+
+  if(t) t.textContent=total||'—';
+  if(pm){pm.style.width=minPct+'%';pm.style.boxShadow=minDone?`0 0 6px ${ex.color}66`:'';}
+  if(ps) ps.style.width=strPct+'%';
+  if(mc){mc.classList.toggle('hit',minDone);}
+  if(sc){sc.classList.toggle('hit',strDone);}
+  if(ul) ul.classList.toggle('visible',minDone);
+  if(cd){
+    cd.classList.toggle('min-done',minDone&&!strDone);
+    cd.classList.toggle('stretch-done',strDone);
+  }
+  if(bd){
+    if(setCount===0){bd.style.cssText='background:rgba(255,255,255,.06);color:var(--grey)';bd.textContent='0 sets';}
+    else if(setCount<MIN_SETS){bd.style.cssText='background:rgba(249,168,37,.12);color:var(--gold)';bd.textContent=`${setCount}/${MIN_SETS} sets`;}
+    else if(setCount===MIN_SETS){bd.style.cssText='background:rgba(46,125,50,.2);color:#A5D6A7';bd.textContent='3 sets ✓';}
+    else{bd.style.cssText='background:rgba(249,168,37,.2);color:var(--gold)';bd.textContent='4 sets ⭐';}
+  }
+}
+
+function addSet(exId){
+  if(sessionSets[exId].length>=STRETCH_SETS) return;
+  sessionSets[exId].push(null);
+  const row=document.getElementById(`sets-row-${exId}`);
+  const btn=document.getElementById(`add-btn-${exId}`);
+  const ex =EXERCISES.find(e=>e.id===exId);
+  const rps=getRepsPerSet(currentSwimmer,exId);
+  const grp=document.createElement('div');
+  grp.className='set-group';
+  grp.innerHTML=`<div class="set-lbl">Set 4 ⭐</div>
+    <input type="number" class="set-input stretch-set" inputmode="numeric"
+      min="0" max="999" placeholder="${rps}"
+      oninput="onSetInput('${exId}',${sessionSets[exId].length-1},this)">`;
+  row.insertBefore(grp,btn);
+  btn.remove(); // max sets reached
+  grp.querySelector('input').focus();
+  updateExUI(exId);
+}
+
+// ── SAVE ──────────────────────────────────────────────────────────────────────
+function saveSession(){
+  const all=loadAll();
+  if(!all[currentSwimmer]) all[currentSwimmer]={};
+  const payload={};
+  EXERCISES.forEach(ex=>{
+    const vals=sessionSets[ex.id].filter(v=>parseInt(v)>0).map(Number);
+    if(vals.length) payload[ex.id]=vals;
+  });
+  all[currentSwimmer][currentWeek]=payload;
+  saveAll(all);
+
+  const btn=document.getElementById('save-btn');
+  btn.textContent='✓ Saved!';btn.classList.add('saved');
+  setTimeout(()=>{btn.textContent='Save Session';btn.classList.remove('saved');},2000);
+  renderHistory();
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function renderHistory(){
+  const container=document.getElementById('personal-history');
+  const data=loadAll()[currentSwimmer]||{};
+  const weeks=Object.keys(data).sort((a,b)=>b.localeCompare(a));
+
+  if(!weeks.length){
+    container.innerHTML='<div class="history-empty">No sessions yet — log your first one above</div>';
+    return;
+  }
+
+  const list=document.createElement('div');
+  list.className='history-list';
+
+  weeks.forEach(wk=>{
+    const wkData=data[wk];
+    let total=0;
+    const lines=[],badges=[];
+
+    EXERCISES.forEach(ex=>{
+      const sets=wkData[ex.id]||[];
+      if(!sets.length) return;
+      const sum=sets.reduce((s,v)=>s+(v||0),0);
+      const rps=getRepsPerSet(currentSwimmer,ex.id);
+      const minTgt=MIN_SETS*rps;
+      const strTgt=STRETCH_SETS*rps;
+      total+=sum;
+      const setLabel=sets.length>=STRETCH_SETS?`${sets.length}×sets ⭐`:`${sets.length}×sets`;
+      const hitMin=sum>=minTgt, hitStr=sum>=strTgt;
+      lines.push({icon:ex.icon,name:ex.name,sum,setLabel,hitMin,hitStr,color:ex.color,unit:ex.unit});
+      if(hitStr) badges.push({icon:ex.icon,label:ex.name,color:ex.color,star:true});
+      else if(hitMin) badges.push({icon:ex.icon,label:ex.name,color:ex.color,star:false});
+    });
+
+    const linesHTML=lines.map(l=>`
+      <div class="history-ex-line">
+        <span>${l.icon}</span>
+        <span style="color:var(--white)">${l.name}</span>
+        <span class="history-sets" style="color:${l.hitStr?'var(--gold)':l.hitMin?'#A5D6A7':'var(--grey)'}">${l.sum} ${l.unit} (${l.setLabel})</span>
+        ${l.hitStr?'<span style="color:var(--gold);font-size:.7rem">⭐</span>':l.hitMin?'<span style="color:#A5D6A7;font-size:.7rem">✓</span>':''}
+      </div>`).join('');
+
+    const badgesHTML=badges.map(b=>
+      `<span class="history-badge" style="background:${b.color}33;color:${b.color}">${b.icon} ${b.label}${b.star?' ⭐':' ✓'}</span>`
+    ).join('');
+
+    const row=document.createElement('div');
+    row.className='history-row';
+    row.innerHTML=`
+      <div>
+        <div class="history-date">Week of ${fmtWeek(wk)}</div>
+        <div class="history-exercises">${linesHTML}</div>
+        ${badgesHTML?`<div class="history-badges">${badgesHTML}</div>`:''}
+      </div>
+      <div>
+        <div class="history-total">${total}</div>
+        <div class="history-total-label">total</div>
+      </div>`;
+    list.appendChild(row);
+  });
+
+  container.innerHTML='';
+  container.appendChild(list);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+const last=localStorage.getItem(LAST_KEY);
+if(last&&SWIMMERS[last]){
+  document.getElementById('swimmer-select').value=last;
+  onSelectSwimmer(last);
+}
+</script>
+</body>
+</html>

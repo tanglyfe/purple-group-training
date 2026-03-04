@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaderboard — Purple Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#071429;--navy:#0B1F3A;--mid:#2196F3;--light:#64B5F6;
+    --white:#F0F6FF;--grey:#8BA3C0;--gold:#F9A825;
+    --bronze:#CD7F32;--silver:#C0C0C0;--goldtier:#FFD700;
+    --platinum:#E5E4E2;--elite:#00E5FF;--green3:#A5D6A7;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;
+    font-weight:300;min-height:100vh;padding-bottom:4rem;}
+  body::before{content:'';position:fixed;inset:0;
+    background:repeating-linear-gradient(180deg,transparent 0,transparent 58px,
+      rgba(33,150,243,.03) 58px,rgba(33,150,243,.03) 60px);pointer-events:none;z-index:0;}
+
+  .topbar{position:sticky;top:0;z-index:100;background:rgba(7,20,41,.97);
+    backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,.15);padding:.75rem 1rem;}
+  .topbar-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:.75rem;}
+  .back-btn{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;
+    font-size:.62rem;letter-spacing:.14em;color:var(--grey);text-decoration:none;
+    text-transform:uppercase;padding:.4rem .6rem;border:1px solid rgba(255,255,255,.08);
+    border-radius:2px;transition:color .2s,border-color .2s;flex-shrink:0;}
+  .back-btn:hover{color:var(--light);border-color:rgba(33,150,243,.3);}
+  .back-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;}
+  .topbar-title{flex:1;}
+  .topbar-title h1{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.04em;line-height:1;}
+  .topbar-sub{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;
+    color:var(--grey);text-transform:uppercase;margin-top:.15rem;}
+  .my-rank-link{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;
+    color:var(--mid);text-decoration:none;text-transform:uppercase;white-space:nowrap;
+    padding:.4rem .6rem;border:1px solid rgba(33,150,243,.25);border-radius:2px;transition:all .2s;}
+  .my-rank-link:hover{background:rgba(33,150,243,.1);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:1rem;position:relative;z-index:1;}
+
+  /* TIER SUMMARY */
+  .tier-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06);
+    border-radius:2px;overflow:hidden;margin-bottom:1.5rem;}
+  .tier-card{background:var(--deep);padding:.75rem .85rem;text-align:center;}
+  .tier-card-badge{font-size:1.4rem;line-height:1;margin-bottom:.3rem;}
+  .tier-card-name{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;
+    text-transform:uppercase;margin-bottom:.2rem;}
+  .tier-card-count{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1;}
+  .tier-card-label{font-family:'DM Mono',monospace;font-size:.52rem;color:var(--grey);
+    text-transform:uppercase;}
+
+  /* EVENT TABS */
+  .event-tabs{display:flex;gap:1px;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:1.25rem;flex-wrap:wrap;}
+  .event-tab{flex:1;min-width:80px;padding:.55rem .5rem;background:var(--deep);
+    font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;
+    color:var(--grey);text-transform:uppercase;cursor:pointer;transition:all .15s;
+    border:none;text-align:center;}
+  .event-tab:hover{background:rgba(255,255,255,.04);color:var(--light);}
+  .event-tab.active{background:var(--navy);color:var(--white);border-bottom:2px solid var(--mid);}
+
+  /* LEADERBOARD TABLE */
+  .lb-table{display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+  .lb-row{background:var(--deep);padding:.8rem 1rem;display:grid;
+    grid-template-columns:44px 1fr auto auto auto;gap:.75rem;align-items:center;
+    transition:background .15s;cursor:default;}
+  .lb-row:hover{background:rgba(255,255,255,.03);}
+  .lb-row.top1{background:rgba(255,215,0,.06)!important;}
+  .lb-row.top2{background:rgba(192,192,192,.05)!important;}
+  .lb-row.top3{background:rgba(205,127,50,.05)!important;}
+  .lb-row.no-time{opacity:.35;}
+
+  .lb-pos{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--grey);
+    line-height:1;text-align:center;}
+  .lb-pos.p1{color:var(--goldtier);}
+  .lb-pos.p2{color:var(--silver);}
+  .lb-pos.p3{color:var(--bronze);}
+
+  .lb-name{font-weight:500;font-size:.88rem;}
+  .lb-meta{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey);
+    letter-spacing:.08em;margin-top:.15rem;}
+
+  .lb-time{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;line-height:1;text-align:right;}
+  .lb-time-label{font-family:'DM Mono',monospace;font-size:.52rem;color:var(--grey);
+    text-transform:uppercase;text-align:right;margin-top:.1rem;}
+  .lb-drop{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.06em;
+    color:var(--green3);text-align:right;}
+
+  .lb-badge{font-size:1.2rem;text-align:center;flex-shrink:0;width:28px;}
+
+  .lb-gap{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.06em;
+    color:var(--grey);text-align:right;}
+
+  .no-data{padding:2rem;text-align:center;font-family:'DM Mono',monospace;
+    font-size:.65rem;letter-spacing:.12em;color:rgba(139,163,192,.4);text-transform:uppercase;}
+
+  /* NEXT CUT MICRO BAR */
+  .next-cut-wrap{display:flex;align-items:center;gap:.4rem;margin-top:.25rem;}
+  .next-cut-bar{width:48px;height:2px;background:rgba(255,255,255,.08);border-radius:1px;overflow:hidden;}
+  .next-cut-fill{height:100%;border-radius:1px;}
+  .next-cut-label{font-family:'DM Mono',monospace;font-size:.52rem;color:var(--grey);}
+
+  @media(max-width:600px){
+    .lb-row{grid-template-columns:36px 1fr auto auto;}
+    .lb-gap{display:none;}
+    .tier-summary{grid-template-columns:repeat(3,1fr);}
+    .tier-card:nth-child(n+4){display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="back-btn" href="index.html">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Home
+    </a>
+    <div class="topbar-title">
+      <h1>Leaderboard</h1>
+      <div class="topbar-sub">Purple Group · All Events</div>
+    </div>
+    <a class="my-rank-link" href="rankings.html">My Rank ›</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="tier-summary" id="tier-summary"></div>
+  <div class="event-tabs" id="event-tabs"></div>
+  <div class="lb-table" id="lb-table"></div>
+</div>
+
+<script>
+const SWIMMERS={
+  "Lorenzo Navarro":{age:11,gen:'M',lane:3},"Woody Li":{age:13,gen:'M',lane:3},
+  "Aiden Kiatrungrit":{age:10,gen:'M',lane:3},"Priscilla Silva":{age:13,gen:'F',lane:3},
+  "Ashley Hong":{age:13,gen:'F',lane:3},"Aiden Kong":{age:12,gen:'M',lane:3},
+  "Gisele Barbosa":{age:14,gen:'F',lane:3},"Edison Cheung":{age:12,gen:'M',lane:3},
+  "Nathan Cheung":{age:13,gen:'M',lane:3},"Lucciana Cisneros":{age:12,gen:'F',lane:3},
+  "Noah Gonzales":{age:10,gen:'M',lane:2},"Kellen Luk":{age:13,gen:'M',lane:2},
+  "Sean Jiang":{age:11,gen:'M',lane:2},"Abraham Boukai":{age:12,gen:'M',lane:2},
+  "Ian An":{age:12,gen:'M',lane:2},"Kirsten Peredo":{age:8,gen:'F',lane:2},
+  "Jaden Manalastas":{age:9,gen:'M',lane:2},"Ellie Lung":{age:9,gen:'F',lane:2},
+  "Natalie Kitchen":{age:13,gen:'F',lane:2},"Emily Cheung":{age:9,gen:'F',lane:2},
+  "Logan Yip":{age:10,gen:'M',lane:2},"Maya Hall":{age:10,gen:'F',lane:2},
+  "Tessa Chun":{age:11,gen:'F',lane:1},"Ellisha Fu":{age:11,gen:'F',lane:1},
+  "Milana Ludan":{age:11,gen:'F',lane:1},"Wilson Zhou":{age:10,gen:'M',lane:1},
+  "Rachel Cheng":{age:13,gen:'F',lane:1},"Isabelle Leung":{age:9,gen:'F',lane:1},
+  "Evanna Jiang":{age:10,gen:'F',lane:1},"Leah Wang":{age:9,gen:'F',lane:1},
+  "Eli Wu":{age:10,gen:'M',lane:1},"Maeko Lam":{age:11,gen:'F',lane:1},
+  "Jadon Jiang":{age:13,gen:'M',lane:1},"Allison Chan":{age:12,gen:'F',lane:1},
+  "Ayrton Lee":{age:12,gen:'M',lane:1}
+};
+const EVENTS=[
+  {id:'100FR',name:'100 Free'},{id:'200FR',name:'200 Free'},
+  {id:'100BK',name:'100 Back'},{id:'100BR',name:'100 Breast'},
+  {id:'100FL',name:'100 Fly'}, {id:'200IM',name:'200 IM'},
+];
+const STANDARDS={"8":{"F":{"100FR":[90.89,81.19,71.49,68.29,65.09],"200FR":[202.79,180.59,158.39,150.99,143.59],"100BK":[105.79,93.99,82.29,78.39,74.49],"100BR":[120.29,106.89,93.59,89.09,84.69],"100FL":[116.69,101.39,86.09,80.99,75.99],"200IM":[222.99,199.59,176.19,168.39,160.69]},"M":{"100FR":[88.49,79.29,70.19,67.19,64.09],"200FR":[189.59,170.69,151.69,145.39,139.09],"100BK":[101.09,90.49,79.89,76.29,72.79],"100BR":[115.49,103.59,91.69,87.69,83.69],"100FL":[113.89,99.29,84.59,79.79,74.89],"200IM":[218.59,195.99,173.49,165.89,158.39]}},"9":{"F":{"100FR":[90.89,81.19,71.49,68.29,65.09],"200FR":[202.79,180.59,158.39,150.99,143.59],"100BK":[105.79,93.99,82.29,78.39,74.49],"100BR":[120.29,106.89,93.59,89.09,84.69],"100FL":[116.69,101.39,86.09,80.99,75.99],"200IM":[222.99,199.59,176.19,168.39,160.69]},"M":{"100FR":[88.49,79.29,70.19,67.19,64.09],"200FR":[189.59,170.69,151.69,145.39,139.09],"100BK":[101.09,90.49,79.89,76.29,72.79],"100BR":[115.49,103.59,91.69,87.69,83.69],"100FL":[113.89,99.29,84.59,79.79,74.89],"200IM":[218.59,195.99,173.49,165.89,158.39]}},"10":{"F":{"100FR":[90.89,81.19,71.49,68.29,65.09],"200FR":[202.79,180.59,158.39,150.99,143.59],"100BK":[105.79,93.99,82.29,78.39,74.49],"100BR":[120.29,106.89,93.59,89.09,84.69],"100FL":[116.69,101.39,86.09,80.99,75.99],"200IM":[222.99,199.59,176.19,168.39,160.69]},"M":{"100FR":[88.49,79.29,70.19,67.19,64.09],"200FR":[189.59,170.69,151.69,145.39,139.09],"100BK":[101.09,90.49,79.89,76.29,72.79],"100BR":[115.49,103.59,91.69,87.69,83.69],"100FL":[113.89,99.29,84.59,79.79,74.89],"200IM":[218.59,195.99,173.49,165.89,158.39]}},"11":{"F":{"100FR":[77.69,72.19,66.59,63.79,61.09],"200FR":[169.09,157.09,144.99,138.89,132.89],"100BK":[90.69,83.59,76.39,72.79,69.29],"100BR":[100.29,92.89,85.49,81.79,78.09],"100FL":[90.79,83.49,76.29,72.59,68.99],"200IM":[192.79,178.99,165.19,158.39,151.49]},"M":{"100FR":[76.09,70.59,65.19,62.49,59.79],"200FR":[166.59,154.69,142.79,136.89,130.89],"100BK":[89.79,82.69,75.59,72.09,68.59],"100BR":[100.29,92.59,84.99,81.19,77.29],"100FL":[90.49,82.99,75.59,71.89,68.19],"200IM":[192.69,178.19,163.69,156.49,149.29]}},"12":{"F":{"100FR":[74.69,69.39,64.09,61.39,58.69],"200FR":[163.39,151.69,139.99,134.19,128.39],"100BK":[86.59,79.79,72.99,69.59,66.19],"100BR":[96.49,89.39,82.19,78.69,75.09],"100FL":[86.09,79.19,72.29,68.89,65.49],"200IM":[183.99,170.79,157.69,151.09,144.59]},"M":{"100FR":[71.49,66.39,61.29,58.79,56.19],"200FR":[155.99,144.89,133.69,128.19,122.59],"100BK":[82.19,75.69,69.29,65.99,62.79],"100BR":[92.59,85.49,78.39,74.89,71.39],"100FL":[82.89,76.09,69.29,65.89,62.49],"200IM":[179.29,165.79,152.29,145.59,138.79]}},"13":{"F":{"100FR":[72.49,67.29,62.09,59.59,56.99],"200FR":[157.69,146.49,135.19,129.59,123.89],"100BK":[79.29,73.59,67.99,65.09,62.29],"100BR":[90.99,84.49,77.99,74.69,71.49],"100FL":[78.89,73.29,67.59,64.79,61.99],"200IM":[176.69,164.09,151.39,145.09,138.79]},"M":{"100FR":[67.59,62.69,57.89,55.49,53.09],"200FR":[147.79,137.19,126.69,121.39,116.09],"100BK":[74.39,69.09,63.79,61.09,58.49],"100BR":[84.29,78.29,72.29,69.29,66.29],"100FL":[73.79,68.49,63.19,60.59,57.99],"200IM":[164.69,152.89,141.19,135.29,129.39]}},"14":{"F":{"100FR":[70.99,65.89,60.89,58.29,55.79],"200FR":[153.79,142.89,131.89,126.39,120.89],"100BK":[77.19,71.69,66.19,63.39,60.69],"100BR":[88.69,82.39,76.09,72.89,69.69],"100FL":[76.89,71.39,65.89,63.19,60.39],"200IM":[172.49,160.19,147.89,141.69,135.59]},"M":{"100FR":[65.09,60.39,55.79,53.49,51.19],"200FR":[142.59,132.39,122.19,117.09,111.99],"100BK":[71.39,66.29,61.19,58.59,56.09],"100BR":[80.59,74.89,69.09,66.19,63.39],"100FL":[70.49,65.49,60.39,57.89,55.39],"200IM":[157.99,146.69,135.39,129.79,124.09]}}};
+const TIERS=[
+  {name:'Unranked',badge:'⬜',color:'#8BA3C0',bg:'rgba(139,163,192,.08)'},
+  {name:'Bronze',  badge:'🥉',color:'#CD7F32',bg:'rgba(205,127,50,.15)'},
+  {name:'Silver',  badge:'🥈',color:'#C0C0C0',bg:'rgba(192,192,192,.15)'},
+  {name:'Gold',    badge:'🥇',color:'#FFD700',bg:'rgba(255,215,0,.15)'},
+  {name:'Platinum',badge:'💎',color:'#E5E4E2',bg:'rgba(229,228,226,.12)'},
+  {name:'Elite',   badge:'⚡',color:'#00E5FF',bg:'rgba(0,229,255,.1)'},
+];
+const CUT_LABELS=['B','BB','A','AA','AAA'];
+const STORAGE_KEY='purple_times';
+
+const loadTimes=()=>{try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch{return{};}};
+function fmtTime(s){
+  if(s===null||s===undefined)return'—';
+  const m=Math.floor(s/60),r=(s%60).toFixed(2).padStart(5,'0');
+  return m>0?`${m}:${r}`:r;
+}
+function getPB(times,evId){
+  const e=times[evId];if(!e||!e.length)return null;
+  return Math.min(...e.map(x=>x.time));
+}
+function getBaseline(times,evId){
+  const e=times[evId];if(!e||!e.length)return null;
+  return e[0].time;
+}
+function getTierIdx(t,std){
+  if(!t||!std)return 0;
+  for(let i=4;i>=0;i--)if(t<=std[i])return i+1;
+  return 0;
+}
+function getOverallTier(name){
+  const sw=SWIMMERS[name];
+  const times=loadTimes()[name]||{};
+  const std=STANDARDS[Math.min(14,Math.max(8,sw.age))][sw.gen];
+  let min=6,swum=0;
+  EVENTS.forEach(ev=>{
+    const pb=getPB(times,ev.id);
+    if(pb!==null){swum++;const t=getTierIdx(pb,std[ev.id]);if(t<min)min=t;}
+  });
+  return swum===0?0:min;
+}
+
+let currentEvent=EVENTS[0].id;
+
+function init(){
+  renderTierSummary();
+  renderTabs();
+  renderLeaderboard(currentEvent);
+}
+
+function renderTierSummary(){
+  const c=document.getElementById('tier-summary');
+  c.innerHTML='';
+  const counts=[0,0,0,0,0]; // Bronze,Silver,Gold,Platinum,Elite
+  Object.keys(SWIMMERS).forEach(n=>{
+    const t=getOverallTier(n);
+    if(t>=1&&t<=5) counts[t-1]++;
+  });
+  TIERS.slice(1).forEach((tier,i)=>{
+    const card=document.createElement('div');
+    card.className='tier-card';
+    card.innerHTML=`
+      <div class="tier-card-badge">${tier.badge}</div>
+      <div class="tier-card-name" style="color:${tier.color}">${tier.name}</div>
+      <div class="tier-card-count" style="color:${tier.color}">${counts[i]}</div>
+      <div class="tier-card-label">swimmers</div>`;
+    c.appendChild(card);
+  });
+}
+
+function renderTabs(){
+  const c=document.getElementById('event-tabs');
+  c.innerHTML='';
+  EVENTS.forEach(ev=>{
+    const btn=document.createElement('button');
+    btn.className=`event-tab${ev.id===currentEvent?' active':''}`;
+    btn.textContent=ev.name;
+    btn.onclick=()=>{
+      currentEvent=ev.id;
+      document.querySelectorAll('.event-tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderLeaderboard(ev.id);
+    };
+    c.appendChild(btn);
+  });
+}
+
+function renderLeaderboard(evId){
+  const c=document.getElementById('lb-table');
+  c.innerHTML='';
+  const allTimes=loadTimes();
+
+  // Build ranked list
+  const rows=Object.keys(SWIMMERS).map(name=>{
+    const sw=SWIMMERS[name];
+    const times=allTimes[name]||{};
+    const std=STANDARDS[Math.min(14,Math.max(8,sw.age))][sw.gen];
+    const pb=getPB(times,evId);
+    const base=getBaseline(times,evId);
+    const tierIdx=pb!==null?getTierIdx(pb,std[evId]):0;
+    return{name,sw,pb,base,tierIdx,std:std[evId]};
+  }).sort((a,b)=>{
+    if(a.pb===null&&b.pb===null)return 0;
+    if(a.pb===null)return 1;
+    if(b.pb===null)return-1;
+    return a.pb-b.pb;
+  });
+
+  if(rows.every(r=>r.pb===null)){
+    c.innerHTML=`<div class="no-data">No times entered yet for this event.<br>Coach enters results after meets.</div>`;
+    return;
+  }
+
+  const leader=rows.find(r=>r.pb!==null);
+
+  rows.forEach((r,i)=>{
+    const pos=r.pb!==null?i+1:null;
+    const tier=TIERS[r.tierIdx];
+    let rowClass='lb-row';
+    if(pos===1)rowClass+=' top1';
+    else if(pos===2)rowClass+=' top2';
+    else if(pos===3)rowClass+=' top3';
+    if(r.pb===null)rowClass+=' no-time';
+
+    const posClass=pos===1?'p1':pos===2?'p2':pos===3?'p3':'';
+    const drop=(r.base&&r.pb&&r.base>r.pb)?(r.base-r.pb).toFixed(2):null;
+    const gap=r.pb&&leader&&r.pb!==leader.pb?`+${(r.pb-leader.pb).toFixed(2)}s`:'';
+
+    // Next cut progress
+    let nextCutHTML='';
+    if(r.pb!==null&&r.tierIdx<5&&r.std){
+      const nextCutSec=r.std[r.tierIdx];
+      const currBound=r.tierIdx>0?r.std[r.tierIdx-1]:r.pb*1.15;
+      const pct=Math.min(100,Math.round((currBound-r.pb)/(currBound-nextCutSec)*100));
+      const nextTier=TIERS[r.tierIdx+1];
+      nextCutHTML=`<div class="next-cut-wrap">
+        <div class="next-cut-bar">
+          <div class="next-cut-fill" style="width:${pct}%;background:${tier.color}"></div>
+        </div>
+        <span class="next-cut-label">${(r.pb-nextCutSec).toFixed(2)}s to ${nextTier.badge}</span>
+      </div>`;
+    }
+
+    const row=document.createElement('div');
+    row.className=rowClass;
+    row.innerHTML=`
+      <div class="lb-pos ${posClass}">${pos||'—'}</div>
+      <div>
+        <div class="lb-name">${r.name}</div>
+        <div class="lb-meta">Age ${r.sw.age} · Lane ${r.sw.lane} · ${r.sw.gen==='F'?'Girls':'Boys'}</div>
+        ${nextCutHTML}
+      </div>
+      <div class="lb-gap">${gap}</div>
+      <div>
+        <div class="lb-time" style="color:${tier.color}">${fmtTime(r.pb)}</div>
+        ${drop?`<div class="lb-drop">▼ ${drop}s</div>`:'<div class="lb-time-label">No time</div>'}
+      </div>
+      <div class="lb-badge">${r.pb!==null?tier.badge:'·'}</div>`;
+    c.appendChild(row);
+  });
+}
+
+init();
+// Refresh if storage changes (e.g. coach entered times in another tab)
+window.addEventListener('storage',init);
+</script>
+</body>
+</html>
