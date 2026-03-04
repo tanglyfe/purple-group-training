@@ -2,319 +2,1081 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Purple Group — Training Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purple Group — SSF Swim Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --deep:#071429;--navy:#0B1F3A;--mid:#2196F3;--light:#64B5F6;
-    --white:#F0F6FF;--grey:#8BA3C0;--gold:#F9A825;
-    --green2:#43A047;--green3:#A5D6A7;
-    --elite:#00E5FF;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  html{-webkit-text-size-adjust:100%;}
-  body{
-    background:var(--deep);color:var(--white);
-    font-family:'DM Sans',sans-serif;font-weight:300;
-    min-height:100vh;overflow-x:hidden;
-  }
-
-  /* POOL LANE LINES */
-  body::before{
-    content:'';position:fixed;inset:0;
-    background:repeating-linear-gradient(180deg,
-      transparent 0,transparent 58px,
-      rgba(33,150,243,.04) 58px,rgba(33,150,243,.04) 60px);
-    pointer-events:none;z-index:0;
-  }
-
-  /* HERO */
-  .hero{
-    position:relative;z-index:1;
-    padding:3.5rem 1.5rem 2rem;
-    max-width:700px;margin:0 auto;
-    text-align:center;
-  }
-  .hero-eyebrow{
-    font-family:'DM Mono',monospace;font-size:.65rem;
-    letter-spacing:.25em;color:var(--mid);text-transform:uppercase;
-    margin-bottom:.75rem;
-  }
-  .hero-title{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:clamp(3rem,10vw,5.5rem);
-    line-height:.95;letter-spacing:.03em;
-    background:linear-gradient(135deg,var(--white) 40%,var(--light));
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    background-clip:text;
-  }
-  .hero-sub{
-    font-size:.95rem;color:var(--grey);margin-top:.9rem;
-    letter-spacing:.01em;line-height:1.6;
-  }
-  .hero-divider{
-    width:48px;height:2px;
-    background:linear-gradient(90deg,transparent,var(--mid),transparent);
-    margin:1.5rem auto 0;
+  :root {
+    --navy:    #0B1F3A;
+    --deep:    #071429;
+    --blue:    #1565C0;
+    --mid:     #2196F3;
+    --light:   #64B5F6;
+    --pale:    #BBDEFB;
+    --purple:  #7B1FA2;
+    --teal:    #00897B;
+    --gold:    #F9A825;
+    --white:   #F0F6FF;
+    --grey:    #8BA3C0;
+    --free:    #2196F3;
+    --back:    #43A047;
+    --breast:  #FB8C00;
+    --fly:     #8E24AA;
+    --im:      #E53935;
+    --rec:     #546E7A;
+    --en1:     #1565C0;
+    --en2:     #2E7D32;
+    --sp1:     #BF360C;
+    --sp3:     #6A1B9A;
+    --elite:   #00E5FF;
   }
 
-  /* MEET COUNTDOWN */
-  .countdown-wrap{
-    max-width:700px;margin:0 auto;padding:0 1.5rem;
-    position:relative;z-index:1;
-  }
-  .countdown-card{
-    background:linear-gradient(135deg,rgba(249,168,37,.08),rgba(249,168,37,.03));
-    border:1px solid rgba(249,168,37,.2);border-radius:2px;
-    padding:.85rem 1.1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
-  }
-  .countdown-icon{font-size:1.1rem;flex-shrink:0;}
-  .countdown-text{flex:1;}
-  .countdown-label{
-    font-family:'DM Mono',monospace;font-size:.6rem;
-    letter-spacing:.18em;color:var(--gold);text-transform:uppercase;
-  }
-  .countdown-name{font-size:.88rem;font-weight:500;margin-top:.1rem;}
-  .countdown-days{
-    font-family:'Bebas Neue',sans-serif;font-size:2.2rem;
-    color:var(--gold);line-height:1;flex-shrink:0;
-  }
-  .countdown-days-label{
-    font-family:'DM Mono',monospace;font-size:.52rem;
-    color:var(--grey);text-transform:uppercase;text-align:right;
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: default;
   }
 
-  /* SECTIONS */
-  .section{max-width:700px;margin:0 auto;padding:2rem 1.5rem 0;position:relative;z-index:1;}
-  .section-label{
-    font-family:'DM Mono',monospace;font-size:.62rem;
-    letter-spacing:.2em;color:var(--grey);text-transform:uppercase;
-    margin-bottom:.85rem;display:flex;align-items:center;gap:.6rem;
-  }
-  .section-label::after{
-    content:'';flex:1;height:1px;
-    background:linear-gradient(90deg,rgba(255,255,255,.08),transparent);
-  }
-
-  /* CARD GRID */
-  .card-grid{
-    display:grid;gap:1px;
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:2px;overflow:hidden;
-  }
-  .grid-3{grid-template-columns:1fr 1fr 1fr;}
-  .grid-4{grid-template-columns:repeat(4,1fr);}
-
-  /* CARD */
-  .card{
-    background:var(--deep);padding:1.1rem 1.1rem .95rem;
-    text-decoration:none;color:inherit;
-    display:flex;flex-direction:column;gap:.4rem;
-    transition:background .15s;position:relative;overflow:hidden;
-  }
-  .card.link{cursor:pointer;}
-  .card.link:hover{background:rgba(255,255,255,.03);}
-  .card.link::after{
-    content:'›';position:absolute;right:1rem;top:50%;
-    transform:translateY(-50%);
-    font-family:'DM Mono',monospace;font-size:.85rem;
-    color:rgba(139,163,192,.25);transition:color .2s,right .2s;
-  }
-  .card.link:hover::after{color:var(--mid);right:.85rem;}
-  .card.coach{background:rgba(249,168,37,.018);}
-  .card.coach:hover{background:rgba(249,168,37,.045);}
-  .card.stat{cursor:default;}
-
-  .card-accent{
-    position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0;
-  }
-  .card-icon{font-size:1.25rem;line-height:1;}
-  .card-title{
-    font-family:'Bebas Neue',sans-serif;font-size:1.15rem;
-    letter-spacing:.04em;line-height:1;
-  }
-  .card-desc{
-    font-family:'DM Mono',monospace;font-size:.58rem;
-    letter-spacing:.1em;color:var(--grey);text-transform:uppercase;
-    line-height:1.55;
-  }
-  .card-badge{
-    display:inline-flex;align-items:center;
-    font-family:'DM Mono',monospace;font-size:.55rem;
-    letter-spacing:.1em;text-transform:uppercase;
-    padding:.15rem .45rem;border-radius:1px;margin-top:.15rem;
-    align-self:flex-start;
-  }
-  .stat-num{
-    font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;margin-top:.1rem;
+  /* ── LANE LINES BACKGROUND ─────────────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 58px,
+        rgba(33,150,243,0.04) 58px,
+        rgba(33,150,243,0.04) 60px
+      );
+    pointer-events: none;
+    z-index: 0;
   }
 
-  /* FOOTER */
-  .footer{
-    max-width:700px;margin:2.5rem auto 0;padding:1rem 1.5rem 3.5rem;
-    position:relative;z-index:1;
-    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
-    border-top:1px solid rgba(255,255,255,.05);
-  }
-  .footer-left{
-    font-family:'DM Mono',monospace;font-size:.58rem;
-    letter-spacing:.12em;color:rgba(139,163,192,.35);text-transform:uppercase;
-  }
-  .footer-right{
-    font-family:'DM Mono',monospace;font-size:.58rem;
-    letter-spacing:.1em;color:rgba(139,163,192,.2);text-transform:uppercase;
+  /* ── WATER SHIMMER ─────────────────────────────────────────────────── */
+  .shimmer-bg {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(21,101,192,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(123,31,162,0.10) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
   }
 
-  @media(max-width:540px){
-    .grid-3{grid-template-columns:1fr 1fr;}
-    .grid-4{grid-template-columns:1fr 1fr;}
-    .hero{padding:2.5rem 1.25rem 1.5rem;}
-    .section{padding:1.5rem 1.25rem 0;}
-    .countdown-wrap{padding:0 1.25rem;}
+  /* ── LAYOUT ────────────────────────────────────────────────────────── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
   }
-  @media(max-width:360px){
-    .grid-3{grid-template-columns:1fr;}
+
+  /* ── HERO ──────────────────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    padding: 6rem 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    color: var(--light);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 14vw, 12rem);
+    line-height: 0.88;
+    letter-spacing: 0.01em;
+    color: var(--white);
+    margin: 1rem 0 0;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.4s forwards;
+  }
+
+  .hero-title span {
+    color: var(--mid);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--grey);
+    margin-top: 1.5rem;
+    max-width: 480px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.6s forwards;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.8s forwards;
+  }
+
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    color: var(--mid);
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .hero-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.1);
+    align-self: stretch;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.2s forwards;
+  }
+
+  .scroll-hint span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .scroll-arrow {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--grey), transparent);
+    animation: scrollPulse 2s ease-in-out 1.5s infinite;
+  }
+
+  /* ── SECTION TITLES ────────────────────────────────────────────────── */
+  .section {
+    padding: 5rem 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    color: var(--light);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── MEET COUNTDOWN ────────────────────────────────────────────────── */
+  .countdown-bar {
+    background: linear-gradient(135deg, rgba(21,101,192,0.15), rgba(123,31,162,0.15));
+    border: 1px solid rgba(33,150,243,0.2);
+    border-radius: 2px;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .countdown-bar::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, var(--mid), var(--purple));
+  }
+
+  .countdown-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .countdown-date {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  .countdown-days {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .countdown-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .countdown-days .countdown-label {
+    display: block;
+  }
+
+  /* ── PHASE CARDS ───────────────────────────────────────────────────── */
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4rem;
+  }
+
+  .phase {
+    background: var(--deep);
+    padding: 1.5rem 1.25rem;
+    transition: background 0.2s;
+  }
+
+  .phase:hover { background: rgba(33,150,243,0.06); }
+
+  .phase-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: rgba(255,255,255,0.06);
+    margin-bottom: 0.5rem;
+  }
+
+  .phase-week {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .phase-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+
+  .phase-dates {
+    font-size: 0.75rem;
+    color: var(--grey);
+    margin-bottom: 0.75rem;
+  }
+
+  .phase-yardage {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--light);
+  }
+
+  .phase.active .phase-name { color: var(--mid); }
+  .phase.active .phase-num { color: rgba(33,150,243,0.15); }
+  .phase.active { background: rgba(33,150,243,0.05); }
+
+  .phase-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .badge-active   { background: rgba(33,150,243,0.2);  color: var(--light); }
+  .badge-upcoming { background: rgba(255,255,255,0.06); color: var(--grey); }
+  .badge-done     { background: rgba(67,160,71,0.2);   color: #81C784; }
+
+  /* ── SET TYPE KEY ──────────────────────────────────────────────────── */
+  .set-types {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+
+  .set-chip {
+    padding: 0.35rem 0.75rem;
+    border-radius: 1px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ── TOOLS GRID ────────────────────────────────────────────────────── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 1px;
+  }
+  .tools-grid.four-col { grid-template-columns: repeat(4, 1fr); }
+
+  .tool-card {
+    background: var(--deep);
+    padding: 1.5rem 1.5rem 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.15s;
+  }
+
+  .tool-card:hover { background: rgba(33,150,243,0.06); }
+
+  .tool-card.coach { background: rgba(249,168,37,0.02); }
+  .tool-card.coach:hover { background: rgba(249,168,37,0.06); }
+
+  .tool-card::after {
+    content: '›';
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    color: rgba(139,163,192,0.2);
+    transition: color 0.2s, right 0.2s;
+  }
+  .tool-card:hover::after { color: var(--mid); right: 1rem; }
+  .tool-card.coach:hover::after { color: var(--gold); }
+
+  .tool-accent {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .tool-icon { font-size: 1.3rem; line-height: 1; }
+
+  .tool-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .tool-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--grey);
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  .tool-badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.56rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.5rem;
+    border-radius: 1px;
+    margin-top: 0.2rem;
+    align-self: flex-start;
+  }
+
+  .tools-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-bottom: none;
+    color: var(--grey);
+    margin-top: 1px;
+  }
+  .tools-section-label:first-child { margin-top: 0; }
+  .tools-section-label.coach-label { color: var(--gold); background: rgba(249,168,37,0.03); }
+
+  /* ── FILE CARDS ────────────────────────────────────────────────────── */
+  .files-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .file-card {
+    background: var(--deep);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .file-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .file-card:hover { background: rgba(33,150,243,0.07); }
+  .file-card:hover::after { transform: scaleX(1); }
+
+  .file-card.xlsx::after { background: var(--en2); }
+  .file-card.docx::after { background: var(--mid); }
+  .file-card.print::after { background: var(--gold); }
+
+  .file-icon { font-size: 1.5rem; line-height: 1; }
+
+  .file-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1px;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .file-type.xlsx  { background: rgba(46,125,50,0.2);  color: #81C784; }
+  .file-type.docx  { background: rgba(33,150,243,0.2);  color: var(--light); }
+  .file-type.print { background: rgba(249,168,37,0.2);  color: var(--gold); }
+
+  .file-name  { font-size: 0.95rem; font-weight: 500; color: var(--white); line-height: 1.4; }
+  .file-desc  { font-size: 0.78rem; color: var(--grey); line-height: 1.6; flex: 1; }
+
+  .file-download {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    color: var(--light);
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  .file-download svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  /* ── WEEK SCHEDULE ─────────────────────────────────────────────────── */
+  .week-block {
+    margin-bottom: 1px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .week-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.75rem;
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+  }
+
+  .week-header:hover { background: rgba(33,150,243,0.06); }
+
+  .week-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: rgba(255,255,255,0.12);
+    line-height: 1;
+    min-width: 3rem;
+  }
+
+  .week-info { flex: 1; }
+
+  .week-phase {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  .week-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.03em; }
+  .week-dates { font-size: 0.75rem; color: var(--grey); }
+
+  .week-yardage { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--light); text-align: right; }
+
+  .week-chevron {
+    width: 18px; height: 18px;
+    stroke: var(--grey); fill: none; stroke-width: 2;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .week-block.open .week-chevron { transform: rotate(180deg); }
+
+  .week-days { display: none; border-top: 1px solid rgba(255,255,255,0.06); }
+  .week-block.open .week-days { display: block; }
+
+  .day-row {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.9rem 1.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.15s;
+  }
+
+  .day-row:last-child { border-bottom: none; }
+  .day-row:hover { background: rgba(33,150,243,0.04); }
+
+  .day-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .day-theme { font-size: 0.85rem; color: var(--white); font-weight: 400; }
+
+  .day-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .set-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  .day-yds { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--grey); white-space: nowrap; }
+
+  /* ── SWIMMER HIGHLIGHTS ────────────────────────────────────────────── */
+  .highlights {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .highlight-card { background: var(--deep); padding: 1.25rem 1.5rem; transition: background 0.2s; }
+  .highlight-card:hover { background: rgba(255,255,255,0.02); }
+  .highlight-name { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.3rem; }
+
+  .highlight-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .highlight-note { font-size: 0.75rem; color: var(--grey); line-height: 1.6; }
+
+  /* ── FOOTER ────────────────────────────────────────────────────────── */
+  footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 2rem 0; position: relative; z-index: 1; }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-left { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; color: var(--grey); text-transform: uppercase; }
+  .footer-method { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--grey); letter-spacing: 0.08em; }
+  .footer-method span { color: var(--light); }
+
+  /* ── ANIMATIONS ────────────────────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+    50%       { opacity: 1;   transform: scaleY(1); }
+  }
+
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ────────────────────────────────────────────────────── */
+  @media (max-width: 700px) {
+    .phases { grid-template-columns: repeat(2, 1fr); }
+    .tools-grid { grid-template-columns: repeat(2, 1fr); }
+    .tools-grid.four-col { grid-template-columns: repeat(2, 1fr); }
+    .hero-title { font-size: clamp(4rem, 18vw, 8rem); }
+    .countdown-days { margin-left: 0; }
+    .day-row { grid-template-columns: 80px 1fr; }
+    .day-meta { display: none; }
+    .hero-divider { display: none; }
+  }
+  @media (max-width: 460px) {
+    .tools-grid { grid-template-columns: 1fr; }
+    .tools-grid.four-col { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
 <body>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-eyebrow">San Francisco Unified · Spring 2026</div>
-  <div class="hero-title">Purple<br>Group</div>
-  <div class="hero-sub">Training Hub — 35 Swimmers · Weeks 26–29</div>
-  <div class="hero-divider"></div>
-</div>
+<div class="shimmer-bg"></div>
 
-<!-- MEET COUNTDOWN -->
-<div class="countdown-wrap">
-  <div class="countdown-card">
-    <div class="countdown-icon">🏊</div>
-    <div class="countdown-text">
-      <div class="countdown-label">Next Meet</div>
-      <div class="countdown-name">Spring Championship — March 28, 2026</div>
-    </div>
-    <div style="text-align:right">
-      <div class="countdown-days" id="days-count">—</div>
-      <div class="countdown-days-label">days away</div>
+<!-- ── HERO ──────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <p class="hero-eyebrow">SSF Swim Team &nbsp;·&nbsp; Ages 9–13 &nbsp;·&nbsp; SCY</p>
+    <h1 class="hero-title">
+      Purple
+      <span>Group</span>
+    </h1>
+    <p class="hero-sub">
+      4-week periodized training block — Weeks 26 through 29.
+      Build, Peak, Taper, Race. All workouts, pace tables, and lane
+      assignments in one place.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-stat">
+        <span class="hero-stat-num">35</span>
+        <span class="hero-stat-label">Swimmers</span>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">3</span>
+        <span class="hero-stat-label">Lanes</span>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">10</span>
+        <span class="hero-stat-label">Events tracked</span>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">~57K</span>
+        <span class="hero-stat-label">Total yards</span>
+      </div>
     </div>
   </div>
-</div>
-
-<!-- SWIMMER TOOLS -->
-<div class="section">
-  <div class="section-label">Swimmer Tools</div>
-  <div class="card-grid grid-3">
-
-    <a class="card link" href="rankings.html">
-      <div class="card-accent" style="background:linear-gradient(180deg,#CD7F32,#FFD700,#00E5FF)"></div>
-      <div class="card-icon">🏆</div>
-      <div class="card-title">My Rankings</div>
-      <div class="card-desc">Personal bests · USA Swimming cuts · rank tier</div>
-      <div class="card-badge" style="background:rgba(0,229,255,.1);color:var(--elite)">Bronze → Elite</div>
-    </a>
-
-    <a class="card link" href="leaderboard.html">
-      <div class="card-accent" style="background:var(--gold)"></div>
-      <div class="card-icon">📋</div>
-      <div class="card-title">Leaderboard</div>
-      <div class="card-desc">Team rankings by event · drop times</div>
-      <div class="card-badge" style="background:rgba(249,168,37,.1);color:var(--gold)">6 Events</div>
-    </a>
-
-    <a class="card link" href="dryland.html">
-      <div class="card-accent" style="background:var(--mid)"></div>
-      <div class="card-icon">💪</div>
-      <div class="card-title">Dryland Log</div>
-      <div class="card-desc">Log sets · unlock higher targets · history</div>
-      <div class="card-badge" style="background:rgba(33,150,243,.12);color:var(--light)">3× min · 4× stretch</div>
-    </a>
-
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
   </div>
-</div>
+</section>
 
-<!-- COACH TOOLS -->
-<div class="section">
-  <div class="section-label">Coach Tools</div>
-  <div class="card-grid grid-3">
+<!-- ── MEET COUNTDOWN + PHASES ───────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
 
-    <a class="card link coach" href="rankings-coach.html">
-      <div class="card-accent" style="background:var(--gold)"></div>
-      <div class="card-icon">⭐</div>
-      <div class="card-title">Times Entry</div>
-      <div class="card-desc">Enter meet results · manage PBs · meet history</div>
-      <div class="card-badge" style="background:rgba(249,168,37,.1);color:var(--gold)">🔐 Password</div>
-    </a>
-
-    <a class="card link coach" href="dryland-coach.html">
-      <div class="card-accent" style="background:var(--gold)"></div>
-      <div class="card-icon">📊</div>
-      <div class="card-title">Dryland Dashboard</div>
-      <div class="card-desc">Group totals · tier breakdown · CSV export</div>
-      <div class="card-badge" style="background:rgba(249,168,37,.1);color:var(--gold)">Coach View</div>
-    </a>
-
-    <a class="card link coach" href="attendance.html">
-      <div class="card-accent" style="background:var(--gold)"></div>
-      <div class="card-icon">✅</div>
-      <div class="card-title">Attendance</div>
-      <div class="card-desc">Daily tap-in · weekly summary · CSV export</div>
-      <div class="card-badge" style="background:rgba(249,168,37,.1);color:var(--gold)">35 Swimmers</div>
-    </a>
-
-  </div>
-</div>
-
-<!-- STATS -->
-<div class="section">
-  <div class="section-label">Season Snapshot</div>
-  <div class="card-grid grid-4">
-
-    <div class="card stat">
-      <div class="card-icon">🏊</div>
-      <div class="stat-num" style="color:var(--mid)">35</div>
-      <div class="card-desc">Swimmers</div>
+    <div class="countdown-bar reveal">
+      <div>
+        <div class="countdown-label">Target Meet</div>
+        <div class="countdown-date">March 28, 2026 — Saturday</div>
+      </div>
+      <div>
+        <div class="countdown-label">Location</div>
+        <div style="font-size:0.85rem; color:var(--white); margin-top:0.2rem;">SSF Swim Team</div>
+      </div>
+      <div class="countdown-days">
+        <div class="countdown-num" id="days-remaining">—</div>
+        <span class="countdown-label">Days to race</span>
+      </div>
     </div>
 
-    <div class="card stat">
-      <div class="card-icon">📅</div>
-      <div class="stat-num" style="color:var(--light)">5</div>
-      <div class="card-desc">Days / week</div>
+    <p class="section-label reveal">Training Block</p>
+    <h2 class="section-title reveal">4-Week Plan</h2>
+
+    <div class="phases reveal">
+      <div class="phase active">
+        <div class="phase-badge badge-active">Current</div>
+        <div class="phase-num">26</div>
+        <div class="phase-week">Week 26</div>
+        <div class="phase-name">Build</div>
+        <div class="phase-dates">Mar 2 – 6</div>
+        <div class="phase-yardage">~14,200 yds</div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge badge-upcoming">Upcoming</div>
+        <div class="phase-num">27</div>
+        <div class="phase-week">Week 27</div>
+        <div class="phase-name">Peak</div>
+        <div class="phase-dates">Mar 9 – 13</div>
+        <div class="phase-yardage">~15,500 yds</div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge badge-upcoming">Upcoming</div>
+        <div class="phase-num">28</div>
+        <div class="phase-week">Week 28</div>
+        <div class="phase-name">Taper</div>
+        <div class="phase-dates">Mar 16 – 20</div>
+        <div class="phase-yardage">~12,000 yds</div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge badge-upcoming">Upcoming</div>
+        <div class="phase-num">29</div>
+        <div class="phase-week">Week 29</div>
+        <div class="phase-name">Race Week</div>
+        <div class="phase-dates">Mar 23 – 27</div>
+        <div class="phase-yardage">~6,200 yds</div>
+      </div>
     </div>
 
-    <div class="card stat">
-      <div class="card-icon">🎯</div>
-      <div class="stat-num" style="color:var(--gold)">Wk 26</div>
-      <div class="card-desc">Current week</div>
-    </div>
-
-    <div class="card stat">
-      <div class="card-icon">🏆</div>
-      <div class="stat-num" style="color:var(--elite);font-size:1.4rem">Mar 28</div>
-      <div class="card-desc">Meet day</div>
+    <p class="section-label reveal">Methodology</p>
+    <h2 class="section-title reveal">Set Type Key</h2>
+    <div class="set-types reveal">
+      <div class="set-chip" style="background:rgba(84,110,122,0.2);color:#90A4AE;">REC — Recovery / Drill</div>
+      <div class="set-chip" style="background:rgba(21,101,192,0.2);color:#90CAF9;">EN1 — 90–95% Critical Pace</div>
+      <div class="set-chip" style="background:rgba(46,125,50,0.2);color:#A5D6A7;">EN2 — ~Critical Pace</div>
+      <div class="set-chip" style="background:rgba(191,54,12,0.2);color:#FFAB91;">SP1 — 95% Max / Lactate</div>
+      <div class="set-chip" style="background:rgba(106,27,154,0.2);color:#CE93D8;">SP3 — Max Effort / Full Rest</div>
     </div>
 
   </div>
-</div>
+</section>
 
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-left">Purple Group · Spring 2026 · SSF</div>
-  <div class="footer-right">Built with Claude</div>
-</div>
+<!-- ── TOOLS ──────────────────────────────────────────────────────────────── -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <p class="section-label reveal">Interactive Tools</p>
+    <h2 class="section-title reveal">Team Hub</h2>
+
+    <!-- SWIMMER TOOLS -->
+    <div class="tools-section-label reveal">🏊 Swimmer Tools</div>
+    <div class="tools-grid reveal">
+
+      <a class="tool-card" href="rankings.html">
+        <div class="tool-accent" style="background:linear-gradient(180deg,#CD7F32,#FFD700,#00E5FF)"></div>
+        <div class="tool-icon">🏆</div>
+        <div class="tool-title">My Rankings</div>
+        <div class="tool-desc">Personal bests · USA Swimming cuts · rank tier progression</div>
+        <div class="tool-badge" style="background:rgba(0,229,255,0.1);color:#00E5FF;">Bronze → Elite</div>
+      </a>
+
+      <a class="tool-card" href="leaderboard.html">
+        <div class="tool-accent" style="background:var(--gold)"></div>
+        <div class="tool-icon">📋</div>
+        <div class="tool-title">Leaderboard</div>
+        <div class="tool-desc">Team rankings by event · time drops · next cut progress</div>
+        <div class="tool-badge" style="background:rgba(249,168,37,0.12);color:var(--gold);">6 Events</div>
+      </a>
+
+      <a class="tool-card" href="dryland.html">
+        <div class="tool-accent" style="background:var(--mid)"></div>
+        <div class="tool-icon">💪</div>
+        <div class="tool-title">Dryland Log</div>
+        <div class="tool-desc">Log sets · unlock higher targets · track weekly progress</div>
+        <div class="tool-badge" style="background:rgba(33,150,243,0.12);color:var(--light);">3× min · 4× stretch</div>
+      </a>
+
+    </div>
+
+    <!-- COACH TOOLS -->
+    <div class="tools-section-label coach-label reveal" style="margin-top:1px">⭐ Coach Tools</div>
+    <div class="tools-grid reveal" style="margin-bottom:0;grid-template-columns:1fr 1fr;">
+
+      <a class="tool-card coach" href="coach-hub.html">
+        <div class="tool-accent" style="background:linear-gradient(180deg,var(--gold),#F57F17)"></div>
+        <div class="tool-icon">📁</div>
+        <div class="tool-title">Coach Hub</div>
+        <div class="tool-desc">Downloads · roster intel · dryland dashboard · attendance</div>
+        <div class="tool-badge" style="background:rgba(249,168,37,0.1);color:var(--gold);">🔐 Password</div>
+      </a>
+
+      <a class="tool-card coach" href="rankings-coach.html">
+        <div class="tool-accent" style="background:var(--gold)"></div>
+        <div class="tool-icon">⭐</div>
+        <div class="tool-title">Times Entry</div>
+        <div class="tool-desc">Enter meet results · manage PBs · meet history</div>
+        <div class="tool-badge" style="background:rgba(249,168,37,0.1);color:var(--gold);">🔐 Password</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── WEEKLY SCHEDULE ────────────────────────────────────────────────────── -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <p class="section-label reveal">Schedule</p>
+    <h2 class="section-title reveal">Week by Week</h2>
+
+    <!-- WEEK 26 -->
+    <div class="week-block open reveal">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-num">26</div>
+        <div class="week-info">
+          <div class="week-phase">Build — Technique Foundation</div>
+          <div class="week-title">March 2 – 6, 2026</div>
+        </div>
+        <div class="week-yardage">
+          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--mid)">14,200</div>
+          <div>yards</div>
+        </div>
+        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="week-days">
+        <div class="day-row">
+          <div class="day-label">Mon 3/2</div>
+          <div class="day-theme">Freestyle &amp; Turns</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--rec)"></div>
+            <div class="set-dot" style="background:var(--en2)"></div>
+            <div class="set-dot" style="background:var(--sp3)"></div>
+            <div class="day-yds">~2,800</div>
+          </div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Tue 3/3</div>
+          <div class="day-theme">Butterfly &amp; Breaststroke — 8×100 IM</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--rec)"></div>
+            <div class="set-dot" style="background:var(--en1)"></div>
+            <div class="set-dot" style="background:var(--en2)"></div>
+            <div class="day-yds">~3,200</div>
+          </div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Wed 3/4</div>
+          <div class="day-theme">Backstroke &amp; Kick Power</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--rec)"></div>
+            <div class="set-dot" style="background:var(--en1)"></div>
+            <div class="set-dot" style="background:var(--sp1)"></div>
+            <div class="set-dot" style="background:var(--sp3)"></div>
+            <div class="day-yds">~2,500</div>
+          </div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Thu 3/5</div>
+          <div class="day-theme">Freestyle Endurance — EN1 / EN2 Bookends</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--rec)"></div>
+            <div class="set-dot" style="background:var(--en1)"></div>
+            <div class="set-dot" style="background:var(--en2)"></div>
+            <div class="day-yds">~3,500</div>
+          </div>
+        </div>
+        <div class="day-row">
+          <div class="day-label">Fri 3/6</div>
+          <div class="day-theme">Speed &amp; Fun — Blastoffs &amp; Relay</div>
+          <div class="day-meta">
+            <div class="set-dot" style="background:var(--en1)"></div>
+            <div class="set-dot" style="background:var(--sp1)"></div>
+            <div class="set-dot" style="background:var(--sp3)"></div>
+            <div class="day-yds">~2,200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 27 -->
+    <div class="week-block reveal" style="margin-top:1px">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-num" style="color:rgba(255,255,255,0.06)">27</div>
+        <div class="week-info">
+          <div class="week-phase">Peak — Race Pace &amp; Power</div>
+          <div class="week-title" style="color:var(--grey)">March 9 – 13, 2026</div>
+        </div>
+        <div class="week-yardage">
+          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--grey)">15,500</div>
+          <div>yards</div>
+        </div>
+        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="week-days">
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Mon 3/9</div>
+          <div class="day-theme" style="color:var(--grey)">Race Pace Freestyle — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~3,200</div></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Tue 3/10</div>
+          <div class="day-theme" style="color:var(--grey)">Butterfly Peak — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~3,000</div></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Wed 3/11</div>
+          <div class="day-theme" style="color:var(--grey)">Breaststroke &amp; Turns — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~2,800</div></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Thu 3/12</div>
+          <div class="day-theme" style="color:var(--grey)">Big Endurance Day — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~4,000</div></div>
+        </div>
+        <div class="day-row">
+          <div class="day-label" style="color:rgba(139,163,192,0.5)">Fri 3/13</div>
+          <div class="day-theme" style="color:var(--grey)">Speed Day — Coming soon</div>
+          <div class="day-meta"><div class="day-yds">~2,500</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 28 -->
+    <div class="week-block reveal" style="margin-top:1px">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-num" style="color:rgba(255,255,255,0.06)">28</div>
+        <div class="week-info">
+          <div class="week-phase">Taper — Sharpen &amp; Speed</div>
+          <div class="week-title" style="color:var(--grey)">March 16 – 20, 2026</div>
+        </div>
+        <div class="week-yardage">
+          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--grey)">12,000</div>
+          <div>yards</div>
+        </div>
+        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="week-days">
+        <div class="day-row" style="opacity:0.4">
+          <div class="day-label">Mon–Fri</div>
+          <div class="day-theme">Workouts coming in Week 27</div>
+          <div class="day-meta"><div class="day-yds">~12,000 total</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEEK 29 -->
+    <div class="week-block reveal" style="margin-top:1px">
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div class="week-num" style="color:rgba(255,255,255,0.06)">29</div>
+        <div class="week-info">
+          <div class="week-phase">Race Week</div>
+          <div class="week-title" style="color:var(--grey)">March 23 – 27, 2026</div>
+        </div>
+        <div class="week-yardage">
+          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--gold)">6,200</div>
+          <div>yards</div>
+        </div>
+        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="week-days">
+        <div class="day-row" style="opacity:0.4">
+          <div class="day-label">Mon–Fri</div>
+          <div class="day-theme">Race week activation &amp; sharpening — coming soon</div>
+          <div class="day-meta"><div class="day-yds">~6,200 total</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-left">Purple Group &nbsp;·&nbsp; SSF Swim Team &nbsp;·&nbsp; 2026</div>
+      <div class="footer-method">Methodology: <span>Acadian Endurance EN1 / EN2 / SP1 / SP3</span></div>
+    </div>
+  </div>
+</footer>
 
 <script>
-const meetDate = new Date('2026-03-28T08:00:00');
-const today = new Date();
-today.setHours(0,0,0,0);
-const diff = Math.ceil((meetDate - today) / (1000*60*60*24));
-const el = document.getElementById('days-count');
-if(diff > 0) el.textContent = diff;
-else if(diff === 0) el.textContent = 'TODAY';
-else el.textContent = 'Done';
+  // Countdown
+  const meetDate = new Date('2026-03-28T00:00:00');
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const diff = Math.ceil((meetDate - today) / (1000 * 60 * 60 * 24));
+  document.getElementById('days-remaining').textContent = diff > 0 ? diff : 'Race Day!';
+
+  // Week accordion
+  function toggleWeek(header) {
+    header.closest('.week-block').classList.toggle('open');
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 
 </body>
