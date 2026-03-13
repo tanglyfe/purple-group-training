@@ -16,7 +16,6 @@
   body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;padding-bottom:4rem;}
   body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.03) 58px,rgba(33,150,243,0.03) 60px);pointer-events:none;z-index:0;}
 
-  /* TOPBAR */
   .topbar{position:sticky;top:0;z-index:100;background:rgba(7,20,41,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,0.15);padding:.75rem 1rem;}
   .topbar-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:.75rem;}
   .back-btn{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:var(--grey);text-decoration:none;text-transform:uppercase;padding:.4rem .6rem;border:1px solid rgba(255,255,255,0.08);border-radius:2px;transition:color .2s,border-color .2s;flex-shrink:0;}
@@ -27,28 +26,23 @@
   .signout-btn{background:none;border:1px solid rgba(255,255,255,0.08);border-radius:2px;color:var(--grey);font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .6rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
   .signout-btn:hover{border-color:rgba(198,40,40,.4);color:#EF9A9A;}
 
-  /* LOADING */
-  .loading-wrap{min-height:60vh;display:flex;align-items:center;justify-content:center;}
+  .loading-wrap{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;}
   .loading-text{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.18em;color:var(--grey);text-transform:uppercase;}
+  .loading-sub{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;color:rgba(139,163,192,0.4);text-transform:uppercase;}
 
-  /* CONTENT */
   .content{max-width:680px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1;}
 
-  /* WELCOME */
   .welcome{margin-bottom:2rem;}
   .welcome-name{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.03em;line-height:1;}
   .welcome-role{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;margin-top:.3rem;}
 
-  /* ROLE BADGE */
   .role-badge{display:inline-flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;padding:.3rem .65rem;border-radius:2px;margin-top:.5rem;}
   .role-badge.swimmer{background:rgba(33,150,243,0.12);border:1px solid rgba(33,150,243,0.25);color:var(--light);}
   .role-badge.parent{background:rgba(249,168,37,0.1);border:1px solid rgba(249,168,37,0.25);color:var(--gold);}
   .role-badge.coach{background:rgba(46,125,50,0.12);border:1px solid rgba(46,125,50,0.25);color:var(--green2);}
 
-  /* SECTION HEADER */
   .section-hdr{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.18em;color:var(--grey);text-transform:uppercase;margin-bottom:.75rem;margin-top:1.75rem;}
 
-  /* CARD GRID */
   .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
   .dash-card{background:var(--deep);padding:1.1rem 1rem;text-decoration:none;transition:background .15s;display:block;position:relative;}
   .dash-card:hover{background:rgba(33,150,243,0.06);}
@@ -58,32 +52,25 @@
   .card-title{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;color:var(--light);text-transform:uppercase;margin-bottom:.25rem;}
   .card-desc{font-size:.75rem;color:var(--grey);line-height:1.5;}
 
-  /* STATS ROW */
   .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.5rem;}
   .stat-box{background:var(--deep);padding:.9rem 1rem;}
   .stat-label{font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;margin-bottom:.25rem;}
   .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1;}
   .stat-sub{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);margin-top:.15rem;}
 
-  /* ROSTER MANAGE */
   .roster-section{border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
   .roster-row{display:grid;grid-template-columns:1fr auto auto;gap:.75rem;align-items:center;padding:.65rem .9rem;border-bottom:1px solid rgba(255,255,255,0.04);}
   .roster-row:last-child{border-bottom:none;}
   .roster-row.header{background:rgba(255,255,255,0.03);font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;}
   .roster-name{font-size:.88rem;font-weight:500;}
   .roster-meta{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);text-transform:uppercase;margin-top:.1rem;}
-  .status-pill{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .5rem;border-radius:2px;}
-  .status-pill.active{background:rgba(46,125,50,0.15);color:var(--green2);border:1px solid rgba(46,125,50,0.2);}
-  .status-pill.pending{background:rgba(249,168,37,0.1);color:var(--gold);border:1px solid rgba(249,168,37,0.2);}
   .remove-btn{background:none;border:1px solid rgba(198,40,40,0.2);border-radius:2px;color:rgba(239,83,80,0.6);font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .5rem;cursor:pointer;transition:all .15s;}
   .remove-btn:hover{border-color:var(--red2);color:var(--red2);}
-
   .empty-state{padding:2rem;text-align:center;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:rgba(139,163,192,0.35);text-transform:uppercase;}
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-inner">
     <a class="back-btn" href="index.html">← Home</a>
@@ -95,12 +82,11 @@
   </div>
 </div>
 
-<!-- LOADING -->
 <div class="loading-wrap" id="loading-wrap">
   <div class="loading-text">Loading your dashboard…</div>
+  <div class="loading-sub" id="loading-sub"></div>
 </div>
 
-<!-- CONTENT -->
 <div class="content" id="dash-content" style="display:none;"></div>
 
 <script type="module">
@@ -109,8 +95,7 @@ import {
   getAuth, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, getDocs,
-  collection, updateDoc, deleteDoc, query, where
+  getFirestore, doc, getDoc, getDocs, collection, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -126,19 +111,39 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-// Sign out
 document.getElementById('signout-btn').addEventListener('click', async () => {
   await signOut(auth);
   window.location.href = 'login.html';
 });
 
-// Auth guard
+// Retry fetching user doc up to 5× with 600ms gaps
+// Fixes race condition where Firestore write hasn't completed before redirect
+async function getUserDoc(uid) {
+  for (let i = 0; i < 5; i++) {
+    const snap = await getDoc(doc(db, 'users', uid));
+    if (snap.exists()) return snap;
+    document.getElementById('loading-sub').textContent = 'Setting up your account…';
+    await new Promise(r => setTimeout(r, 600));
+  }
+  return null;
+}
+
 onAuthStateChanged(auth, async user => {
-  if (!user) { window.location.href = 'login.html'; return; }
-  const snap = await getDoc(doc(db, 'users', user.uid));
-  if (!snap.exists()) { window.location.href = 'login.html'; return; }
-  const profile = snap.data();
-  renderDashboard(user, profile);
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  const snap = await getUserDoc(user.uid);
+
+  if (!snap) {
+    // Doc never appeared after retries — registration may have failed
+    await signOut(auth);
+    window.location.href = 'register.html';
+    return;
+  }
+
+  renderDashboard(user, snap.data());
 });
 
 async function renderDashboard(user, profile) {
@@ -147,7 +152,8 @@ async function renderDashboard(user, profile) {
   content.style.display = 'block';
 
   const firstName = (profile.displayName || user.displayName || 'Swimmer').split(' ')[0];
-  document.getElementById('topbar-sub').textContent = profile.role.charAt(0).toUpperCase() + profile.role.slice(1) + ' · Purple Group';
+  document.getElementById('topbar-sub').textContent =
+    profile.role.charAt(0).toUpperCase() + profile.role.slice(1) + ' · Purple Group';
 
   const roleEmoji = { swimmer:'🏊', parent:'👨‍👩‍👧', coach:'⭐' };
   const roleLabel = { swimmer:'Swimmer Account', parent:'Parent Account', coach:'Coach Account' };
@@ -159,17 +165,12 @@ async function renderDashboard(user, profile) {
       <div class="role-badge ${profile.role}">${roleEmoji[profile.role] || '👤'} ${roleLabel[profile.role] || profile.role}</div>
     </div>`;
 
-  if (profile.role === 'swimmer') {
-    html += renderSwimmerDash(profile);
-  } else if (profile.role === 'parent') {
-    html += renderParentDash(profile);
-  } else if (profile.role === 'coach') {
-    html += await renderCoachDash();
-  }
+  if (profile.role === 'swimmer')     html += renderSwimmerDash();
+  else if (profile.role === 'parent') html += renderParentDash(profile);
+  else if (profile.role === 'coach')  html += await renderCoachDash();
 
   content.innerHTML = html;
 
-  // Wire up coach remove buttons after render
   if (profile.role === 'coach') {
     content.querySelectorAll('.remove-btn[data-uid]').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -181,8 +182,7 @@ async function renderDashboard(user, profile) {
   }
 }
 
-// ── SWIMMER DASHBOARD ──
-function renderSwimmerDash(profile) {
+function renderSwimmerDash() {
   return `
     <div class="section-hdr">My Tools</div>
     <div class="card-grid">
@@ -202,7 +202,6 @@ function renderSwimmerDash(profile) {
         <div class="card-desc">Log sets · track weekly progress</div>
       </a>
     </div>
-
     <div class="section-hdr">Team</div>
     <div class="card-grid">
       <a class="dash-card" href="leaderboard.html">
@@ -218,7 +217,6 @@ function renderSwimmerDash(profile) {
     </div>`;
 }
 
-// ── PARENT DASHBOARD ──
 function renderParentDash(profile) {
   const childName = profile.childName || 'your swimmer';
   return `
@@ -240,7 +238,6 @@ function renderParentDash(profile) {
         <div class="card-desc">Weekly dryland progress</div>
       </a>
     </div>
-
     <div class="section-hdr">Team</div>
     <div class="card-grid">
       <a class="dash-card" href="leaderboard.html">
@@ -256,9 +253,7 @@ function renderParentDash(profile) {
     </div>`;
 }
 
-// ── COACH DASHBOARD ──
 async function renderCoachDash() {
-  // Fetch all users
   const snap = await getDocs(collection(db, 'users'));
   const users = [];
   snap.forEach(d => users.push({ uid: d.id, ...d.data() }));
@@ -285,7 +280,6 @@ async function renderCoachDash() {
         <div class="stat-sub">registered</div>
       </div>
     </div>
-
     <div class="section-hdr">Coach Tools</div>
     <div class="card-grid">
       <a class="dash-card" href="attendance.html">
@@ -309,20 +303,17 @@ async function renderCoachDash() {
         <div class="card-desc">Team rankings by event</div>
       </a>
     </div>
-
     <div class="section-hdr">Registered Members</div>
     <div class="roster-section">
       <div class="roster-row header">
-        <div>Member</div>
-        <div>Role</div>
-        <div>Action</div>
+        <div>Member</div><div>Role</div><div>Action</div>
       </div>`;
 
-  const allMembers = [...coaches, ...swimmers, ...parents];
-  if (allMembers.length === 0) {
+  const all = [...coaches, ...swimmers, ...parents];
+  if (all.length === 0) {
     html += `<div class="empty-state">No registered members yet</div>`;
   } else {
-    allMembers.forEach(u => {
+    all.forEach(u => {
       const roleColor = u.role === 'coach' ? 'var(--green2)' : u.role === 'parent' ? 'var(--gold)' : 'var(--light)';
       const meta = u.role === 'parent' && u.childName ? `Parent of ${u.childName}` : u.email || '';
       html += `<div class="roster-row">
@@ -331,9 +322,7 @@ async function renderCoachDash() {
           <div class="roster-meta">${meta}</div>
         </div>
         <div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:${roleColor}">${u.role}</div>
-        <div>
-          <button class="remove-btn" data-uid="${u.uid}" data-name="${u.displayName || u.email}">Remove</button>
-        </div>
+        <button class="remove-btn" data-uid="${u.uid}" data-name="${u.displayName || u.email}">Remove</button>
       </div>`;
     });
   }
