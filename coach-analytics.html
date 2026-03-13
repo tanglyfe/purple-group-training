@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coach Analytics — SSF Aquatics</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0B1F3A; --deep:#071429; --mid:#2196F3; --light:#64B5F6;
+    --gold:#F9A825; --white:#F0F6FF; --grey:#8BA3C0;
+    --green:#43A047; --red:#E53935; --orange:#FB8C00;
+    --free:#2196F3; --back:#43A047; --breast:#FB8C00; --fly:#8E24AA; --im:#E53935;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.04) 58px,rgba(33,150,243,0.04) 60px);pointer-events:none;z-index:0;}
+  .shimmer-bg{position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(21,101,192,0.18) 0%,transparent 70%);pointer-events:none;z-index:0;}
+  .container{max-width:1300px;margin:0 auto;padding:0 2rem;position:relative;z-index:1;}
+
+  /* AUTH GATE */
+  #auth-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
+  #auth-gate input{background:rgba(255,255,255,0.06);border:1px solid rgba(33,150,243,0.25);border-radius:8px;padding:.7rem 1.2rem;color:var(--white);font-family:inherit;font-size:.95rem;outline:none;width:260px;text-align:center;}
+  #auth-gate button{background:var(--mid);border:none;border-radius:8px;color:#fff;font-family:'DM Mono',monospace;font-size:.75rem;letter-spacing:.1em;padding:.65rem 1.5rem;cursor:pointer;}
+  #auth-gate .err{color:var(--red);font-size:.8rem;font-family:'DM Mono',monospace;}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:100;background:rgba(7,20,41,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,0.15);padding:.85rem 2rem;display:flex;align-items:center;gap:1.5rem;}
+  nav a{color:var(--grey);text-decoration:none;font-size:.83rem;letter-spacing:.04em;transition:color .2s;}
+  nav a:hover{color:var(--white);}
+  nav .brand{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:var(--white);margin-right:auto;}
+  nav .nav-active{color:var(--gold);}
+
+  /* PAGE HEADER */
+  .page-header{padding:2.5rem 0 1.5rem;border-bottom:1px solid rgba(33,150,243,0.1);margin-bottom:2rem;}
+  .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:.06em;line-height:1;}
+  .page-header h1 span{color:var(--gold);}
+  .page-header p{color:var(--grey);margin-top:.4rem;font-size:.88rem;}
+
+  /* TABS */
+  .tabs{display:flex;gap:0;margin-bottom:0;border-bottom:1px solid rgba(33,150,243,0.15);}
+  .tab{padding:.65rem 1.3rem;font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:var(--grey);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;}
+  .tab:hover{color:var(--white);}
+  .tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+  .tab-panel{display:none;padding-top:1.5rem;}
+  .tab-panel.active{display:block;}
+
+  /* CONTROLS */
+  .controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-bottom:1.5rem;}
+  .filter-pills{display:flex;gap:.4rem;}
+  .pill{padding:.3rem .8rem;border-radius:20px;border:1px solid rgba(33,150,243,0.25);background:transparent;color:var(--grey);font-family:inherit;font-size:.75rem;cursor:pointer;transition:all .2s;}
+  .pill:hover{border-color:var(--mid);color:var(--white);}
+  .pill.active{background:var(--mid);border-color:var(--mid);color:#fff;}
+  .search-wrap{position:relative;}
+  .search-wrap input{background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:8px;padding:.55rem 1rem .55rem 2.2rem;color:var(--white);font-family:inherit;font-size:.85rem;outline:none;width:220px;}
+  .search-wrap input::placeholder{color:var(--grey);}
+  .search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--grey);font-size:.9rem;}
+
+  /* SECTION LABEL */
+  .section-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--grey);margin-bottom:.75rem;display:flex;align-items:center;gap:.6rem;}
+  .section-label::after{content:'';flex:1;height:1px;background:rgba(33,150,243,0.1);}
+
+  /* SUMMARY CHIPS */
+  .summary-row{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;}
+  .sum-chip{background:rgba(255,255,255,0.03);border:1px solid rgba(33,150,243,0.15);border-radius:10px;padding:.9rem 1.25rem;min-width:130px;}
+  .sum-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;color:var(--light);}
+  .sum-label{font-size:.72rem;color:var(--grey);margin-top:.2rem;font-family:'DM Mono',monospace;letter-spacing:.06em;}
+
+  /* ── TAB 1: COVERAGE GRID ── */
+  .coverage-table{width:100%;border-collapse:collapse;margin-bottom:3rem;font-size:.82rem;}
+  .coverage-table th{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);padding:.5rem .7rem;text-align:center;border-bottom:1px solid rgba(33,150,243,0.12);white-space:nowrap;}
+  .coverage-table th.name-col{text-align:left;}
+  .coverage-table td{padding:.45rem .7rem;border-bottom:1px solid rgba(255,255,255,0.03);text-align:center;vertical-align:middle;}
+  .coverage-table tr:hover td{background:rgba(33,150,243,0.04);}
+  .swimmer-name-cell{text-align:left;font-weight:500;white-space:nowrap;}
+  .swimmer-name-cell a{color:var(--white);text-decoration:none;}
+  .swimmer-name-cell a:hover{color:var(--light);}
+  .well-rounded{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);margin-left:.4rem;vertical-align:middle;}
+  .roundedness-bar{display:flex;gap:2px;justify-content:center;}
+  .stroke-dot{width:10px;height:10px;border-radius:50%;}
+  .stroke-dot.has{opacity:1;}
+  .stroke-dot.missing{opacity:0.15;}
+  .cell-yes{color:var(--green);font-size:.75rem;font-family:'DM Mono',monospace;}
+  .cell-no{color:rgba(139,163,192,0.3);font-size:.75rem;}
+  .cell-time{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--white);}
+  .cell-date{font-size:.68rem;color:var(--grey);}
+
+  /* ── TAB 2: MISSING EVENTS ── */
+  .missing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:3rem;}
+  .missing-card{background:rgba(255,255,255,0.03);border:1px solid rgba(33,150,243,0.1);border-radius:10px;padding:1rem 1.2rem;}
+  .missing-event-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.04em;margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem;}
+  .stroke-pip{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .missing-names{display:flex;flex-wrap:wrap;gap:.35rem;}
+  .missing-name-tag{background:rgba(255,255,255,0.05);border-radius:4px;padding:.2rem .5rem;font-size:.72rem;color:var(--grey);}
+  .missing-count{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--grey);margin-bottom:.5rem;}
+
+  /* ── TAB 3: IMPROVEMENT ── */
+  .improvement-table{width:100%;border-collapse:collapse;margin-bottom:3rem;}
+  .improvement-table th{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);padding:.5rem .9rem;text-align:left;border-bottom:1px solid rgba(33,150,243,0.12);}
+  .improvement-table td{padding:.6rem .9rem;border-bottom:1px solid rgba(255,255,255,0.03);font-size:.85rem;vertical-align:middle;}
+  .improvement-table tr:hover td{background:rgba(33,150,243,0.03);}
+  .imp-name a{color:var(--white);text-decoration:none;font-weight:500;}
+  .imp-name a:hover{color:var(--light);}
+  .imp-event{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--grey);}
+  .imp-drop{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500;}
+  .imp-drop.positive{color:var(--green);}
+  .imp-drop.negative{color:var(--red);}
+  .imp-times{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--grey);}
+  .imp-arrow{color:var(--grey);margin:0 .3rem;}
+
+  /* LOADING */
+  .loading-state{text-align:center;padding:4rem 2rem;color:var(--grey);}
+  .spinner{width:32px;height:32px;border:2px solid rgba(33,150,243,0.2);border-top-color:var(--mid);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  footer{border-top:1px solid rgba(33,150,243,0.1);padding:1.5rem 2rem;text-align:center;color:var(--grey);font-size:.78rem;position:relative;z-index:1;}
+</style>
+</head>
+<body>
+<div class="shimmer-bg"></div>
+
+<!-- MAIN CONTENT -->
+<div id="main-content">
+<nav>
+  <span class="brand">SSF Aquatics</span>
+  <a href="index.html">Home</a>
+  <a href="times.html">Times</a>
+  <a href="leaderboard.html">Leaderboard</a>
+  <a href="coach-hub.html">Coach Hub</a>
+  <a href="coach-analytics.html" class="nav-active">Analytics</a>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Coach <span>Analytics</span></h1>
+    <p>Event coverage · Last swum · Improvement tracking · 2025–2026 season</p>
+  </div>
+
+  <div id="summary-row" class="summary-row" style="display:none"></div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="coverage">Coverage</button>
+    <button class="tab" data-tab="missing">Missing Events</button>
+    <button class="tab" data-tab="improvement">Improvement</button>
+  </div>
+
+  <!-- TAB 1: COVERAGE -->
+  <div class="tab-panel active" id="tab-coverage">
+    <div class="controls">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="cov-search" placeholder="Search swimmer…">
+      </div>
+      <div class="filter-pills" id="cov-gender">
+        <button class="pill active" data-gender="all">All</button>
+        <button class="pill" data-gender="M">Boys</button>
+        <button class="pill" data-gender="F">Girls</button>
+      </div>
+      <div class="filter-pills" id="cov-roundedness">
+        <button class="pill active" data-round="all">All</button>
+        <button class="pill" data-round="yes">Well-Rounded Only</button>
+        <button class="pill" data-round="no">Missing Strokes</button>
+      </div>
+    </div>
+    <div id="coverage-container">
+      <div class="loading-state"><div class="spinner"></div><p>Loading…</p></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: MISSING EVENTS -->
+  <div class="tab-panel" id="tab-missing">
+    <div class="controls">
+      <div class="filter-pills" id="miss-gender">
+        <button class="pill active" data-gender="all">All</button>
+        <button class="pill" data-gender="M">Boys</button>
+        <button class="pill" data-gender="F">Girls</button>
+      </div>
+    </div>
+    <div id="missing-container">
+      <div class="loading-state"><div class="spinner"></div><p>Loading…</p></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: IMPROVEMENT -->
+  <div class="tab-panel" id="tab-improvement">
+    <div class="controls">
+      <div class="filter-pills" id="imp-gender">
+        <button class="pill active" data-gender="all">All</button>
+        <button class="pill" data-gender="M">Boys</button>
+        <button class="pill" data-gender="F">Girls</button>
+      </div>
+      <div class="filter-pills" id="imp-direction">
+        <button class="pill active" data-dir="all">All</button>
+        <button class="pill" data-dir="drop">Drops Only</button>
+        <button class="pill" data-dir="up">Slower Only</button>
+      </div>
+    </div>
+    <div id="improvement-container">
+      <div class="loading-state"><div class="spinner"></div><p>Loading…</p></div>
+    </div>
+  </div>
+</div>
+
+<footer>SSF Aquatics · Coach Analytics · 2025–2026</footer>
+</div>
+
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
+  authDomain: "ssfaquatics.firebaseapp.com",
+  projectId: "ssfaquatics",
+  storageBucket: "ssfaquatics.firebasestorage.app",
+  messagingSenderId: "21079628309",
+  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+let allSwimmers = [];
+let covGender = 'all', covRound = 'all', covSearch = '';
+let missGender = 'all';
+let impGender = 'all', impDir = 'all';
+
+const STROKES = ['Free', 'Back', 'Breast', 'Fly', 'IM'];
+const STROKE_COLORS = { Free:'var(--free)', Back:'var(--back)', Breast:'var(--breast)', Fly:'var(--fly)', IM:'var(--im)' };
+const ALL_EVENTS = [
+  '50 Free','100 Free','200 Free','500 Free','1000 Free','1650 Free',
+  '50 Back','100 Back','200 Back',
+  '50 Breast','100 Breast','200 Breast',
+  '50 Fly','100 Fly','200 Fly',
+  '100 IM','200 IM','400 IM'
+];
+
+function strokeOf(ev) {
+  const e = ev.toUpperCase();
+  if (e.includes('FREE'))   return 'Free';
+  if (e.includes('BACK'))   return 'Back';
+  if (e.includes('BREAST')) return 'Breast';
+  if (e.includes('FLY'))    return 'Fly';
+  if (e.includes('IM'))     return 'IM';
+  return 'Free';
+}
+function parseSecs(t) {
+  t = t.trim();
+  if (t.includes(':')) { const [m,s] = t.split(':'); return parseInt(m)*60+parseFloat(s); }
+  return parseFloat(t);
+}
+
+async function init() {
+  const q = query(collection(db, 'swimmers'), where('active','==',true));
+  const snap = await getDocs(q);
+  allSwimmers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  const wellRounded = allSwimmers.filter(s => isWellRounded(s)).length;
+  const seasonActive = allSwimmers.filter(s => Object.keys(s.season_history||{}).length > 0).length;
+
+  document.getElementById('summary-row').innerHTML = `
+    <div class="sum-chip"><div class="sum-val">${allSwimmers.length}</div><div class="sum-label">Active Swimmers</div></div>
+    <div class="sum-chip"><div class="sum-val">${wellRounded}</div><div class="sum-label">Well-Rounded</div></div>
+    <div class="sum-chip"><div class="sum-val">${allSwimmers.length - wellRounded}</div><div class="sum-label">Missing Strokes</div></div>
+    <div class="sum-chip"><div class="sum-val">${seasonActive}</div><div class="sum-label">Active This Season</div></div>
+  `;
+  document.getElementById('summary-row').style.display = 'flex';
+
+  renderCoverage();
+  renderMissing();
+  renderImprovement();
+}
+
+function isWellRounded(s) {
+  const times = s.times || {};
+  return STROKES.every(stroke => Object.keys(times).some(ev => strokeOf(ev) === stroke));
+}
+
+function lastSwumThisSeason(s, event) {
+  const hist = (s.season_history || {})[event];
+  if (!hist || !hist.length) return null;
+  return [...hist].sort((a,b) => b.date.localeCompare(a.date))[0];
+}
+
+function renderCoverage() {
+  let list = allSwimmers.filter(s => {
+    if (covGender !== 'all' && s.gender !== covGender) return false;
+    if (covSearch && !s.name.toLowerCase().includes(covSearch.toLowerCase())) return false;
+    if (covRound === 'yes' && !isWellRounded(s)) return false;
+    if (covRound === 'no'  &&  isWellRounded(s)) return false;
+    return true;
+  });
+  list.sort((a,b) => a.name.localeCompare(b.name));
+
+  const eventSet = new Set();
+  allSwimmers.forEach(s => Object.keys(s.times||{}).forEach(ev => eventSet.add(ev)));
+  const events = ALL_EVENTS.filter(ev => eventSet.has(ev));
+
+  const thead = `<tr>
+    <th class="name-col">Swimmer</th>
+    <th>Strokes</th>
+    ${events.map(ev => `<th style="color:${STROKE_COLORS[strokeOf(ev)]}">${ev}</th>`).join('')}
+  </tr>`;
+
+  const tbody = list.map(s => {
+    const times = s.times || {};
+    const strokes = STROKES.map(st => {
+      const has = Object.keys(times).some(ev => strokeOf(ev) === st);
+      return `<div class="stroke-dot ${has?'has':'missing'}" style="background:${STROKE_COLORS[st]}"></div>`;
+    }).join('');
+    const rounded = isWellRounded(s);
+    const cells = events.map(ev => {
+      if (!times[ev]) return `<td class="cell-no">—</td>`;
+      const last = lastSwumThisSeason(s, ev);
+      const dateLabel = last
+        ? `<div class="cell-date">${last.date.slice(5)}</div>`
+        : `<div class="cell-date" style="opacity:.3">no season</div>`;
+      return `<td><div class="cell-time">${times[ev]}</div>${dateLabel}</td>`;
+    }).join('');
+    return `<tr>
+      <td class="swimmer-name-cell">
+        <a href="swimmer.html?id=${s.id}">${s.name}</a>
+        ${rounded ? '<span class="well-rounded" title="Well-rounded"></span>' : ''}
+      </td>
+      <td><div class="roundedness-bar">${strokes}</div></td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  document.getElementById('coverage-container').innerHTML = `
+    <div style="overflow-x:auto">
+      <table class="coverage-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>
+    </div>`;
+}
+
+function renderMissing() {
+  const list = allSwimmers.filter(s => missGender === 'all' || s.gender === missGender);
+  const eventSet = new Set();
+  allSwimmers.forEach(s => Object.keys(s.times||{}).forEach(ev => eventSet.add(ev)));
+  const events = ALL_EVENTS.filter(ev => eventSet.has(ev));
+
+  const cards = events.map(ev => {
+    const missing = list.filter(s => !(s.times||{})[ev]);
+    if (!missing.length) return '';
+    const stroke = strokeOf(ev);
+    const names = missing.map(s =>
+      `<span class="missing-name-tag">${s.name.split(' ')[0]} ${s.name.split(' ').slice(-1)[0]}</span>`
+    ).join('');
+    return `<div class="missing-card">
+      <div class="missing-event-name">
+        <div class="stroke-pip" style="background:${STROKE_COLORS[stroke]}"></div>${ev}
+      </div>
+      <div class="missing-count">${missing.length} swimmer${missing.length!==1?'s':''} haven't swum this</div>
+      <div class="missing-names">${names}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+
+  document.getElementById('missing-container').innerHTML = cards ||
+    `<div class="loading-state"><p>All swimmers have swum every tracked event 🎉</p></div>`;
+}
+
+function renderImprovement() {
+  const list = allSwimmers.filter(s => impGender === 'all' || s.gender === impGender);
+  const rows = [];
+
+  list.forEach(s => {
+    const hist = s.season_history || {};
+    Object.entries(hist).forEach(([ev, entries]) => {
+      if (entries.length < 2) return;
+      const byDate = [...entries].sort((a,b) => a.date.localeCompare(b.date));
+      const first  = byDate[0];
+      const best   = entries[0];
+      const drop   = first.secs - best.secs;
+      if (Math.abs(drop) < 0.01) return;
+      rows.push({ swimmer: s, event: ev, firstTime: first.time, firstDate: first.date, bestTime: best.time, bestDate: best.date, drop, meets: entries.length });
+    });
+  });
+
+  const filtered = rows.filter(r => {
+    if (impDir === 'drop') return r.drop > 0;
+    if (impDir === 'up')   return r.drop < 0;
+    return true;
+  }).sort((a,b) => b.drop - a.drop);
+
+  if (!filtered.length) {
+    document.getElementById('improvement-container').innerHTML =
+      `<div class="loading-state"><p>No improvement data yet — needs 2+ swims per event this season.</p></div>`;
+    return;
+  }
+
+  document.getElementById('improvement-container').innerHTML = `
+    <table class="improvement-table">
+      <thead><tr><th>Swimmer</th><th>Event</th><th>Drop / Rise</th><th>First → Best</th><th>Swims</th></tr></thead>
+      <tbody>${filtered.map(r => {
+        const pos = r.drop > 0;
+        return `<tr>
+          <td class="imp-name"><a href="swimmer.html?id=${r.swimmer.id}">${r.swimmer.name}</a></td>
+          <td class="imp-event" style="color:${STROKE_COLORS[strokeOf(r.event)]}">${r.event}</td>
+          <td class="imp-drop ${pos?'positive':'negative'}">${pos?'▼':'▲'} ${Math.abs(r.drop).toFixed(2)}s</td>
+          <td class="imp-times">${r.firstTime} <span class="imp-arrow">→</span> ${r.bestTime} <span style="font-size:.65rem;opacity:.5">(${r.bestDate.slice(5)})</span></td>
+          <td style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--grey)">${r.meets}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+// TABS
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+  });
+});
+
+// FILTERS
+document.getElementById('cov-search').addEventListener('input', e => { covSearch = e.target.value; renderCoverage(); });
+
+function wireFilter(id, key, renderer) {
+  document.querySelectorAll(`#${id} .pill`).forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll(`#${id} .pill`).forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+      const val = p.dataset.gender || p.dataset.round || p.dataset.dir;
+      if (key === 'covGender')  covGender  = val;
+      if (key === 'covRound')   covRound   = val;
+      if (key === 'missGender') missGender = val;
+      if (key === 'impGender')  impGender  = val;
+      if (key === 'impDir')     impDir     = val;
+      renderer();
+    });
+  });
+}
+wireFilter('cov-gender',      'covGender',  renderCoverage);
+wireFilter('cov-roundedness', 'covRound',   renderCoverage);
+wireFilter('miss-gender',     'missGender', renderMissing);
+wireFilter('imp-gender',      'impGender',  renderImprovement);
+wireFilter('imp-direction',   'impDir',     renderImprovement);
+
+// AUTO-INIT
+init().catch(console.error);
+</script>
+</body>
+</html>
