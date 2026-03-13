@@ -205,8 +205,8 @@
 <nav>
   <span class="brand">SSF Aquatics</span>
   <a href="index.html">Home</a>
-  <a href="roster.html">Roster</a>
-  <a href="rankings.html">Rankings</a>
+  <a href="times.html">Times</a>
+  <a href="leaderboard.html">Leaderboard</a>
   <a href="dashboard.html">My Account</a>
 </nav>
 
@@ -351,7 +351,7 @@ function render(s) {
           <span>Updated ${lastUpdated}</span>
         </div>
       </div>
-      <a class="back-link" href="roster.html">← Roster</a>
+      <a class="back-link" href="times.html">← Roster</a>
     </div>
 
     <div class="summary-chips">
@@ -377,7 +377,7 @@ function render(s) {
 
 function showError(msg) {
   document.getElementById('page-content').innerHTML =
-    `<div class="error-state"><p style="font-size:2rem;margin-bottom:1rem">⚠️</p><p>${msg}</p><p style="margin-top:1rem"><a href="roster.html" style="color:var(--light)">← Back to roster</a></p></div>`;
+    `<div class="error-state"><p style="font-size:2rem;margin-bottom:1rem">⚠️</p><p>${msg}</p><p style="margin-top:1rem"><a href="times.html" style="color:var(--light)">← Back to roster</a></p></div>`;
 }
 
 load().catch(e => { console.error(e); showError('Failed to load profile.'); });
