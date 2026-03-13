@@ -180,7 +180,7 @@
 import { initializeApp }        from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
   getAuth, createUserWithEmailAndPassword, updateProfile,
-  GoogleAuthProvider, signInWithPopup, onAuthStateChanged
+  GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
   getFirestore, doc, setDoc, getDoc, serverTimestamp
@@ -221,6 +221,33 @@ if (isGooglePending && pendingUid) {
   document.getElementById('email-section').style.display = 'none';
   document.getElementById('google-complete-section').style.display = 'block';
 }
+
+// Handle Google redirect return
+getRedirectResult(auth).then(async result => {
+  if (!result) return;
+  const user = result.user;
+  const snap = await getDoc(doc(db, 'users', user.uid));
+  if (snap.exists()) { window.location.href = 'dashboard.html'; return; }
+  const savedRole  = sessionStorage.getItem('reg_role');
+  const savedChild = sessionStorage.getItem('reg_child') || '';
+  if (savedRole) {
+    await createUserProfile(user.uid, {
+      displayName: user.displayName || '',
+      email: user.email || '',
+      role: savedRole,
+      ...(savedRole === 'parent' ? { childName: savedChild } : {})
+    });
+    sessionStorage.removeItem('reg_role');
+    sessionStorage.removeItem('reg_child');
+    showSuccess('Account created! Redirecting…');
+    setTimeout(() => window.location.href = 'dashboard.html', 1200);
+  } else {
+    sessionStorage.setItem('google_pending_uid',   user.uid);
+    sessionStorage.setItem('google_pending_name',  user.displayName || '');
+    sessionStorage.setItem('google_pending_email', user.email || '');
+    window.location.href = 'register.html?google=1';
+  }
+}).catch(e => console.error('Redirect result error:', e));
 
 // If already fully registered, redirect
 onAuthStateChanged(auth, async user => {
@@ -301,24 +328,16 @@ document.getElementById('google-btn')?.addEventListener('click', async () => {
   const child = document.getElementById('child-name').value.trim();
   if (selectedRole === 'parent' && !child) { showError("Please enter your swimmer's name"); return; }
 
+  // Save role/child before redirect so we have it on return
+  sessionStorage.setItem('reg_role', selectedRole);
+  sessionStorage.setItem('reg_child', child);
+
   setLoading(true);
   try {
     const provider = new GoogleAuthProvider();
-    const cred = await signInWithPopup(auth, provider);
-    // Check not already registered
-    const snap = await getDoc(doc(db, 'users', cred.user.uid));
-    if (snap.exists()) { window.location.href = 'dashboard.html'; return; }
-
-    await createUserProfile(cred.user.uid, {
-      displayName: cred.user.displayName || '',
-      email: cred.user.email || '',
-      role: selectedRole,
-      ...(selectedRole === 'parent' ? { childName: child } : {})
-    });
-    showSuccess('Account created! Redirecting…');
-    setTimeout(() => window.location.href = 'dashboard.html', 1200);
+    await signInWithRedirect(auth, provider);
   } catch(e) {
-    if (e.code !== 'auth/popup-closed-by-user') showError('Google sign up failed');
+    showError('Google sign up failed');
     setLoading(false);
   }
 });

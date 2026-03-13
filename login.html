@@ -109,7 +109,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword,
-  GoogleAuthProvider, signInWithPopup, onAuthStateChanged
+  GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
@@ -129,6 +129,22 @@ const db   = getFirestore(app);
 // If already signed in, redirect
 onAuthStateChanged(auth, async user => {
   if (user) await redirectByRole(user);
+});
+
+// Handle redirect result on page load
+getRedirectResult(auth).then(async result => {
+  if (!result) return;
+  const snap = await getDoc(doc(db, 'users', result.user.uid));
+  if (!snap.exists()) {
+    sessionStorage.setItem('google_pending_uid',   result.user.uid);
+    sessionStorage.setItem('google_pending_name',  result.user.displayName || '');
+    sessionStorage.setItem('google_pending_email', result.user.email || '');
+    window.location.href = 'register.html?google=1';
+  } else {
+    await redirectByRole(result.user);
+  }
+}).catch(e => {
+  if (e.code !== 'auth/popup-closed-by-user') showError('Google sign in failed — please try again');
 });
 
 async function redirectByRole(user) {
@@ -183,22 +199,9 @@ document.getElementById('google-btn').addEventListener('click', async () => {
   setLoading(true);
   try {
     const provider = new GoogleAuthProvider();
-    const cred = await signInWithPopup(auth, provider);
-    // Check if user doc exists; if not, they need to register
-    const snap = await getDoc(doc(db, 'users', cred.user.uid));
-    if (!snap.exists()) {
-      // New Google user — send to register to pick role
-      sessionStorage.setItem('google_pending_uid',   cred.user.uid);
-      sessionStorage.setItem('google_pending_name',  cred.user.displayName || '');
-      sessionStorage.setItem('google_pending_email', cred.user.email || '');
-      window.location.href = 'register.html?google=1';
-    } else {
-      await redirectByRole(cred.user);
-    }
+    await signInWithRedirect(auth, provider);
   } catch(e) {
-    if (e.code !== 'auth/popup-closed-by-user') {
-      showError('Google sign in failed — please try again');
-    }
+    showError('Google sign in failed — please try again');
     setLoading(false);
   }
 });
