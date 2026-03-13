@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swimmer Profile — SSF Aquatics</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #0B1F3A;
+    --deep:   #071429;
+    --blue:   #1565C0;
+    --mid:    #2196F3;
+    --light:  #64B5F6;
+    --pale:   #BBDEFB;
+    --gold:   #F9A825;
+    --white:  #F0F6FF;
+    --grey:   #8BA3C0;
+    --free:   #2196F3;
+    --back:   #43A047;
+    --breast: #FB8C00;
+    --fly:    #8E24AA;
+    --im:     #E53935;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--deep);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(180deg, transparent 0px, transparent 58px, rgba(33,150,243,0.04) 58px, rgba(33,150,243,0.04) 60px);
+    pointer-events: none; z-index: 0;
+  }
+  .shimmer-bg {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(21,101,192,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(123,31,162,0.10) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(7,20,41,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(33,150,243,0.15);
+    padding: 1rem 2rem;
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+  nav a { color: var(--grey); text-decoration: none; font-size: .85rem; letter-spacing: .04em; transition: color .2s; }
+  nav a:hover { color: var(--white); }
+  nav .brand { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .08em; color: var(--white); margin-right: auto; }
+
+  /* ── PROFILE HERO ── */
+  .profile-hero {
+    padding: 3.5rem 0 2.5rem;
+    display: flex; align-items: center; gap: 2rem;
+    border-bottom: 1px solid rgba(33,150,243,0.12);
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .big-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--mid));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 2rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(33,150,243,0.2), 0 0 30px rgba(33,150,243,0.15);
+  }
+  .big-avatar.female {
+    background: linear-gradient(135deg, #7B1FA2, #CE93D8);
+    box-shadow: 0 0 0 3px rgba(123,31,162,0.2), 0 0 30px rgba(123,31,162,0.15);
+  }
+  .profile-info h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: .06em; line-height: 1;
+  }
+  .profile-meta { color: var(--grey); font-size: .9rem; margin-top: .4rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+  .profile-meta span { display: flex; align-items: center; gap: .3rem; }
+  .back-link {
+    margin-left: auto;
+    color: var(--grey); text-decoration: none; font-size: .85rem;
+    display: flex; align-items: center; gap: .4rem;
+    transition: color .2s;
+  }
+  .back-link:hover { color: var(--white); }
+
+  /* ── SUMMARY CHIPS ── */
+  .summary-chips { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .chip {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(33,150,243,0.18);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    min-width: 120px;
+  }
+  .chip-val { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .04em; color: var(--light); line-height: 1; }
+  .chip-label { color: var(--grey); font-size: .75rem; margin-top: .25rem; letter-spacing: .04em; text-transform: uppercase; }
+
+  /* ── TIMES SECTION ── */
+  .section-label {
+    font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--grey); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: rgba(33,150,243,0.12); }
+
+  /* ── STROKE GROUPS ── */
+  .stroke-groups { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 4rem; }
+  .stroke-group {}
+  .stroke-heading {
+    display: flex; align-items: center; gap: .6rem;
+    font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--grey); margin-bottom: .6rem;
+  }
+  .stroke-bar { flex: 1; height: 1px; }
+  .stroke-bar.free   { background: linear-gradient(90deg, var(--free), transparent); }
+  .stroke-bar.back   { background: linear-gradient(90deg, var(--back), transparent); }
+  .stroke-bar.breast { background: linear-gradient(90deg, var(--breast), transparent); }
+  .stroke-bar.fly    { background: linear-gradient(90deg, var(--fly), transparent); }
+  .stroke-bar.im     { background: linear-gradient(90deg, var(--im), transparent); }
+
+  .event-rows { display: flex; flex-direction: column; gap: .5rem; }
+  .event-row {
+    display: flex; align-items: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(33,150,243,0.1);
+    border-radius: 8px;
+    padding: .75rem 1.25rem;
+    gap: 1rem;
+    transition: border-color .2s;
+  }
+  .event-row:hover { border-color: rgba(33,150,243,0.25); }
+  .event-pill {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .event-pill.free   { background: var(--free); }
+  .event-pill.back   { background: var(--back); }
+  .event-pill.breast { background: var(--breast); }
+  .event-pill.fly    { background: var(--fly); }
+  .event-pill.im     { background: var(--im); }
+  .event-label { color: var(--grey); font-size: .88rem; flex: 1; }
+  .event-time-big {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--white);
+  }
+  .swimcloud-link {
+    margin-left: .5rem;
+    color: var(--light);
+    font-size: .75rem;
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .event-row:hover .swimcloud-link { opacity: 1; }
+
+  /* ── NO TIMES ── */
+  .no-times-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(33,150,243,0.1);
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    color: var(--grey);
+    margin-bottom: 4rem;
+  }
+  .no-times-card p { margin-bottom: .5rem; }
+  .no-times-card a { color: var(--light); }
+
+  /* ── LOADING / ERROR ── */
+  .loading-state, .error-state {
+    text-align: center; padding: 5rem 2rem; color: var(--grey);
+  }
+  .loading-spinner {
+    width: 36px; height: 36px;
+    border: 2px solid rgba(33,150,243,0.2);
+    border-top-color: var(--mid);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  footer {
+    border-top: 1px solid rgba(33,150,243,0.1);
+    padding: 2rem; text-align: center;
+    color: var(--grey); font-size: .8rem;
+    position: relative; z-index: 1;
+  }
+</style>
+</head>
+<body>
+<div class="shimmer-bg"></div>
+
+<nav>
+  <span class="brand">SSF Aquatics</span>
+  <a href="index.html">Home</a>
+  <a href="roster.html">Roster</a>
+  <a href="rankings.html">Rankings</a>
+  <a href="dashboard.html">My Account</a>
+</nav>
+
+<div class="container">
+  <div id="page-content">
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading profile…</p>
+    </div>
+  </div>
+</div>
+
+<footer>SSF Aquatics · South San Francisco · 2026</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
+  authDomain: "ssfaquatics.firebaseapp.com",
+  projectId: "ssfaquatics",
+  storageBucket: "ssfaquatics.firebasestorage.app",
+  messagingSenderId: "21079628309",
+  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── Stroke helpers ──
+function strokeOf(event) {
+  const e = event.toUpperCase();
+  if (e.includes('FREE'))   return 'free';
+  if (e.includes('BACK'))   return 'back';
+  if (e.includes('BREAST')) return 'breast';
+  if (e.includes('FLY'))    return 'fly';
+  if (e.includes('IM'))     return 'im';
+  return 'free';
+}
+
+const STROKE_LABELS = { free: 'Freestyle', back: 'Backstroke', breast: 'Breaststroke', fly: 'Butterfly', im: 'Individual Medley' };
+const STROKE_ORDER  = ['free', 'back', 'breast', 'fly', 'im'];
+
+const EVENT_ORDER = ['50 Free','100 Free','200 Free','500 Free','1000 Free','1650 Free',
+  '100 Back','200 Back','100 Breast','200 Breast','100 Fly','200 Fly','200 IM','400 IM'];
+
+function sortEvents(times) {
+  return Object.entries(times).sort(([a],[b]) => {
+    const ai = EVENT_ORDER.indexOf(a), bi = EVENT_ORDER.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1; if (bi === -1) return -1;
+    return ai - bi;
+  });
+}
+
+function groupByStroke(times) {
+  const groups = {};
+  STROKE_ORDER.forEach(s => groups[s] = []);
+  Object.entries(times).forEach(([ev, t]) => {
+    const s = strokeOf(ev);
+    if (!groups[s]) groups[s] = [];
+    groups[s].push([ev, t]);
+  });
+  // Sort within each group
+  STROKE_ORDER.forEach(s => {
+    groups[s].sort(([a],[b]) => {
+      const ai = EVENT_ORDER.indexOf(a), bi = EVENT_ORDER.indexOf(b);
+      if (ai === -1 && bi === -1) return a.localeCompare(b);
+      if (ai === -1) return 1; if (bi === -1) return -1;
+      return ai - bi;
+    });
+  });
+  return groups;
+}
+
+// ── Load + render ──
+async function load() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) { showError('No swimmer ID provided.'); return; }
+
+  const snap = await getDoc(doc(db, 'swimmers', id));
+  if (!snap.exists()) { showError('Swimmer not found.'); return; }
+
+  const swimmer = { id: snap.id, ...snap.data() };
+  render(swimmer);
+}
+
+function render(s) {
+  const times   = s.times || {};
+  const events  = sortEvents(times);
+  const count   = events.length;
+  const strokes = [...new Set(events.map(([e]) => strokeOf(e)))].length;
+  const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const avatarClass = s.gender === 'F' ? 'big-avatar female' : 'big-avatar';
+
+  const lastUpdated = s.lastUpdated
+    ? (s.lastUpdated.toDate ? s.lastUpdated.toDate() : new Date(s.lastUpdated)).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' })
+    : 'Unknown';
+
+  // Build stroke groups
+  const groups = groupByStroke(times);
+  let strokesHtml = '';
+  STROKE_ORDER.forEach(stroke => {
+    const evs = groups[stroke];
+    if (!evs || evs.length === 0) return;
+    const rowsHtml = evs.map(([ev, t]) => `
+      <div class="event-row">
+        <div class="event-pill ${stroke}"></div>
+        <span class="event-label">${ev}</span>
+        <span class="event-time-big">${t}</span>
+        <a class="swimcloud-link" href="https://www.swimcloud.com/swimmer/${s.id}/" target="_blank" rel="noopener">↗ SwimCloud</a>
+      </div>`).join('');
+    strokesHtml += `
+      <div class="stroke-group">
+        <div class="stroke-heading">
+          ${STROKE_LABELS[stroke]}
+          <div class="stroke-bar ${stroke}"></div>
+        </div>
+        <div class="event-rows">${rowsHtml}</div>
+      </div>`;
+  });
+
+  const timesSection = count > 0
+    ? `<div class="section-label">Best Times · SCY</div>
+       <div class="stroke-groups">${strokesHtml}</div>`
+    : `<div class="no-times-card">
+        <p>No SCY times recorded yet.</p>
+        <p>Times will appear here after their first meet.</p>
+        <p style="margin-top:.75rem"><a href="https://www.swimcloud.com/swimmer/${s.id}/" target="_blank" rel="noopener">View on SwimCloud ↗</a></p>
+       </div>`;
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="profile-hero">
+      <div class="${avatarClass}">${initials}</div>
+      <div class="profile-info">
+        <h1>${s.name}</h1>
+        <div class="profile-meta">
+          <span>${s.gender === 'M' ? '♂ Male' : '♀ Female'}</span>
+          <span>·</span>
+          <span>Updated ${lastUpdated}</span>
+        </div>
+      </div>
+      <a class="back-link" href="roster.html">← Roster</a>
+    </div>
+
+    <div class="summary-chips">
+      <div class="chip">
+        <div class="chip-val">${count}</div>
+        <div class="chip-label">Events</div>
+      </div>
+      <div class="chip">
+        <div class="chip-val">${strokes}</div>
+        <div class="chip-label">Strokes</div>
+      </div>
+      <div class="chip">
+        <div class="chip-val"><a href="https://www.swimcloud.com/swimmer/${s.id}/" target="_blank" rel="noopener" style="color:var(--light);text-decoration:none;font-size:1.2rem">↗</a></div>
+        <div class="chip-label">SwimCloud</div>
+      </div>
+    </div>
+
+    ${timesSection}
+  `;
+
+  document.title = `${s.name} — SSF Aquatics`;
+}
+
+function showError(msg) {
+  document.getElementById('page-content').innerHTML =
+    `<div class="error-state"><p style="font-size:2rem;margin-bottom:1rem">⚠️</p><p>${msg}</p><p style="margin-top:1rem"><a href="roster.html" style="color:var(--light)">← Back to roster</a></p></div>`;
+}
+
+load().catch(e => { console.error(e); showError('Failed to load profile.'); });
+</script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Roster — SSF Aquatics</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #0B1F3A;
+    --deep:   #071429;
+    --blue:   #1565C0;
+    --mid:    #2196F3;
+    --light:  #64B5F6;
+    --pale:   #BBDEFB;
+    --gold:   #F9A825;
+    --white:  #F0F6FF;
+    --grey:   #8BA3C0;
+    --free:   #2196F3;
+    --back:   #43A047;
+    --breast: #FB8C00;
+    --fly:    #8E24AA;
+    --im:     #E53935;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--deep);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(180deg, transparent 0px, transparent 58px, rgba(33,150,243,0.04) 58px, rgba(33,150,243,0.04) 60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .shimmer-bg {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(21,101,192,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(123,31,162,0.10) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(7,20,41,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(33,150,243,0.15);
+    padding: 1rem 2rem;
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+  nav a { color: var(--grey); text-decoration: none; font-size: .85rem; letter-spacing: .04em; transition: color .2s; }
+  nav a:hover { color: var(--white); }
+  nav .brand { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .08em; color: var(--white); margin-right: auto; }
+  nav .nav-active { color: var(--light); }
+
+  /* ── HEADER ── */
+  .page-header {
+    padding: 4rem 0 2.5rem;
+    border-bottom: 1px solid rgba(33,150,243,0.12);
+    margin-bottom: 2.5rem;
+  }
+  .page-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); letter-spacing: .06em; line-height: 1; }
+  .page-header h1 span { color: var(--light); }
+  .page-header p { color: var(--grey); margin-top: .75rem; font-size: .95rem; }
+
+  /* ── CONTROLS ── */
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .search-wrap { position: relative; flex: 1; min-width: 200px; }
+  .search-wrap input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(33,150,243,0.2);
+    border-radius: 8px;
+    padding: .65rem 1rem .65rem 2.5rem;
+    color: var(--white);
+    font-family: inherit;
+    font-size: .9rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: var(--mid); }
+  .search-wrap input::placeholder { color: var(--grey); }
+  .search-icon { position: absolute; left: .8rem; top: 50%; transform: translateY(-50%); color: var(--grey); font-size: .9rem; }
+  .filter-pills { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .pill {
+    padding: .4rem .9rem;
+    border-radius: 20px;
+    border: 1px solid rgba(33,150,243,0.25);
+    background: transparent;
+    color: var(--grey);
+    font-family: inherit;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .03em;
+  }
+  .pill:hover { border-color: var(--mid); color: var(--white); }
+  .pill.active { background: var(--mid); border-color: var(--mid); color: #fff; }
+  .sort-select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(33,150,243,0.2);
+    border-radius: 8px;
+    padding: .65rem 1rem;
+    color: var(--white);
+    font-family: inherit;
+    font-size: .85rem;
+    outline: none;
+    cursor: pointer;
+  }
+  .sort-select option { background: var(--navy); }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: flex; gap: 1.5rem; flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .stat-chip {
+    background: rgba(33,150,243,0.08);
+    border: 1px solid rgba(33,150,243,0.18);
+    border-radius: 8px;
+    padding: .5rem 1rem;
+    font-size: .8rem;
+    color: var(--grey);
+  }
+  .stat-chip strong { color: var(--light); font-weight: 500; }
+
+  /* ── SWIMMER GRID ── */
+  .swimmer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 4rem;
+  }
+  .swimmer-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(33,150,243,0.12);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color .2s, transform .2s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .swimmer-card:hover { border-color: rgba(33,150,243,0.4); transform: translateY(-2px); }
+  .card-header {
+    padding: 1.1rem 1.25rem .8rem;
+    display: flex; align-items: center; gap: .75rem;
+    border-bottom: 1px solid rgba(33,150,243,0.08);
+  }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--mid));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .avatar.female { background: linear-gradient(135deg, #7B1FA2, #CE93D8); }
+  .card-name { font-weight: 500; font-size: .95rem; }
+  .card-meta { font-size: .75rem; color: var(--grey); margin-top: .1rem; }
+  .gender-badge {
+    margin-left: auto;
+    font-size: .7rem;
+    padding: .2rem .5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: .05em;
+  }
+  .gender-badge.M { background: rgba(33,150,243,0.15); color: var(--light); }
+  .gender-badge.F { background: rgba(123,31,162,0.2); color: #CE93D8; }
+
+  .card-times { padding: .75rem 1.25rem 1rem; }
+  .times-grid { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .event-tag {
+    display: flex; align-items: center; gap: .35rem;
+    padding: .3rem .6rem;
+    border-radius: 6px;
+    font-size: .75rem;
+    font-family: 'DM Mono', monospace;
+  }
+  .event-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .event-tag.free  { background: rgba(33,150,243,0.12); }
+  .event-tag.back  { background: rgba(67,160,71,0.12); }
+  .event-tag.breast{ background: rgba(251,140,0,0.12); }
+  .event-tag.fly   { background: rgba(142,36,170,0.12); }
+  .event-tag.im    { background: rgba(229,57,53,0.12); }
+  .event-dot.free  { background: var(--free); }
+  .event-dot.back  { background: var(--back); }
+  .event-dot.breast{ background: var(--breast); }
+  .event-dot.fly   { background: var(--fly); }
+  .event-dot.im    { background: var(--im); }
+  .event-name { color: var(--grey); }
+  .event-time { color: var(--white); font-weight: 500; }
+  .no-times { color: var(--grey); font-size: .8rem; font-style: italic; padding: .25rem 0; }
+  .view-all {
+    display: inline-block; margin-top: .6rem;
+    font-size: .75rem; color: var(--light);
+    text-decoration: none; letter-spacing: .03em;
+  }
+
+  /* ── EMPTY / LOADING ── */
+  .loading-state, .empty-state {
+    text-align: center; padding: 4rem 2rem; color: var(--grey);
+  }
+  .loading-spinner {
+    width: 36px; height: 36px;
+    border: 2px solid rgba(33,150,243,0.2);
+    border-top-color: var(--mid);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(33,150,243,0.1);
+    padding: 2rem;
+    text-align: center;
+    color: var(--grey);
+    font-size: .8rem;
+    position: relative; z-index: 1;
+  }
+</style>
+</head>
+<body>
+<div class="shimmer-bg"></div>
+
+<nav>
+  <span class="brand">SSF Aquatics</span>
+  <a href="index.html">Home</a>
+  <a href="roster.html" class="nav-active">Roster</a>
+  <a href="rankings.html">Rankings</a>
+  <a href="dashboard.html">My Account</a>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Team <span>Roster</span></h1>
+    <p>Best times updated weekly from SwimCloud · SCY only</p>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="search" placeholder="Search swimmers…">
+    </div>
+    <div class="filter-pills">
+      <button class="pill active" data-gender="all">All</button>
+      <button class="pill" data-gender="M">Boys</button>
+      <button class="pill" data-gender="F">Girls</button>
+    </div>
+    <select class="sort-select" id="sort-select">
+      <option value="name">Sort: Name A–Z</option>
+      <option value="events">Sort: Most Events</option>
+    </select>
+  </div>
+
+  <div class="stats-row" id="stats-row" style="display:none">
+    <div class="stat-chip"><strong id="stat-total">0</strong> swimmers</div>
+    <div class="stat-chip"><strong id="stat-male">0</strong> boys</div>
+    <div class="stat-chip"><strong id="stat-female">0</strong> girls</div>
+    <div class="stat-chip">Updated <strong id="stat-updated">—</strong></div>
+  </div>
+
+  <div id="roster-container">
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading roster…</p>
+    </div>
+  </div>
+</div>
+
+<footer>SSF Aquatics · South San Francisco · 2026</footer>
+
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
+  authDomain: "ssfaquatics.firebaseapp.com",
+  projectId: "ssfaquatics",
+  storageBucket: "ssfaquatics.firebasestorage.app",
+  messagingSenderId: "21079628309",
+  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── State ──
+let allSwimmers = [];
+let genderFilter = 'all';
+let sortMode = 'name';
+
+// ── Stroke detection ──
+function strokeOf(event) {
+  const e = event.toUpperCase();
+  if (e.includes('FREE'))   return 'free';
+  if (e.includes('BACK'))   return 'back';
+  if (e.includes('BREAST')) return 'breast';
+  if (e.includes('FLY'))    return 'fly';
+  if (e.includes('IM'))     return 'im';
+  return 'free';
+}
+
+// ── Priority event order for display ──
+const EVENT_ORDER = ['50 Free','100 Free','200 Free','500 Free','100 Back','200 Back','100 Breast','200 Breast','100 Fly','200 Fly','200 IM','400 IM'];
+function sortEvents(times) {
+  const entries = Object.entries(times);
+  entries.sort(([a],[b]) => {
+    const ai = EVENT_ORDER.indexOf(a), bi = EVENT_ORDER.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
+  return entries;
+}
+
+// ── Load swimmers ──
+async function loadSwimmers() {
+  const q = query(collection(db, 'swimmers'), where('active', '==', true));
+  const snap = await getDocs(q);
+  allSwimmers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // Stats
+  const males   = allSwimmers.filter(s => s.gender === 'M').length;
+  const females = allSwimmers.filter(s => s.gender === 'F').length;
+
+  // Most recent lastUpdated
+  let latest = null;
+  allSwimmers.forEach(s => {
+    if (s.lastUpdated) {
+      const d = s.lastUpdated.toDate ? s.lastUpdated.toDate() : new Date(s.lastUpdated);
+      if (!latest || d > latest) latest = d;
+    }
+  });
+
+  document.getElementById('stat-total').textContent   = allSwimmers.length;
+  document.getElementById('stat-male').textContent    = males;
+  document.getElementById('stat-female').textContent  = females;
+  document.getElementById('stat-updated').textContent = latest ? latest.toLocaleDateString('en-US', { month:'short', day:'numeric' }) : '—';
+  document.getElementById('stats-row').style.display  = 'flex';
+
+  render();
+}
+
+// ── Render ──
+function render() {
+  const search = document.getElementById('search').value.toLowerCase();
+
+  let list = allSwimmers.filter(s => {
+    if (genderFilter !== 'all' && s.gender !== genderFilter) return false;
+    if (search && !s.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  if (sortMode === 'name') {
+    list.sort((a,b) => a.name.localeCompare(b.name));
+  } else {
+    list.sort((a,b) => Object.keys(b.times||{}).length - Object.keys(a.times||{}).length);
+  }
+
+  const container = document.getElementById('roster-container');
+  if (list.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🏊</div><p>No swimmers found</p></div>`;
+    return;
+  }
+
+  const cards = list.map(s => {
+    const times  = s.times || {};
+    const events = sortEvents(times);
+    const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const avatarClass = s.gender === 'F' ? 'avatar female' : 'avatar';
+    const eventCount  = events.length;
+
+    const SHOW = 4;
+    const shown = events.slice(0, SHOW);
+    const extra = eventCount - SHOW;
+
+    const tagsHtml = shown.map(([ev, t]) => {
+      const stroke = strokeOf(ev);
+      return `<div class="event-tag ${stroke}">
+        <div class="event-dot ${stroke}"></div>
+        <span class="event-name">${ev}</span>
+        <span class="event-time">${t}</span>
+      </div>`;
+    }).join('');
+
+    const noTimesHtml = eventCount === 0 ? `<p class="no-times">No times recorded yet</p>` : '';
+    const moreHtml = extra > 0 ? `<a class="view-all" href="swimmer.html?id=${s.id}">+${extra} more events →</a>` : '';
+
+    return `<a class="swimmer-card" href="swimmer.html?id=${s.id}">
+      <div class="card-header">
+        <div class="${avatarClass}">${initials}</div>
+        <div>
+          <div class="card-name">${s.name}</div>
+          <div class="card-meta">${eventCount} event${eventCount !== 1 ? 's' : ''}</div>
+        </div>
+        <span class="gender-badge ${s.gender}">${s.gender === 'M' ? 'BOY' : 'GIRL'}</span>
+      </div>
+      <div class="card-times">
+        <div class="times-grid">${tagsHtml}${noTimesHtml}</div>
+        ${moreHtml}
+      </div>
+    </a>`;
+  }).join('');
+
+  container.innerHTML = `<div class="swimmer-grid">${cards}</div>`;
+}
+
+// ── Event listeners ──
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('sort-select').addEventListener('change', e => { sortMode = e.target.value; render(); });
+document.querySelectorAll('.pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    genderFilter = p.dataset.gender;
+    render();
+  });
+});
+
+loadSwimmers().catch(e => {
+  console.error(e);
+  document.getElementById('roster-container').innerHTML =
+    `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load roster. Please try again.</p></div>`;
+});
+</script>
+</body>
+</html>
