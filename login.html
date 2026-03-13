@@ -127,13 +127,19 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 // If already signed in, redirect
-onAuthStateChanged(auth, async user => {
-  if (user) await redirectByRole(user);
-});
+// Handle redirect result FIRST before onAuthStateChanged can act
+let redirectHandled = false;
 
-// Handle redirect result on page load
 getRedirectResult(auth).then(async result => {
-  if (!result) return;
+  redirectHandled = true;
+  if (!result) {
+    // No redirect result — let onAuthStateChanged handle existing sessions
+    onAuthStateChanged(auth, async user => {
+      if (user) await redirectByRole(user);
+    });
+    return;
+  }
+  // Came back from Google redirect
   const snap = await getDoc(doc(db, 'users', result.user.uid));
   if (!snap.exists()) {
     sessionStorage.setItem('google_pending_uid',   result.user.uid);
@@ -144,7 +150,12 @@ getRedirectResult(auth).then(async result => {
     await redirectByRole(result.user);
   }
 }).catch(e => {
+  redirectHandled = true;
   if (e.code !== 'auth/popup-closed-by-user') showError('Google sign in failed — please try again');
+  // Fall back to normal session handling
+  onAuthStateChanged(auth, async user => {
+    if (user) await redirectByRole(user);
+  });
 });
 
 async function redirectByRole(user) {
