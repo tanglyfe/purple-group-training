@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Times — SSF Aquatics</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0B1F3A; --deep:#071429; --blue:#1565C0; --mid:#2196F3;
+    --light:#64B5F6; --pale:#BBDEFB; --gold:#F9A825; --white:#F0F6FF;
+    --grey:#8BA3C0; --free:#2196F3; --back:#43A047; --breast:#FB8C00;
+    --fly:#8E24AA; --im:#E53935;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.04) 58px,rgba(33,150,243,0.04) 60px);pointer-events:none;z-index:0;}
+  .shimmer-bg{position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(21,101,192,0.18) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(123,31,162,0.10) 0%,transparent 60%);pointer-events:none;z-index:0;}
+  .container{max-width:1200px;margin:0 auto;padding:0 2rem;position:relative;z-index:1;}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:100;background:rgba(7,20,41,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,0.15);padding:1rem 2rem;display:flex;align-items:center;gap:1.5rem;}
+  nav a{color:var(--grey);text-decoration:none;font-size:.85rem;letter-spacing:.04em;transition:color .2s;}
+  nav a:hover{color:var(--white);}
+  nav .brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;color:var(--white);margin-right:auto;}
+  nav .nav-active{color:var(--light);}
+
+  /* HEADER */
+  .page-header{padding:3.5rem 0 0;}
+  .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,4rem);letter-spacing:.06em;line-height:1;}
+  .page-header h1 span{color:var(--light);}
+  .page-header p{color:var(--grey);margin-top:.5rem;font-size:.9rem;}
+
+  /* TABS */
+  .tabs{display:flex;gap:0;margin-top:2rem;border-bottom:1px solid rgba(33,150,243,0.15);}
+  .tab{padding:.75rem 1.5rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;color:var(--grey);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;}
+  .tab:hover{color:var(--white);}
+  .tab.active{color:var(--light);border-bottom-color:var(--mid);}
+
+  /* CONTROLS */
+  .controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;padding:1.5rem 0 1rem;}
+  .search-wrap{position:relative;flex:1;min-width:200px;}
+  .search-wrap input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:8px;padding:.6rem 1rem .6rem 2.4rem;color:var(--white);font-family:inherit;font-size:.88rem;outline:none;transition:border-color .2s;}
+  .search-wrap input:focus{border-color:var(--mid);}
+  .search-wrap input::placeholder{color:var(--grey);}
+  .search-icon{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);color:var(--grey);}
+  .filter-pills{display:flex;gap:.4rem;flex-wrap:wrap;}
+  .pill{padding:.35rem .85rem;border-radius:20px;border:1px solid rgba(33,150,243,0.25);background:transparent;color:var(--grey);font-family:inherit;font-size:.78rem;cursor:pointer;transition:all .2s;}
+  .pill:hover{border-color:var(--mid);color:var(--white);}
+  .pill.active{background:var(--mid);border-color:var(--mid);color:#fff;}
+  .sort-select{background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:8px;padding:.6rem 1rem;color:var(--white);font-family:inherit;font-size:.82rem;outline:none;cursor:pointer;}
+  .sort-select option{background:var(--navy);}
+
+  /* EVENT SELECT (for Rankings tab) */
+  .event-select-wrap{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem 0 1.25rem;}
+  .event-btn{padding:.35rem .85rem;border-radius:6px;border:1px solid rgba(33,150,243,0.2);background:transparent;color:var(--grey);font-family:'DM Mono',monospace;font-size:.72rem;cursor:pointer;transition:all .2s;letter-spacing:.04em;}
+  .event-btn:hover{border-color:var(--mid);color:var(--white);}
+  .event-btn.active{color:#fff;}
+  .event-btn.free.active{background:rgba(33,150,243,0.25);border-color:var(--free);}
+  .event-btn.back.active{background:rgba(67,160,71,0.25);border-color:var(--back);}
+  .event-btn.breast.active{background:rgba(251,140,0,0.25);border-color:var(--breast);}
+  .event-btn.fly.active{background:rgba(142,36,170,0.25);border-color:var(--fly);}
+  .event-btn.im.active{background:rgba(229,57,53,0.25);border-color:var(--im);}
+
+  /* STATS ROW */
+  .stats-row{display:flex;gap:1.25rem;flex-wrap:wrap;padding:.5rem 0 1.25rem;}
+  .stat-chip{background:rgba(33,150,243,0.08);border:1px solid rgba(33,150,243,0.18);border-radius:8px;padding:.4rem .9rem;font-size:.78rem;color:var(--grey);}
+  .stat-chip strong{color:var(--light);font-weight:500;}
+
+  /* SWIMMER GRID (Roster) */
+  .swimmer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.1rem;padding-bottom:4rem;}
+  .swimmer-card{background:rgba(255,255,255,0.03);border:1px solid rgba(33,150,243,0.12);border-radius:12px;overflow:hidden;transition:border-color .2s,transform .2s;cursor:pointer;text-decoration:none;color:inherit;display:block;}
+  .swimmer-card:hover{border-color:rgba(33,150,243,0.4);transform:translateY(-2px);}
+  .card-header{padding:1rem 1.2rem .7rem;display:flex;align-items:center;gap:.7rem;border-bottom:1px solid rgba(33,150,243,0.08);}
+  .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--mid));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;flex-shrink:0;}
+  .avatar.female{background:linear-gradient(135deg,#7B1FA2,#CE93D8);}
+  .card-name{font-weight:500;font-size:.92rem;}
+  .card-meta{font-size:.72rem;color:var(--grey);margin-top:.1rem;}
+  .gender-badge{margin-left:auto;font-size:.68rem;padding:.18rem .48rem;border-radius:4px;font-weight:500;letter-spacing:.05em;}
+  .gender-badge.M{background:rgba(33,150,243,0.15);color:var(--light);}
+  .gender-badge.F{background:rgba(123,31,162,0.2);color:#CE93D8;}
+  .card-times{padding:.7rem 1.2rem .9rem;}
+  .times-grid{display:flex;flex-wrap:wrap;gap:.35rem;}
+  .event-tag{display:flex;align-items:center;gap:.3rem;padding:.28rem .55rem;border-radius:5px;font-size:.72rem;font-family:'DM Mono',monospace;}
+  .event-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+  .event-tag.free{background:rgba(33,150,243,0.12);} .event-dot.free{background:var(--free);}
+  .event-tag.back{background:rgba(67,160,71,0.12);} .event-dot.back{background:var(--back);}
+  .event-tag.breast{background:rgba(251,140,0,0.12);} .event-dot.breast{background:var(--breast);}
+  .event-tag.fly{background:rgba(142,36,170,0.12);} .event-dot.fly{background:var(--fly);}
+  .event-tag.im{background:rgba(229,57,53,0.12);} .event-dot.im{background:var(--im);}
+  .event-name{color:var(--grey);}
+  .event-time{color:var(--white);font-weight:500;}
+  .no-times{color:var(--grey);font-size:.78rem;font-style:italic;}
+  .view-all{display:inline-block;margin-top:.5rem;font-size:.72rem;color:var(--light);}
+
+  /* RANKINGS TABLE */
+  .rankings-table{width:100%;border-collapse:collapse;margin-bottom:4rem;}
+  .rankings-table th{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);padding:.6rem 1rem;text-align:left;border-bottom:1px solid rgba(33,150,243,0.15);}
+  .rankings-table td{padding:.75rem 1rem;border-bottom:1px solid rgba(33,150,243,0.06);font-size:.88rem;vertical-align:middle;}
+  .rankings-table tr:hover td{background:rgba(33,150,243,0.04);}
+  .rank-num{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--grey);min-width:2.5rem;}
+  .rank-num.gold{color:#FFD700;}
+  .rank-num.silver{color:#C0C0C0;}
+  .rank-num.bronze{color:#CD7F32;}
+  .rank-name{font-weight:500;}
+  .rank-name a{color:inherit;text-decoration:none;}
+  .rank-name a:hover{color:var(--light);}
+  .rank-gender{font-size:.72rem;padding:.18rem .45rem;border-radius:4px;font-weight:500;letter-spacing:.04em;}
+  .rank-gender.M{background:rgba(33,150,243,0.15);color:var(--light);}
+  .rank-gender.F{background:rgba(123,31,162,0.2);color:#CE93D8;}
+  .rank-time{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:500;}
+  .rank-time.stroke-free{color:var(--free);}
+  .rank-time.stroke-back{color:var(--back);}
+  .rank-time.stroke-breast{color:var(--breast);}
+  .rank-time.stroke-fly{color:var(--fly);}
+  .rank-time.stroke-im{color:var(--im);}
+  .rank-bar-wrap{width:120px;}
+  .rank-bar{height:4px;border-radius:2px;background:rgba(255,255,255,0.06);}
+  .rank-bar-fill{height:100%;border-radius:2px;transition:width .6s ease;}
+
+  /* LOADING / EMPTY */
+  .loading-state,.empty-state{text-align:center;padding:4rem 2rem;color:var(--grey);}
+  .spinner{width:32px;height:32px;border:2px solid rgba(33,150,243,0.2);border-top-color:var(--mid);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  footer{border-top:1px solid rgba(33,150,243,0.1);padding:2rem;text-align:center;color:var(--grey);font-size:.8rem;position:relative;z-index:1;}
+
+  @media(max-width:600px){
+    .rank-bar-wrap{display:none;}
+    .swimmer-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="shimmer-bg"></div>
+
+<nav>
+  <span class="brand">SSF Aquatics</span>
+  <a href="index.html">Home</a>
+  <a href="times.html" class="nav-active">Times</a>
+  <a href="leaderboard.html">Leaderboard</a>
+  <a href="dashboard.html">My Account</a>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Team <span>Times</span></h1>
+    <p>Best times from SwimCloud · SCY · Updated weekly</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="roster">Roster</button>
+    <button class="tab" data-tab="rankings">Rankings by Event</button>
+  </div>
+
+  <!-- ROSTER TAB -->
+  <div class="tab-panel active" id="tab-roster">
+    <div class="controls">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="roster-search" placeholder="Search swimmers…">
+      </div>
+      <div class="filter-pills">
+        <button class="pill active" data-gender="all">All</button>
+        <button class="pill" data-gender="M">Boys</button>
+        <button class="pill" data-gender="F">Girls</button>
+      </div>
+      <select class="sort-select" id="roster-sort">
+        <option value="name">Sort: Name A–Z</option>
+        <option value="events">Sort: Most Events</option>
+      </select>
+    </div>
+    <div class="stats-row" id="roster-stats" style="display:none">
+      <div class="stat-chip"><strong id="stat-total">0</strong> swimmers</div>
+      <div class="stat-chip"><strong id="stat-male">0</strong> boys</div>
+      <div class="stat-chip"><strong id="stat-female">0</strong> girls</div>
+      <div class="stat-chip">Updated <strong id="stat-updated">—</strong></div>
+    </div>
+    <div id="roster-container">
+      <div class="loading-state"><div class="spinner"></div><p>Loading roster…</p></div>
+    </div>
+  </div>
+
+  <!-- RANKINGS TAB -->
+  <div class="tab-panel" id="tab-rankings">
+    <div class="event-select-wrap" id="event-buttons"></div>
+    <div class="controls">
+      <div class="filter-pills" id="rankings-gender-pills">
+        <button class="pill active" data-gender="all">All</button>
+        <button class="pill" data-gender="M">Boys</button>
+        <button class="pill" data-gender="F">Girls</button>
+      </div>
+    </div>
+    <div id="rankings-container">
+      <div class="loading-state"><div class="spinner"></div><p>Loading times…</p></div>
+    </div>
+  </div>
+</div>
+
+<footer>SSF Aquatics · South San Francisco · 2026</footer>
+
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
+  authDomain: "ssfaquatics.firebaseapp.com",
+  projectId: "ssfaquatics",
+  storageBucket: "ssfaquatics.firebasestorage.app",
+  messagingSenderId: "21079628309",
+  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── State ──
+let allSwimmers = [];
+let rosterGender = 'all', rosterSort = 'name';
+let rankingsGender = 'all', selectedEvent = null;
+
+// ── Helpers ──
+function strokeOf(ev) {
+  const e = ev.toUpperCase();
+  if (e.includes('FREE'))   return 'free';
+  if (e.includes('BACK'))   return 'back';
+  if (e.includes('BREAST')) return 'breast';
+  if (e.includes('FLY'))    return 'fly';
+  if (e.includes('IM'))     return 'im';
+  return 'free';
+}
+const EVENT_ORDER = ['50 Free','100 Free','200 Free','500 Free','1000 Free','1650 Free',
+  '100 Back','200 Back','100 Breast','200 Breast','100 Fly','200 Fly','200 IM','400 IM'];
+
+function sortedEvents(times) {
+  return Object.entries(times).sort(([a],[b]) => {
+    const ai = EVENT_ORDER.indexOf(a), bi = EVENT_ORDER.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1; if (bi === -1) return -1;
+    return ai - bi;
+  });
+}
+
+function parseSecs(t) {
+  t = t.trim();
+  if (t.includes(':')) { const [m,s] = t.split(':'); return parseInt(m)*60+parseFloat(s); }
+  return parseFloat(t);
+}
+
+// ── Load data ──
+async function loadSwimmers() {
+  const q = query(collection(db, 'swimmers'), where('active', '==', true));
+  const snap = await getDocs(q);
+  allSwimmers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // Stats
+  const males   = allSwimmers.filter(s => s.gender === 'M').length;
+  const females = allSwimmers.filter(s => s.gender === 'F').length;
+  let latest = null;
+  allSwimmers.forEach(s => {
+    if (s.lastUpdated) {
+      const d = s.lastUpdated.toDate ? s.lastUpdated.toDate() : new Date(s.lastUpdated);
+      if (!latest || d > latest) latest = d;
+    }
+  });
+  document.getElementById('stat-total').textContent   = allSwimmers.length;
+  document.getElementById('stat-male').textContent    = males;
+  document.getElementById('stat-female').textContent  = females;
+  document.getElementById('stat-updated').textContent = latest ? latest.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
+  document.getElementById('roster-stats').style.display = 'flex';
+
+  buildEventButtons();
+  renderRoster();
+  renderRankings();
+}
+
+// ── ROSTER RENDER ──
+function renderRoster() {
+  const search = document.getElementById('roster-search').value.toLowerCase();
+  let list = allSwimmers.filter(s => {
+    if (rosterGender !== 'all' && s.gender !== rosterGender) return false;
+    if (search && !s.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  if (rosterSort === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
+  else list.sort((a,b) => Object.keys(b.times||{}).length - Object.keys(a.times||{}).length);
+
+  const container = document.getElementById('roster-container');
+  if (!list.length) { container.innerHTML = `<div class="empty-state">No swimmers found</div>`; return; }
+
+  const SHOW = 4;
+  const cards = list.map(s => {
+    const times = s.times || {};
+    const events = sortedEvents(times);
+    const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const shown = events.slice(0, SHOW);
+    const extra = events.length - SHOW;
+    const tags = shown.map(([ev,t]) => {
+      const stroke = strokeOf(ev);
+      return `<div class="event-tag ${stroke}"><div class="event-dot ${stroke}"></div><span class="event-name">${ev}</span><span class="event-time">${t}</span></div>`;
+    }).join('');
+    const noTimes = events.length === 0 ? `<p class="no-times">No times yet</p>` : '';
+    const more = extra > 0 ? `<a class="view-all" href="swimmer.html?id=${s.id}">+${extra} more →</a>` : '';
+    return `<a class="swimmer-card" href="swimmer.html?id=${s.id}">
+      <div class="card-header">
+        <div class="avatar${s.gender==='F'?' female':''}">${initials}</div>
+        <div><div class="card-name">${s.name}</div><div class="card-meta">${events.length} event${events.length!==1?'s':''}</div></div>
+        <span class="gender-badge ${s.gender}">${s.gender==='M'?'BOY':'GIRL'}</span>
+      </div>
+      <div class="card-times"><div class="times-grid">${tags}${noTimes}</div>${more}</div>
+    </a>`;
+  }).join('');
+
+  container.innerHTML = `<div class="swimmer-grid">${cards}</div>`;
+}
+
+// ── EVENT BUTTONS ──
+function buildEventButtons() {
+  // Collect all unique events across all swimmers
+  const eventSet = new Set();
+  allSwimmers.forEach(s => Object.keys(s.times||{}).forEach(ev => eventSet.add(ev)));
+  const events = [...eventSet].sort((a,b) => {
+    const ai = EVENT_ORDER.indexOf(a), bi = EVENT_ORDER.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1; if (bi === -1) return -1;
+    return ai - bi;
+  });
+  if (!selectedEvent && events.length) selectedEvent = events[0];
+  const wrap = document.getElementById('event-buttons');
+  wrap.innerHTML = events.map(ev => {
+    const stroke = strokeOf(ev);
+    return `<button class="event-btn ${stroke}${selectedEvent===ev?' active':''}" data-event="${ev}">${ev}</button>`;
+  }).join('');
+  wrap.querySelectorAll('.event-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedEvent = btn.dataset.event;
+      wrap.querySelectorAll('.event-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderRankings();
+    });
+  });
+}
+
+// ── RANKINGS RENDER ──
+function renderRankings() {
+  const container = document.getElementById('rankings-container');
+  if (!selectedEvent) { container.innerHTML = `<div class="empty-state">No events found</div>`; return; }
+
+  const stroke = strokeOf(selectedEvent);
+  const colorClass = `stroke-${stroke}`;
+
+  // Gather swimmers with this event
+  let rows = allSwimmers
+    .filter(s => {
+      if (rankingsGender !== 'all' && s.gender !== rankingsGender) return false;
+      return s.times && s.times[selectedEvent];
+    })
+    .map(s => ({ ...s, t: parseSecs(s.times[selectedEvent]), display: s.times[selectedEvent] }));
+
+  rows.sort((a,b) => a.t - b.t);
+
+  if (!rows.length) {
+    container.innerHTML = `<div class="empty-state"><p>No times recorded for ${selectedEvent} yet.</p></div>`;
+    return;
+  }
+
+  const fastest = rows[0].t;
+  const html = `
+    <table class="rankings-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Swimmer</th>
+          <th></th>
+          <th>Time</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((r,i) => {
+          const rankClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+          const pct = Math.round((fastest/r.t)*100);
+          const barColor = stroke==='free'?'var(--free)':stroke==='back'?'var(--back)':stroke==='breast'?'var(--breast)':stroke==='fly'?'var(--fly)':'var(--im)';
+          return `<tr>
+            <td><span class="rank-num ${rankClass}">${i+1}</span></td>
+            <td><div class="rank-name"><a href="swimmer.html?id=${r.id}">${r.name}</a></div></td>
+            <td><span class="rank-gender ${r.gender}">${r.gender==='M'?'BOY':'GIRL'}</span></td>
+            <td><span class="rank-time ${colorClass}">${r.display}</span></td>
+            <td class="rank-bar-wrap"><div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%;background:${barColor};opacity:0.7"></div></div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+  container.innerHTML = html;
+}
+
+// ── TABS ──
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+  });
+});
+
+// ── ROSTER CONTROLS ──
+document.getElementById('roster-search').addEventListener('input', renderRoster);
+document.getElementById('roster-sort').addEventListener('change', e => { rosterSort = e.target.value; renderRoster(); });
+document.querySelectorAll('.filter-pills:first-of-type .pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.filter-pills:first-of-type .pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    rosterGender = p.dataset.gender;
+    renderRoster();
+  });
+});
+
+// ── RANKINGS GENDER PILLS ──
+document.querySelectorAll('#rankings-gender-pills .pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('#rankings-gender-pills .pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    rankingsGender = p.dataset.gender;
+    renderRankings();
+  });
+});
+
+// ── INIT ──
+loadSwimmers().catch(e => {
+  console.error(e);
+  document.getElementById('roster-container').innerHTML =
+    `<div class="empty-state"><p>⚠️ Failed to load. Please try again.</p></div>`;
+  document.getElementById('rankings-container').innerHTML =
+    `<div class="empty-state"><p>⚠️ Failed to load. Please try again.</p></div>`;
+});
+</script>
+</body>
+</html>
