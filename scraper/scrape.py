@@ -89,8 +89,9 @@ async def scrape_best_times(page, swimmer_id: str) -> dict:
             except:
                 return {}  # No times yet
 
-            # Grab all table rows — each row is one event
-            times = {}
+            # Grab all table rows — multiple rows per event (one per meet)
+            # Collect ALL times per event and keep the fastest
+            all_times = {}  # event -> list of (seconds, display_str)
             rows = await page.query_selector_all("table tbody tr")
 
             for row in rows:
@@ -108,12 +109,22 @@ async def scrape_best_times(page, swimmer_id: str) -> dict:
                 if not t or t == "–" or t == "-":
                     continue
 
-                # Normalize event name — e.g. "50 Free" → "50 Y Free"
+                # Normalize event name
                 event = normalize_event(event)
-                if event:
-                    times[event] = t
+                if not event:
+                    continue
 
-            return times
+                try:
+                    secs = parse_time(t)
+                    if event not in all_times:
+                        all_times[event] = (secs, t)
+                    elif secs < all_times[event][0]:
+                        all_times[event] = (secs, t)
+                except:
+                    continue
+
+            # Return only the fastest time per event
+            return {ev: data[1] for ev, data in all_times.items()}
 
         except Exception as e:
             if attempt < MAX_RETRIES - 1:
