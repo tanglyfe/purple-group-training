@@ -44,7 +44,6 @@
     cursor: default;
   }
 
-  /* ── LANE LINES BACKGROUND ─────────────────────────────────────────── */
   body::before {
     content: '';
     position: fixed;
@@ -61,7 +60,6 @@
     z-index: 0;
   }
 
-  /* ── WATER SHIMMER ─────────────────────────────────────────────────── */
   .shimmer-bg {
     position: fixed;
     inset: 0;
@@ -71,7 +69,6 @@
     z-index: 0;
   }
 
-  /* ── LAYOUT ────────────────────────────────────────────────────────── */
   .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -80,7 +77,6 @@
     z-index: 1;
   }
 
-  /* ── HERO ──────────────────────────────────────────────────────────── */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -164,6 +160,47 @@
     align-self: stretch;
   }
 
+  .hero-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 1s forwards;
+  }
+
+  .btn-portal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--white);
+    background: var(--mid);
+    padding: 0.65rem 1.4rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .btn-portal:hover { background: #1976D2; }
+
+  .btn-register {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--grey);
+    padding: 0.65rem 1rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .btn-register:hover { color: var(--light); }
+
   .scroll-hint {
     position: absolute;
     bottom: 2.5rem;
@@ -192,7 +229,6 @@
     animation: scrollPulse 2s ease-in-out 1.5s infinite;
   }
 
-  /* ── SECTION TITLES ────────────────────────────────────────────────── */
   .section {
     padding: 5rem 0;
     position: relative;
@@ -216,7 +252,6 @@
     margin-bottom: 2.5rem;
   }
 
-  /* ── MEET COUNTDOWN ────────────────────────────────────────────────── */
   .countdown-bar {
     background: linear-gradient(135deg, rgba(21,101,192,0.15), rgba(123,31,162,0.15));
     border: 1px solid rgba(33,150,243,0.2);
@@ -270,7 +305,6 @@
     display: block;
   }
 
-  /* ── PHASE CARDS ───────────────────────────────────────────────────── */
   .phases {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -345,7 +379,6 @@
   .badge-upcoming { background: rgba(255,255,255,0.06); color: var(--grey); }
   .badge-done     { background: rgba(67,160,71,0.2);   color: #81C784; }
 
-  /* ── SET TYPE KEY ──────────────────────────────────────────────────── */
   .set-types {
     display: flex;
     gap: 0.5rem;
@@ -363,7 +396,6 @@
     font-weight: 500;
   }
 
-  /* ── TOOLS GRID ────────────────────────────────────────────────────── */
   .tools-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -390,9 +422,10 @@
   }
 
   .tool-card:hover { background: rgba(33,150,243,0.06); }
-
   .tool-card.coach { background: rgba(249,168,37,0.02); }
   .tool-card.coach:hover { background: rgba(249,168,37,0.06); }
+  .tool-card.portal { background: rgba(123,31,162,0.03); }
+  .tool-card.portal:hover { background: rgba(123,31,162,0.08); }
 
   .tool-card::after {
     content: '›';
@@ -407,6 +440,7 @@
   }
   .tool-card:hover::after { color: var(--mid); right: 1rem; }
   .tool-card.coach:hover::after { color: var(--gold); }
+  .tool-card.portal:hover::after { color: #CE93D8; }
 
   .tool-accent {
     position: absolute;
@@ -458,84 +492,9 @@
     margin-top: 1px;
   }
   .tools-section-label:first-child { margin-top: 0; }
-  .tools-section-label.coach-label { color: var(--gold); background: rgba(249,168,37,0.03); }
+  .tools-section-label.coach-label  { color: var(--gold);   background: rgba(249,168,37,0.03); }
+  .tools-section-label.portal-label { color: #CE93D8;       background: rgba(123,31,162,0.03); }
 
-  /* ── FILE CARDS ────────────────────────────────────────────────────── */
-  .files-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .file-card {
-    background: var(--deep);
-    padding: 1.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .file-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease;
-  }
-
-  .file-card:hover { background: rgba(33,150,243,0.07); }
-  .file-card:hover::after { transform: scaleX(1); }
-
-  .file-card.xlsx::after { background: var(--en2); }
-  .file-card.docx::after { background: var(--mid); }
-  .file-card.print::after { background: var(--gold); }
-
-  .file-icon { font-size: 1.5rem; line-height: 1; }
-
-  .file-type {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 0.2rem 0.5rem;
-    border-radius: 1px;
-    display: inline-block;
-    width: fit-content;
-  }
-
-  .file-type.xlsx  { background: rgba(46,125,50,0.2);  color: #81C784; }
-  .file-type.docx  { background: rgba(33,150,243,0.2);  color: var(--light); }
-  .file-type.print { background: rgba(249,168,37,0.2);  color: var(--gold); }
-
-  .file-name  { font-size: 0.95rem; font-weight: 500; color: var(--white); line-height: 1.4; }
-  .file-desc  { font-size: 0.78rem; color: var(--grey); line-height: 1.6; flex: 1; }
-
-  .file-download {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
-    color: var(--light);
-    text-transform: uppercase;
-    margin-top: 0.5rem;
-  }
-
-  .file-download svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
-
-  /* ── WEEK SCHEDULE ─────────────────────────────────────────────────── */
   .week-block {
     margin-bottom: 1px;
     border: 1px solid rgba(255,255,255,0.06);
@@ -624,38 +583,8 @@
   }
 
   .set-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-
   .day-yds { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--grey); white-space: nowrap; }
 
-  /* ── SWIMMER HIGHLIGHTS ────────────────────────────────────────────── */
-  .highlights {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .highlight-card { background: var(--deep); padding: 1.25rem 1.5rem; transition: background 0.2s; }
-  .highlight-card:hover { background: rgba(255,255,255,0.02); }
-  .highlight-name { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.3rem; }
-
-  .highlight-tag {
-    display: inline-block;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.58rem;
-    letter-spacing: 0.12em;
-    padding: 0.15rem 0.5rem;
-    border-radius: 1px;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-
-  .highlight-note { font-size: 0.75rem; color: var(--grey); line-height: 1.6; }
-
-  /* ── FOOTER ────────────────────────────────────────────────────────── */
   footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 2rem 0; position: relative; z-index: 1; }
 
   .footer-inner {
@@ -670,7 +599,6 @@
   .footer-method { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--grey); letter-spacing: 0.08em; }
   .footer-method span { color: var(--light); }
 
-  /* ── ANIMATIONS ────────────────────────────────────────────────────── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -684,7 +612,6 @@
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* ── RESPONSIVE ────────────────────────────────────────────────────── */
   @media (max-width: 700px) {
     .phases { grid-template-columns: repeat(2, 1fr); }
     .tools-grid { grid-template-columns: repeat(2, 1fr); }
@@ -705,7 +632,7 @@
 
 <div class="shimmer-bg"></div>
 
-<!-- ── HERO ──────────────────────────────────────────────────────────────── -->
+<!-- HERO -->
 <section class="hero">
   <div class="container">
     <p class="hero-eyebrow">SSF Swim Team &nbsp;·&nbsp; Ages 9–13 &nbsp;·&nbsp; SCY</p>
@@ -739,6 +666,10 @@
         <span class="hero-stat-label">Total yards</span>
       </div>
     </div>
+    <div class="hero-buttons">
+      <a class="btn-portal" href="login.html">Member Portal →</a>
+      <a class="btn-register" href="register.html">Create account</a>
+    </div>
   </div>
   <div class="scroll-hint">
     <span>Scroll</span>
@@ -746,7 +677,7 @@
   </div>
 </section>
 
-<!-- ── MEET COUNTDOWN + PHASES ───────────────────────────────────────────── -->
+<!-- MEET COUNTDOWN + PHASES -->
 <section class="section">
   <div class="container">
 
@@ -816,7 +747,7 @@
   </div>
 </section>
 
-<!-- ── TOOLS ──────────────────────────────────────────────────────────────── -->
+<!-- TOOLS -->
 <section class="section" style="padding-top:0">
   <div class="container">
     <p class="section-label reveal">Interactive Tools</p>
@@ -854,7 +785,7 @@
 
     <!-- COACH TOOLS -->
     <div class="tools-section-label coach-label reveal" style="margin-top:1px">⭐ Coach Tools</div>
-    <div class="tools-grid reveal" style="margin-bottom:0;grid-template-columns:1fr 1fr;">
+    <div class="tools-grid reveal" style="grid-template-columns:1fr 1fr;">
 
       <a class="tool-card coach" href="coach-hub.html">
         <div class="tool-accent" style="background:linear-gradient(180deg,var(--gold),#F57F17)"></div>
@@ -873,10 +804,33 @@
       </a>
 
     </div>
+
+    <!-- MEMBER PORTAL -->
+    <div class="tools-section-label portal-label reveal" style="margin-top:1px">👤 Member Portal</div>
+    <div class="tools-grid reveal" style="grid-template-columns:1fr 1fr;">
+
+      <a class="tool-card portal" href="login.html">
+        <div class="tool-accent" style="background:linear-gradient(180deg,var(--mid),#7B1FA2)"></div>
+        <div class="tool-icon">🔑</div>
+        <div class="tool-title">Sign In</div>
+        <div class="tool-desc">Access your dashboard · attendance · rankings</div>
+        <div class="tool-badge" style="background:rgba(123,31,162,0.15);color:#CE93D8;">Swimmer · Parent</div>
+      </a>
+
+      <a class="tool-card portal" href="register.html">
+        <div class="tool-accent" style="background:linear-gradient(180deg,#7B1FA2,var(--mid))"></div>
+        <div class="tool-icon">📝</div>
+        <div class="tool-title">Join the Team</div>
+        <div class="tool-desc">Create your account · pick your role · get started</div>
+        <div class="tool-badge" style="background:rgba(123,31,162,0.15);color:#CE93D8;">Free · takes 30 sec</div>
+      </a>
+
+    </div>
+
   </div>
 </section>
 
-<!-- ── WEEKLY SCHEDULE ────────────────────────────────────────────────────── -->
+<!-- WEEKLY SCHEDULE -->
 <section class="section" style="padding-top:0">
   <div class="container">
     <p class="section-label reveal">Schedule</p>
@@ -1043,7 +997,7 @@
   </div>
 </section>
 
-<!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+<!-- FOOTER -->
 <footer>
   <div class="container">
     <div class="footer-inner">
@@ -1054,19 +1008,16 @@
 </footer>
 
 <script>
-  // Countdown
   const meetDate = new Date('2026-03-28T00:00:00');
   const today = new Date();
   today.setHours(0,0,0,0);
   const diff = Math.ceil((meetDate - today) / (1000 * 60 * 60 * 24));
   document.getElementById('days-remaining').textContent = diff > 0 ? diff : 'Race Day!';
 
-  // Week accordion
   function toggleWeek(header) {
     header.closest('.week-block').classList.toggle('open');
   }
 
-  // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((e, i) => {
       if (e.isIntersecting) {
