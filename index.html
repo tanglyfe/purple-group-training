@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Purple Group — SSF Swim Training</title>
+<title>SSF Aquatics</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -32,9 +32,7 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
-
   body {
     background: var(--deep);
     color: var(--white);
@@ -48,14 +46,11 @@
     content: '';
     position: fixed;
     inset: 0;
-    background:
-      repeating-linear-gradient(
-        180deg,
-        transparent 0px,
-        transparent 58px,
-        rgba(33,150,243,0.04) 58px,
-        rgba(33,150,243,0.04) 60px
-      );
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0px, transparent 58px,
+      rgba(33,150,243,0.04) 58px, rgba(33,150,243,0.04) 60px
+    );
     pointer-events: none;
     z-index: 0;
   }
@@ -63,8 +58,9 @@
   .shimmer-bg {
     position: fixed;
     inset: 0;
-    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(21,101,192,0.18) 0%, transparent 70%),
-                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(123,31,162,0.10) 0%, transparent 60%);
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(21,101,192,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(123,31,162,0.10) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
   }
@@ -77,6 +73,7 @@
     z-index: 1;
   }
 
+  /* ── HERO ── */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -99,7 +96,7 @@
 
   .hero-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(5rem, 14vw, 12rem);
+    font-size: clamp(4.5rem, 12vw, 11rem);
     line-height: 0.88;
     letter-spacing: 0.01em;
     color: var(--white);
@@ -113,15 +110,20 @@
     display: block;
   }
 
-  .hero-sub {
-    font-size: 1rem;
-    font-weight: 300;
+  .hero-tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.28em;
     color: var(--grey);
-    margin-top: 1.5rem;
-    max-width: 480px;
-    line-height: 1.7;
+    text-transform: uppercase;
+    margin-top: 1.75rem;
     opacity: 0;
     animation: fadeUp 0.9s ease 0.6s forwards;
+  }
+
+  .hero-tagline strong {
+    color: var(--light);
+    font-weight: 500;
   }
 
   .hero-meta {
@@ -167,7 +169,7 @@
     flex-wrap: wrap;
     margin-top: 2rem;
     opacity: 0;
-    animation: fadeUp 0.9s ease 1s forwards;
+    animation: fadeUp 0.9s ease 0.8s forwards;
   }
 
   .btn-portal {
@@ -229,6 +231,7 @@
     animation: scrollPulse 2s ease-in-out 1.5s infinite;
   }
 
+  /* ── SECTIONS ── */
   .section {
     padding: 5rem 0;
     position: relative;
@@ -252,62 +255,10 @@
     margin-bottom: 2.5rem;
   }
 
-  .countdown-bar {
-    background: linear-gradient(135deg, rgba(21,101,192,0.15), rgba(123,31,162,0.15));
-    border: 1px solid rgba(33,150,243,0.2);
-    border-radius: 2px;
-    padding: 1.5rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-    margin-bottom: 4rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .countdown-bar::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 4px;
-    background: linear-gradient(to bottom, var(--mid), var(--purple));
-  }
-
-  .countdown-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
-    color: var(--grey);
-    text-transform: uppercase;
-  }
-
-  .countdown-date {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    color: var(--gold);
-    letter-spacing: 0.05em;
-  }
-
-  .countdown-days {
-    margin-left: auto;
-    text-align: right;
-  }
-
-  .countdown-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3.5rem;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .countdown-days .countdown-label {
-    display: block;
-  }
-
-  .phases {
+  /* ── FEATURE CARDS ── */
+  .features {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1px;
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.06);
@@ -316,86 +267,43 @@
     margin-bottom: 4rem;
   }
 
-  .phase {
+  .feature-card {
     background: var(--deep);
-    padding: 1.5rem 1.25rem;
+    padding: 2rem 1.5rem;
     transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
   }
 
-  .phase:hover { background: rgba(33,150,243,0.06); }
+  .feature-card:hover { background: rgba(33,150,243,0.05); }
 
-  .phase-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3rem;
-    line-height: 1;
-    color: rgba(255,255,255,0.06);
-    margin-bottom: 0.5rem;
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
   }
 
-  .phase-week {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: var(--grey);
-    text-transform: uppercase;
-    margin-bottom: 0.3rem;
-  }
+  .feature-card:nth-child(1)::before { background: linear-gradient(to bottom, #CD7F32, #FFD700, #00E5FF); }
+  .feature-card:nth-child(2)::before { background: var(--mid); }
+  .feature-card:nth-child(3)::before { background: var(--gold); }
 
-  .phase-name {
+  .feature-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+
+  .feature-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.4rem;
     letter-spacing: 0.04em;
     margin-bottom: 0.5rem;
   }
 
-  .phase-dates {
-    font-size: 0.75rem;
+  .feature-desc {
+    font-size: 0.82rem;
     color: var(--grey);
-    margin-bottom: 0.75rem;
+    line-height: 1.7;
   }
 
-  .phase-yardage {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--light);
-  }
-
-  .phase.active .phase-name { color: var(--mid); }
-  .phase.active .phase-num { color: rgba(33,150,243,0.15); }
-  .phase.active { background: rgba(33,150,243,0.05); }
-
-  .phase-badge {
-    display: inline-block;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.58rem;
-    letter-spacing: 0.12em;
-    padding: 0.2rem 0.5rem;
-    border-radius: 1px;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-
-  .badge-active   { background: rgba(33,150,243,0.2);  color: var(--light); }
-  .badge-upcoming { background: rgba(255,255,255,0.06); color: var(--grey); }
-  .badge-done     { background: rgba(67,160,71,0.2);   color: #81C784; }
-
-  .set-types {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 4rem;
-  }
-
-  .set-chip {
-    padding: 0.35rem 0.75rem;
-    border-radius: 1px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
+  /* ── TOOLS GRID ── */
   .tools-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -406,7 +314,6 @@
     overflow: hidden;
     margin-bottom: 1px;
   }
-  .tools-grid.four-col { grid-template-columns: repeat(4, 1fr); }
 
   .tool-card {
     background: var(--deep);
@@ -492,99 +399,10 @@
     margin-top: 1px;
   }
   .tools-section-label:first-child { margin-top: 0; }
-  .tools-section-label.coach-label  { color: var(--gold);   background: rgba(249,168,37,0.03); }
-  .tools-section-label.portal-label { color: #CE93D8;       background: rgba(123,31,162,0.03); }
+  .tools-section-label.coach-label  { color: var(--gold);  background: rgba(249,168,37,0.03); }
+  .tools-section-label.portal-label { color: #CE93D8;      background: rgba(123,31,162,0.03); }
 
-  .week-block {
-    margin-bottom: 1px;
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .week-header {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.25rem 1.75rem;
-    background: rgba(255,255,255,0.03);
-    cursor: pointer;
-    transition: background 0.2s;
-    user-select: none;
-  }
-
-  .week-header:hover { background: rgba(33,150,243,0.06); }
-
-  .week-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.2rem;
-    color: rgba(255,255,255,0.12);
-    line-height: 1;
-    min-width: 3rem;
-  }
-
-  .week-info { flex: 1; }
-
-  .week-phase {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    color: var(--grey);
-    text-transform: uppercase;
-    margin-bottom: 0.2rem;
-  }
-
-  .week-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.03em; }
-  .week-dates { font-size: 0.75rem; color: var(--grey); }
-
-  .week-yardage { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--light); text-align: right; }
-
-  .week-chevron {
-    width: 18px; height: 18px;
-    stroke: var(--grey); fill: none; stroke-width: 2;
-    transition: transform 0.3s;
-    flex-shrink: 0;
-  }
-
-  .week-block.open .week-chevron { transform: rotate(180deg); }
-
-  .week-days { display: none; border-top: 1px solid rgba(255,255,255,0.06); }
-  .week-block.open .week-days { display: block; }
-
-  .day-row {
-    display: grid;
-    grid-template-columns: 100px 1fr auto;
-    gap: 1rem;
-    align-items: center;
-    padding: 0.9rem 1.75rem;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    transition: background 0.15s;
-  }
-
-  .day-row:last-child { border-bottom: none; }
-  .day-row:hover { background: rgba(33,150,243,0.04); }
-
-  .day-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    color: var(--grey);
-    text-transform: uppercase;
-  }
-
-  .day-theme { font-size: 0.85rem; color: var(--white); font-weight: 400; }
-
-  .day-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  .set-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .day-yds { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--grey); white-space: nowrap; }
-
+  /* ── FOOTER ── */
   footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 2rem 0; position: relative; z-index: 1; }
 
   .footer-inner {
@@ -596,9 +414,10 @@
   }
 
   .footer-left { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; color: var(--grey); text-transform: uppercase; }
-  .footer-method { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--grey); letter-spacing: 0.08em; }
-  .footer-method span { color: var(--light); }
+  .footer-right { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--grey); letter-spacing: 0.08em; }
+  .footer-right a { color: var(--light); text-decoration: none; }
 
+  /* ── ANIMATIONS ── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -612,19 +431,15 @@
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
+  /* ── RESPONSIVE ── */
   @media (max-width: 700px) {
-    .phases { grid-template-columns: repeat(2, 1fr); }
+    .features { grid-template-columns: 1fr; }
     .tools-grid { grid-template-columns: repeat(2, 1fr); }
-    .tools-grid.four-col { grid-template-columns: repeat(2, 1fr); }
     .hero-title { font-size: clamp(4rem, 18vw, 8rem); }
-    .countdown-days { margin-left: 0; }
-    .day-row { grid-template-columns: 80px 1fr; }
-    .day-meta { display: none; }
     .hero-divider { display: none; }
   }
   @media (max-width: 460px) {
     .tools-grid { grid-template-columns: 1fr; }
-    .tools-grid.four-col { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -632,40 +447,17 @@
 
 <div class="shimmer-bg"></div>
 
-<!-- HERO -->
+<!-- ── HERO ── -->
 <section class="hero">
   <div class="container">
-    <p class="hero-eyebrow">SSF Swim Team &nbsp;·&nbsp; Ages 9–13 &nbsp;·&nbsp; SCY</p>
+    <p class="hero-eyebrow">South San Francisco &nbsp;·&nbsp; Competitive Swim &nbsp;·&nbsp; SCY</p>
     <h1 class="hero-title">
-      Purple
-      <span>Group</span>
+      SSF
+      <span>Aquatics</span>
     </h1>
-    <p class="hero-sub">
-      4-week periodized training block — Weeks 26 through 29.
-      Build, Peak, Taper, Race. All workouts, pace tables, and lane
-      assignments in one place.
+    <p class="hero-tagline">
+      <strong>Compete.</strong> &nbsp;<strong>Improve.</strong> &nbsp;<strong>Achieve.</strong>
     </p>
-    <div class="hero-meta">
-      <div class="hero-stat">
-        <span class="hero-stat-num">35</span>
-        <span class="hero-stat-label">Swimmers</span>
-      </div>
-      <div class="hero-divider"></div>
-      <div class="hero-stat">
-        <span class="hero-stat-num">3</span>
-        <span class="hero-stat-label">Lanes</span>
-      </div>
-      <div class="hero-divider"></div>
-      <div class="hero-stat">
-        <span class="hero-stat-num">10</span>
-        <span class="hero-stat-label">Events tracked</span>
-      </div>
-      <div class="hero-divider"></div>
-      <div class="hero-stat">
-        <span class="hero-stat-num">~57K</span>
-        <span class="hero-stat-label">Total yards</span>
-      </div>
-    </div>
     <div class="hero-buttons">
       <a class="btn-portal" href="login.html">Member Portal →</a>
       <a class="btn-register" href="register.html">Create account</a>
@@ -677,81 +469,32 @@
   </div>
 </section>
 
-<!-- MEET COUNTDOWN + PHASES -->
+<!-- ── WHAT WE OFFER ── -->
 <section class="section">
   <div class="container">
+    <p class="section-label reveal">Platform</p>
+    <h2 class="section-title reveal">Built for Every Swimmer</h2>
 
-    <div class="countdown-bar reveal">
-      <div>
-        <div class="countdown-label">Target Meet</div>
-        <div class="countdown-date">March 28, 2026 — Saturday</div>
+    <div class="features reveal">
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">Rankings & Progress</div>
+        <div class="feature-desc">Track personal bests across all events. Earn ranks from Bronze to Elite based on USA Swimming motivational time standards. Every time drop counts.</div>
       </div>
-      <div>
-        <div class="countdown-label">Location</div>
-        <div style="font-size:0.85rem; color:var(--white); margin-top:0.2rem;">SSF Swim Team</div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Attendance & Dryland</div>
+        <div class="feature-desc">Stay on top of your practice attendance and dryland training. Monthly analytics show streaks, trends, and where you stand against the team.</div>
       </div>
-      <div class="countdown-days">
-        <div class="countdown-num" id="days-remaining">—</div>
-        <span class="countdown-label">Days to race</span>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Team Leaderboards</div>
+        <div class="feature-desc">See how you stack up across all events. Friendly competition drives improvement — watch your rank climb as you drop time and hit new cuts.</div>
       </div>
     </div>
 
-    <p class="section-label reveal">Training Block</p>
-    <h2 class="section-title reveal">4-Week Plan</h2>
-
-    <div class="phases reveal">
-      <div class="phase active">
-        <div class="phase-badge badge-active">Current</div>
-        <div class="phase-num">26</div>
-        <div class="phase-week">Week 26</div>
-        <div class="phase-name">Build</div>
-        <div class="phase-dates">Mar 2 – 6</div>
-        <div class="phase-yardage">~14,200 yds</div>
-      </div>
-      <div class="phase">
-        <div class="phase-badge badge-upcoming">Upcoming</div>
-        <div class="phase-num">27</div>
-        <div class="phase-week">Week 27</div>
-        <div class="phase-name">Peak</div>
-        <div class="phase-dates">Mar 9 – 13</div>
-        <div class="phase-yardage">~15,500 yds</div>
-      </div>
-      <div class="phase">
-        <div class="phase-badge badge-upcoming">Upcoming</div>
-        <div class="phase-num">28</div>
-        <div class="phase-week">Week 28</div>
-        <div class="phase-name">Taper</div>
-        <div class="phase-dates">Mar 16 – 20</div>
-        <div class="phase-yardage">~12,000 yds</div>
-      </div>
-      <div class="phase">
-        <div class="phase-badge badge-upcoming">Upcoming</div>
-        <div class="phase-num">29</div>
-        <div class="phase-week">Week 29</div>
-        <div class="phase-name">Race Week</div>
-        <div class="phase-dates">Mar 23 – 27</div>
-        <div class="phase-yardage">~6,200 yds</div>
-      </div>
-    </div>
-
-    <p class="section-label reveal">Methodology</p>
-    <h2 class="section-title reveal">Set Type Key</h2>
-    <div class="set-types reveal">
-      <div class="set-chip" style="background:rgba(84,110,122,0.2);color:#90A4AE;">REC — Recovery / Drill</div>
-      <div class="set-chip" style="background:rgba(21,101,192,0.2);color:#90CAF9;">EN1 — 90–95% Critical Pace</div>
-      <div class="set-chip" style="background:rgba(46,125,50,0.2);color:#A5D6A7;">EN2 — ~Critical Pace</div>
-      <div class="set-chip" style="background:rgba(191,54,12,0.2);color:#FFAB91;">SP1 — 95% Max / Lactate</div>
-      <div class="set-chip" style="background:rgba(106,27,154,0.2);color:#CE93D8;">SP3 — Max Effort / Full Rest</div>
-    </div>
-
-  </div>
-</section>
-
-<!-- TOOLS -->
-<section class="section" style="padding-top:0">
-  <div class="container">
-    <p class="section-label reveal">Interactive Tools</p>
-    <h2 class="section-title reveal">Team Hub</h2>
+    <p class="section-label reveal">Team Hub</p>
+    <h2 class="section-title reveal">All Your Tools</h2>
 
     <!-- SWIMMER TOOLS -->
     <div class="tools-section-label reveal">🏊 Swimmer Tools</div>
@@ -779,6 +522,14 @@
         <div class="tool-title">Dryland Log</div>
         <div class="tool-desc">Log sets · unlock higher targets · track weekly progress</div>
         <div class="tool-badge" style="background:rgba(33,150,243,0.12);color:var(--light);">3× min · 4× stretch</div>
+      </a>
+
+      <a class="tool-card" href="attendance.html">
+        <div class="tool-accent" style="background:var(--back)"></div>
+        <div class="tool-icon">✅</div>
+        <div class="tool-title">Attendance</div>
+        <div class="tool-desc">Session history · streaks · monthly analytics</div>
+        <div class="tool-badge" style="background:rgba(67,160,71,0.12);color:#81C784;">Monthly view</div>
       </a>
 
     </div>
@@ -830,194 +581,17 @@
   </div>
 </section>
 
-<!-- WEEKLY SCHEDULE -->
-<section class="section" style="padding-top:0">
-  <div class="container">
-    <p class="section-label reveal">Schedule</p>
-    <h2 class="section-title reveal">Week by Week</h2>
-
-    <!-- WEEK 26 -->
-    <div class="week-block open reveal">
-      <div class="week-header" onclick="toggleWeek(this)">
-        <div class="week-num">26</div>
-        <div class="week-info">
-          <div class="week-phase">Build — Technique Foundation</div>
-          <div class="week-title">March 2 – 6, 2026</div>
-        </div>
-        <div class="week-yardage">
-          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--mid)">14,200</div>
-          <div>yards</div>
-        </div>
-        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="week-days">
-        <div class="day-row">
-          <div class="day-label">Mon 3/2</div>
-          <div class="day-theme">Freestyle &amp; Turns</div>
-          <div class="day-meta">
-            <div class="set-dot" style="background:var(--rec)"></div>
-            <div class="set-dot" style="background:var(--en2)"></div>
-            <div class="set-dot" style="background:var(--sp3)"></div>
-            <div class="day-yds">~2,800</div>
-          </div>
-        </div>
-        <div class="day-row">
-          <div class="day-label">Tue 3/3</div>
-          <div class="day-theme">Butterfly &amp; Breaststroke — 8×100 IM</div>
-          <div class="day-meta">
-            <div class="set-dot" style="background:var(--rec)"></div>
-            <div class="set-dot" style="background:var(--en1)"></div>
-            <div class="set-dot" style="background:var(--en2)"></div>
-            <div class="day-yds">~3,200</div>
-          </div>
-        </div>
-        <div class="day-row">
-          <div class="day-label">Wed 3/4</div>
-          <div class="day-theme">Backstroke &amp; Kick Power</div>
-          <div class="day-meta">
-            <div class="set-dot" style="background:var(--rec)"></div>
-            <div class="set-dot" style="background:var(--en1)"></div>
-            <div class="set-dot" style="background:var(--sp1)"></div>
-            <div class="set-dot" style="background:var(--sp3)"></div>
-            <div class="day-yds">~2,500</div>
-          </div>
-        </div>
-        <div class="day-row">
-          <div class="day-label">Thu 3/5</div>
-          <div class="day-theme">Freestyle Endurance — EN1 / EN2 Bookends</div>
-          <div class="day-meta">
-            <div class="set-dot" style="background:var(--rec)"></div>
-            <div class="set-dot" style="background:var(--en1)"></div>
-            <div class="set-dot" style="background:var(--en2)"></div>
-            <div class="day-yds">~3,500</div>
-          </div>
-        </div>
-        <div class="day-row">
-          <div class="day-label">Fri 3/6</div>
-          <div class="day-theme">Speed &amp; Fun — Blastoffs &amp; Relay</div>
-          <div class="day-meta">
-            <div class="set-dot" style="background:var(--en1)"></div>
-            <div class="set-dot" style="background:var(--sp1)"></div>
-            <div class="set-dot" style="background:var(--sp3)"></div>
-            <div class="day-yds">~2,200</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- WEEK 27 -->
-    <div class="week-block reveal" style="margin-top:1px">
-      <div class="week-header" onclick="toggleWeek(this)">
-        <div class="week-num" style="color:rgba(255,255,255,0.06)">27</div>
-        <div class="week-info">
-          <div class="week-phase">Peak — Race Pace &amp; Power</div>
-          <div class="week-title" style="color:var(--grey)">March 9 – 13, 2026</div>
-        </div>
-        <div class="week-yardage">
-          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--grey)">15,500</div>
-          <div>yards</div>
-        </div>
-        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="week-days">
-        <div class="day-row">
-          <div class="day-label" style="color:rgba(139,163,192,0.5)">Mon 3/9</div>
-          <div class="day-theme" style="color:var(--grey)">Race Pace Freestyle — Coming soon</div>
-          <div class="day-meta"><div class="day-yds">~3,200</div></div>
-        </div>
-        <div class="day-row">
-          <div class="day-label" style="color:rgba(139,163,192,0.5)">Tue 3/10</div>
-          <div class="day-theme" style="color:var(--grey)">Butterfly Peak — Coming soon</div>
-          <div class="day-meta"><div class="day-yds">~3,000</div></div>
-        </div>
-        <div class="day-row">
-          <div class="day-label" style="color:rgba(139,163,192,0.5)">Wed 3/11</div>
-          <div class="day-theme" style="color:var(--grey)">Breaststroke &amp; Turns — Coming soon</div>
-          <div class="day-meta"><div class="day-yds">~2,800</div></div>
-        </div>
-        <div class="day-row">
-          <div class="day-label" style="color:rgba(139,163,192,0.5)">Thu 3/12</div>
-          <div class="day-theme" style="color:var(--grey)">Big Endurance Day — Coming soon</div>
-          <div class="day-meta"><div class="day-yds">~4,000</div></div>
-        </div>
-        <div class="day-row">
-          <div class="day-label" style="color:rgba(139,163,192,0.5)">Fri 3/13</div>
-          <div class="day-theme" style="color:var(--grey)">Speed Day — Coming soon</div>
-          <div class="day-meta"><div class="day-yds">~2,500</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- WEEK 28 -->
-    <div class="week-block reveal" style="margin-top:1px">
-      <div class="week-header" onclick="toggleWeek(this)">
-        <div class="week-num" style="color:rgba(255,255,255,0.06)">28</div>
-        <div class="week-info">
-          <div class="week-phase">Taper — Sharpen &amp; Speed</div>
-          <div class="week-title" style="color:var(--grey)">March 16 – 20, 2026</div>
-        </div>
-        <div class="week-yardage">
-          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--grey)">12,000</div>
-          <div>yards</div>
-        </div>
-        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="week-days">
-        <div class="day-row" style="opacity:0.4">
-          <div class="day-label">Mon–Fri</div>
-          <div class="day-theme">Workouts coming in Week 27</div>
-          <div class="day-meta"><div class="day-yds">~12,000 total</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- WEEK 29 -->
-    <div class="week-block reveal" style="margin-top:1px">
-      <div class="week-header" onclick="toggleWeek(this)">
-        <div class="week-num" style="color:rgba(255,255,255,0.06)">29</div>
-        <div class="week-info">
-          <div class="week-phase">Race Week</div>
-          <div class="week-title" style="color:var(--grey)">March 23 – 27, 2026</div>
-        </div>
-        <div class="week-yardage">
-          <div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--gold)">6,200</div>
-          <div>yards</div>
-        </div>
-        <svg class="week-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="week-days">
-        <div class="day-row" style="opacity:0.4">
-          <div class="day-label">Mon–Fri</div>
-          <div class="day-theme">Race week activation &amp; sharpening — coming soon</div>
-          <div class="day-meta"><div class="day-yds">~6,200 total</div></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- FOOTER -->
+<!-- ── FOOTER ── -->
 <footer>
   <div class="container">
     <div class="footer-inner">
-      <div class="footer-left">Purple Group &nbsp;·&nbsp; SSF Swim Team &nbsp;·&nbsp; 2026</div>
-      <div class="footer-method">Methodology: <span>Acadian Endurance EN1 / EN2 / SP1 / SP3</span></div>
+      <div class="footer-left">SSF Aquatics &nbsp;·&nbsp; South San Francisco &nbsp;·&nbsp; 2026</div>
+      <div class="footer-right"><a href="login.html">Member Portal</a> &nbsp;·&nbsp; <a href="register.html">Create Account</a></div>
     </div>
   </div>
 </footer>
 
 <script>
-  const meetDate = new Date('2026-03-28T00:00:00');
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const diff = Math.ceil((meetDate - today) / (1000 * 60 * 60 * 24));
-  document.getElementById('days-remaining').textContent = diff > 0 ? diff : 'Race Day!';
-
-  function toggleWeek(header) {
-    header.closest('.week-block').classList.toggle('open');
-  }
-
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((e, i) => {
       if (e.isIntersecting) {
