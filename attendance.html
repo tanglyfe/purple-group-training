@@ -18,22 +18,6 @@
   body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;padding-bottom:6rem;}
   body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.03) 58px,rgba(33,150,243,0.03) 60px);pointer-events:none;z-index:0;}
 
-  /* GATE */
-  .gate-wrap{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4rem 2rem;position:relative;z-index:1;}
-  .gate-card{width:100%;max-width:400px;background:linear-gradient(135deg,rgba(249,168,37,0.07),rgba(249,168,37,0.02));border:1px solid rgba(249,168,37,0.22);border-radius:2px;padding:2.5rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;position:relative;overflow:hidden;}
-  .gate-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,var(--gold),rgba(249,168,37,0.15));}
-  .gate-icon{font-size:2rem;}
-  .gate-title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.03em;}
-  .gate-sub{font-family:'DM Mono',monospace;font-size:.63rem;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;}
-  .gate-inputs{display:flex;gap:.6rem;align-items:center;margin-top:.25rem;flex-wrap:wrap;justify-content:center;width:100%;}
-  .gate-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:2px;color:var(--white);font-family:'DM Mono',monospace;font-size:.95rem;padding:.55rem 1rem;outline:none;letter-spacing:.15em;width:175px;text-align:center;transition:border-color .2s;}
-  .gate-input:focus{border-color:rgba(249,168,37,0.4);}
-  .gate-btn{padding:.55rem 1.25rem;background:var(--gold);border:none;border-radius:2px;color:#071429;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;cursor:pointer;transition:background .2s;}
-  .gate-btn:hover{background:#F57F17;}
-  .gate-error{font-family:'DM Mono',monospace;font-size:.6rem;color:#EF9A9A;letter-spacing:.12em;text-transform:uppercase;display:none;}
-  .back-link{margin-top:1.25rem;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;text-decoration:none;transition:color .2s;}
-  .back-link:hover{color:var(--light);}
-
   /* TOPBAR */
   .topbar{position:sticky;top:0;z-index:100;background:rgba(7,20,41,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,0.15);padding:.75rem 1rem;}
   .topbar-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:.75rem;}
@@ -49,14 +33,6 @@
   .sync-status.error{color:var(--red2);}
   .lock-btn{background:none;border:1px solid rgba(255,255,255,0.08);border-radius:2px;color:var(--grey);font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .6rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
   .lock-btn:hover{border-color:rgba(198,40,40,.4);color:#EF9A9A;}
-
-  /* SETUP BANNER */
-  .setup-banner{max-width:680px;margin:.75rem auto 0;padding:0 1rem;position:relative;z-index:1;display:none;}
-  .setup-card{background:linear-gradient(135deg,rgba(249,168,37,0.08),rgba(249,168,37,0.02));border:1px solid rgba(249,168,37,0.2);border-radius:2px;padding:.85rem 1rem .85rem 1.25rem;position:relative;overflow:hidden;}
-  .setup-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);}
-  .setup-card-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:.3rem;}
-  .setup-card-text{font-size:.78rem;color:var(--grey);line-height:1.6;}
-  .setup-card-text a{color:var(--light);text-decoration:underline;}
 
   /* DATE BAR */
   .date-bar{max-width:680px;margin:0 auto;padding:1rem 1rem 0;position:relative;z-index:1;}
@@ -113,7 +89,7 @@
   .note-input:focus{border-color:var(--gold);}
   .note-input::placeholder{color:rgba(139,163,192,0.5);}
 
-  /* VIEWS: TABS */
+  /* VIEW TABS */
   .view-tabs{max-width:680px;margin:2rem auto 0;padding:0 1rem;display:flex;gap:1px;position:relative;z-index:1;}
   .view-tab{flex:1;padding:.6rem;text-align:center;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);color:var(--grey);transition:all .15s;}
   .view-tab:first-child{border-radius:2px 0 0 2px;}
@@ -158,30 +134,66 @@
   /* EMPTY */
   .empty-state{padding:1.5rem;text-align:center;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;color:rgba(139,163,192,0.4);text-transform:uppercase;border:1px solid rgba(255,255,255,0.06);border-radius:2px;}
 
-  /* LOADING OVERLAY */
+  /* LOADING */
   .loading-row{padding:.75rem .9rem;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;text-align:center;background:rgba(249,168,37,0.03);border:1px solid rgba(249,168,37,0.08);border-radius:2px;margin-top:.5rem;}
+
+  /* MONTHLY VIEW */
+  .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+  .month-nav-btn{background:none;border:1px solid rgba(255,255,255,0.1);border-radius:2px;color:var(--grey);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;padding:.4rem .8rem;cursor:pointer;transition:all .15s;}
+  .month-nav-btn:hover{border-color:var(--mid);color:var(--light);}
+  .month-nav-label{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.05em;}
+
+  .month-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.25rem;}
+  .month-stat{background:var(--deep);padding:.9rem 1rem;}
+  .month-stat-label{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;margin-bottom:.25rem;}
+  .month-stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1;}
+
+  /* HEATMAP */
+  .heatmap-wrap{border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.25rem;}
+  .heatmap-header{display:grid;grid-template-columns:repeat(7,1fr);background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);}
+  .heatmap-dow{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;text-align:center;padding:.4rem 0;}
+  .heatmap-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:.5rem;}
+  .heatmap-cell{aspect-ratio:1;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.55rem;color:rgba(255,255,255,0.5);cursor:default;transition:transform .1s;position:relative;}
+  .heatmap-cell:hover{transform:scale(1.15);z-index:2;}
+  .heatmap-cell.empty{background:transparent;cursor:default;}
+  .heatmap-cell.no-session{background:rgba(255,255,255,0.04);}
+  .heatmap-cell.pct-high{background:rgba(46,125,50,0.7);}
+  .heatmap-cell.pct-mid{background:rgba(249,168,37,0.5);}
+  .heatmap-cell.pct-low{background:rgba(198,40,40,0.55);}
+  .heatmap-cell.today-cell{outline:2px solid var(--mid);outline-offset:-2px;}
+
+  /* ABSENCE ALERTS */
+  .alert-section{margin-bottom:1.25rem;}
+  .alert-section-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem;}
+  .alert-card{background:rgba(198,40,40,0.08);border:1px solid rgba(198,40,40,0.2);border-left:3px solid var(--red2);border-radius:2px;padding:.7rem 1rem;margin-bottom:.4rem;display:flex;align-items:center;justify-content:space-between;}
+  .alert-name{font-size:.88rem;font-weight:500;}
+  .alert-detail{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--red2);text-transform:uppercase;}
+  .no-alerts{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;color:var(--green2);text-transform:uppercase;padding:.6rem 0;}
+
+  /* MONTHLY SWIMMER TABLE */
+  .month-swimmer-table{border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.25rem;}
+  .month-swimmer-row{display:grid;grid-template-columns:1fr 55px 55px 55px 70px;gap:.4rem;align-items:center;padding:.6rem .9rem;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .month-swimmer-row:last-child{border-bottom:none;}
+  .month-swimmer-row:hover{background:rgba(255,255,255,0.02);}
+  .month-swimmer-row.msw-header{background:rgba(255,255,255,0.03);font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;}
+  .trend-up{color:var(--green2);}
+  .trend-dn{color:var(--red2);}
+  .trend-eq{color:var(--grey);}
+
+  /* MOM CHART */
+  .mom-chart{border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.25rem;}
+  .mom-chart-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;padding:.75rem 1rem .5rem;}
+  .mom-bars{display:flex;align-items:flex-end;gap:4px;height:80px;padding:0 1rem .75rem;}
+  .mom-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;}
+  .mom-bar{width:100%;border-radius:2px 2px 0 0;transition:height .4s;min-height:2px;background:var(--mid);}
+  .mom-bar-label{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.06em;color:var(--grey);text-align:center;}
+  .mom-bar-pct{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--light);text-align:center;}
 </style>
 </head>
 <body>
 
-<!-- GATE -->
-<div id="att-gate" class="gate-wrap">
-  <div class="gate-card">
-    <div class="gate-icon">✅</div>
-    <div class="gate-title">Attendance</div>
-    <div class="gate-sub">Coach password required</div>
-    <div class="gate-inputs">
-      <input type="password" id="gate-pw" class="gate-input" placeholder="Password"
-        onkeydown="if(event.key==='Enter')gateUnlock()">
-      <button class="gate-btn" onclick="gateUnlock()">Enter</button>
-    </div>
-    <div id="gate-error" class="gate-error">Incorrect password</div>
-  </div>
-  <a href="index.html" class="back-link">← Back to main site</a>
-</div>
-
 <!-- MAIN APP -->
-<div id="att-app" style="display:none;">
+<div id="att-app">
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -195,18 +207,6 @@
       <div class="topbar-date" id="topbar-date">Purple Group</div>
     </div>
     <span class="sync-status" id="sync-status"></span>
-    <button class="lock-btn" onclick="gateLock()">Lock</button>
-  </div>
-</div>
-
-<!-- SETUP BANNER (shown until SCRIPT_URL is configured) -->
-<div class="setup-banner" id="setup-banner">
-  <div class="setup-card">
-    <div class="setup-card-title">⚠ Google Sheets not connected</div>
-    <div class="setup-card-text">
-      Replace <code style="color:var(--light)">YOUR_SCRIPT_URL_HERE</code> in the JS with your Apps Script URL.
-      Data is saving to localStorage as a fallback until then.
-    </div>
   </div>
 </div>
 
@@ -240,9 +240,9 @@
 
 <!-- MARK ALL -->
 <div class="mark-all-bar">
-  <button class="mark-all-btn present" onclick="markAll('present')">✓ Mark All Present</button>
-  <button class="mark-all-btn absent"  onclick="markAll('absent')">✗ Mark All Absent</button>
-  <button class="mark-all-btn clear"   onclick="markAll('clear')">Clear</button>
+  <button class="mark-all-btn present" id="mark-present-btn">✓ Mark All Present</button>
+  <button class="mark-all-btn absent"  id="mark-absent-btn">✗ Mark All Absent</button>
+  <button class="mark-all-btn clear"   id="mark-clear-btn">Clear</button>
 </div>
 
 <!-- ROSTER -->
@@ -250,9 +250,10 @@
 
 <!-- VIEW TABS -->
 <div class="view-tabs">
-  <div class="view-tab active" onclick="switchView('history')">📅 History</div>
-  <div class="view-tab" onclick="switchView('weekly')">📊 Weekly Summary</div>
-  <div class="view-tab" onclick="switchView('swimmers')">🏊 Swimmer %</div>
+  <div class="view-tab active" data-view="history">📅 History</div>
+  <div class="view-tab" data-view="weekly">📊 Weekly</div>
+  <div class="view-tab" data-view="swimmers">🏊 Swimmers</div>
+  <div class="view-tab" data-view="monthly">📆 Monthly</div>
 </div>
 
 <!-- HISTORY PANEL -->
@@ -270,22 +271,47 @@
   <div id="swimmers-container"></div>
 </div>
 
+<!-- MONTHLY PANEL -->
+<div class="view-panel" id="panel-monthly">
+  <div id="monthly-container"></div>
+</div>
+
 <!-- EXPORT -->
 <div class="export-bar">
-  <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
-  <button class="export-btn" onclick="exportSummary()">📋 Copy Today's Summary</button>
+  <button class="export-btn" id="export-csv-btn">⬇ Export CSV</button>
+  <button class="export-btn" id="export-summary-btn">📋 Copy Today's Summary</button>
 </div>
 
 </div><!-- end #att-app -->
 
-<script>
+<!-- Firebase SDK (modular v10) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import {
+  getFirestore, doc, getDoc, setDoc, getDocs,
+  collection, deleteField
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
 // ─────────────────────────────────────────────────────────────────────────────
-// CONFIG — paste your Apps Script Web App URL here after deploying
+// FIREBASE CONFIG
 // ─────────────────────────────────────────────────────────────────────────────
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwinWhnbO7Cz1RDC2Y5CjoisMcghTBoqeF8Bl8IZoSlaE3XEkI5g9lSFXhY8QtDPLx8bg/exec';
-const COACH_PW   = 'purple2025';
-const SESSION_KEY = 'purple_att_session';
-const LS_KEY      = 'purple_attendance';
+const firebaseConfig = {
+  apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
+  authDomain: "ssfaquatics.firebaseapp.com",
+  projectId: "ssfaquatics",
+  storageBucket: "ssfaquatics.firebasestorage.app",
+  messagingSenderId: "21079628309",
+  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c",
+  measurementId: "G-VRNWV4VDP4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────────────────────────────────────────
+const LS_KEY = 'purple_attendance';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ROSTER
@@ -335,80 +361,91 @@ const LANE_LABELS = { 3:"Lane 3 — Fast", 2:"Lane 2 — Mid", 1:"Lane 1 — Dev
 // STATE
 // ─────────────────────────────────────────────────────────────────────────────
 let currentDate = todayStr();
-let attendance  = {};  // { "YYYY-MM-DD": { "Name": { status, note } } }
+let attendance  = {};   // { "YYYY-MM-DD": { "Name": { status, note } } }
 let saveTimer   = null;
-let sheetsReady = false;
 
 function todayStr() {
   return new Date().toISOString().split('T')[0];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GATE
+// SYNC STATUS
 // ─────────────────────────────────────────────────────────────────────────────
-function gateUnlock() {
-  const val = document.getElementById('gate-pw').value;
-  if (val === COACH_PW) {
-    sessionStorage.setItem(SESSION_KEY, '1');
-    document.getElementById('att-gate').style.display = 'none';
-    document.getElementById('att-app').style.display  = 'block';
-    initApp();
-  } else {
-    document.getElementById('gate-error').style.display = 'block';
-    document.getElementById('gate-pw').value = '';
-    document.getElementById('gate-pw').focus();
-  }
-}
-
-function gateLock() {
-  sessionStorage.removeItem(SESSION_KEY);
-  document.getElementById('att-app').style.display  = 'none';
-  document.getElementById('att-gate').style.display = 'flex';
-  document.getElementById('gate-pw').value = '';
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SHEETS API
-// ─────────────────────────────────────────────────────────────────────────────
-const scriptsConfigured = SCRIPT_URL !== 'YOUR_SCRIPT_URL_HERE';
-
 function setSyncStatus(state, msg) {
   const el = document.getElementById('sync-status');
   el.className = 'sync-status ' + state;
   el.textContent = msg;
 }
 
-async function sheetsRead() {
-  if (!scriptsConfigured) return null;
+// ─────────────────────────────────────────────────────────────────────────────
+// FIRESTORE — READ ONE DATE
+// ─────────────────────────────────────────────────────────────────────────────
+async function firestoreReadDate(date) {
   try {
     setSyncStatus('syncing', '⟳ Loading…');
-    const res = await fetch(`${SCRIPT_URL}?action=read`);
-    const data = await res.json();
+    const snap = await getDoc(doc(db, 'attendance', date));
     setSyncStatus('synced', '✓ Synced');
-    return data;
+    return snap.exists() ? snap.data() : null;
   } catch(e) {
     setSyncStatus('error', '✗ Offline');
+    console.error('Firestore read error:', e);
     return null;
   }
 }
 
-async function sheetsWrite(date, name, status, note) {
-  if (!scriptsConfigured) return;
+// ─────────────────────────────────────────────────────────────────────────────
+// FIRESTORE — READ ALL DATES (for history / stats panels)
+// ─────────────────────────────────────────────────────────────────────────────
+async function firestoreReadAll() {
   try {
-    setSyncStatus('syncing', '⟳ Saving…');
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action:'write', date, name, status, note })
-    });
-    setSyncStatus('synced', '✓ Saved');
+    setSyncStatus('syncing', '⟳ Loading…');
+    const snap = await getDocs(collection(db, 'attendance'));
+    setSyncStatus('synced', '✓ Synced');
+    const result = {};
+    snap.forEach(d => { result[d.id] = d.data(); });
+    return result;
   } catch(e) {
     setSyncStatus('error', '✗ Offline');
+    console.error('Firestore read all error:', e);
+    return null;
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// LOCAL STORAGE FALLBACK
+// FIRESTORE — WRITE ONE SWIMMER RECORD
+// ─────────────────────────────────────────────────────────────────────────────
+async function firestoreWrite(date, name, status, note) {
+  try {
+    setSyncStatus('syncing', '⟳ Saving…');
+    const ref = doc(db, 'attendance', date);
+    await setDoc(ref, {
+      [name]: { status: status || '', note: note || '' }
+    }, { merge: true });
+    setSyncStatus('synced', '✓ Saved');
+    lsSave();
+  } catch(e) {
+    setSyncStatus('error', '✗ Offline');
+    console.error('Firestore write error:', e);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FIRESTORE — WRITE FULL DAY (mark all)
+// ─────────────────────────────────────────────────────────────────────────────
+async function firestoreWriteDay(date, records) {
+  try {
+    setSyncStatus('syncing', '⟳ Saving…');
+    await setDoc(doc(db, 'attendance', date), records);
+    setSyncStatus('synced', '✓ Saved');
+    lsSave();
+  } catch(e) {
+    setSyncStatus('error', '✗ Offline');
+    console.error('Firestore write day error:', e);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LOCAL STORAGE CACHE (offline fallback)
 // ─────────────────────────────────────────────────────────────────────────────
 function lsLoad() {
   try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
@@ -416,7 +453,8 @@ function lsLoad() {
 }
 
 function lsSave() {
-  localStorage.setItem(LS_KEY, JSON.stringify(attendance));
+  try { localStorage.setItem(LS_KEY, JSON.stringify(attendance)); }
+  catch(e) { /* storage full — ignore */ }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -439,14 +477,10 @@ function getRecord(d, name) {
 // INIT
 // ─────────────────────────────────────────────────────────────────────────────
 async function initApp() {
-  // Show setup banner if not configured
-  if (!scriptsConfigured) {
-    document.getElementById('setup-banner').style.display = 'block';
-  }
-
-  // Load local first for instant render
+  // 1. Load localStorage immediately for instant render
   attendance = lsLoad();
   currentDate = todayStr();
+
   document.getElementById('date-picker').value = currentDate;
   document.getElementById('date-picker').addEventListener('change', e => switchDate(e.target.value));
 
@@ -455,38 +489,42 @@ async function initApp() {
   ensureDate(currentDate);
   renderRoster();
   updateStats();
+
+  // 2. Load today from Firestore and merge
+  const todayData = await firestoreReadDate(currentDate);
+  if (todayData) {
+    attendance[currentDate] = {};
+    SWIMMERS.forEach(sw => {
+    attendance[currentDate][sw.name] = {
+        status: todayData[sw.name]?.status || null,
+        note: todayData[sw.name]?.note || ''
+      };
+    });
+    lsSave();
+    renderRoster();
+    updateStats();
+  }
+
+  // 3. Load all dates in background for history/stats panels
+  const allData = await firestoreReadAll();
+  if (allData) {
+    Object.keys(allData).forEach(date => {
+      attendance[date] = attendance[date] || {};
+      SWIMMERS.forEach(sw => {
+        const raw = allData[date][sw.name];
+        attendance[date][sw.name] = {
+          status: raw?.status || null,
+          note: raw?.note || ''
+        };
+      });
+    });
+    lsSave();
+  }
+
   renderHistory();
   renderWeeklySummary();
   renderSwimmerPct();
-
-  // Then try to load from Sheets and merge
-  if (scriptsConfigured) {
-    const sheetsData = await sheetsRead();
-    if (sheetsData) {
-      // Merge: sheets data wins over localStorage
-      mergeFromSheets(sheetsData);
-      lsSave();
-      renderRoster();
-      updateStats();
-      renderHistory();
-      renderWeeklySummary();
-      renderSwimmerPct();
-      sheetsReady = true;
-    }
-  }
-}
-
-function mergeFromSheets(rows) {
-  // rows = [ { date, name, status, note }, ... ]
-  if (!Array.isArray(rows)) return;
-  rows.forEach(row => {
-    if (!row.date || !row.name) return;
-    ensureDate(row.date);
-    attendance[row.date][row.name] = {
-      status: row.status || null,
-      note: row.note || ''
-    };
-  });
+  renderMonthly();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -513,7 +551,7 @@ function buildWeekBtns() {
   }
 }
 
-function switchDate(d) {
+async function switchDate(d) {
   currentDate = d;
   document.getElementById('date-picker').value = d;
   document.querySelectorAll('.day-btn').forEach(b => b.classList.toggle('active', b.dataset.date === d));
@@ -521,6 +559,18 @@ function switchDate(d) {
   ensureDate(d);
   renderRoster();
   updateStats();
+
+  // Load this date from Firestore if not already cached
+  const firestoreData = await firestoreReadDate(d);
+  if (firestoreData) {
+    attendance[d] = {};
+    SWIMMERS.forEach(sw => {
+      attendance[d][sw.name] = firestoreData[sw.name] || { status: null, note: '' };
+    });
+    lsSave();
+    renderRoster();
+    updateStats();
+  }
 }
 
 function updateTopbarDate() {
@@ -561,11 +611,11 @@ function renderRoster() {
         </div>
         <div class="att-btns">
           <button class="att-btn present-btn ${rec.status==='present'?'active':''}"
-            onclick="setStatus('${sw.name}','present')" title="Present">✓</button>
+            data-name="${sw.name}" data-action="present" title="Present">✓</button>
           <button class="att-btn absent-btn ${rec.status==='absent'?'active':''}"
-            onclick="setStatus('${sw.name}','absent')" title="Absent">✗</button>
+            data-name="${sw.name}" data-action="absent" title="Absent">✗</button>
           <button class="att-btn note-btn ${rec.note?'has-note':''}"
-            onclick="toggleNote('${sw.name}')" title="Add note">📝</button>
+            data-name="${sw.name}" data-action="note" title="Add note">📝</button>
         </div>`;
       group.appendChild(row);
 
@@ -573,11 +623,12 @@ function renderRoster() {
       notePanel.className = 'note-panel';
       notePanel.id = `note-panel-${k}`;
       notePanel.innerHTML = `<textarea class="note-input" placeholder="Note for ${sw.name.split(' ')[0]}…"
-        oninput="saveNote('${sw.name}',this.value)">${rec.note||''}</textarea>`;
+        data-name="${sw.name}">${rec.note||''}</textarea>`;
       group.appendChild(notePanel);
     });
     container.appendChild(group);
   });
+
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -593,10 +644,10 @@ function setStatus(name, status) {
   renderHistory();
   renderWeeklySummary();
   renderSwimmerPct();
-  // Debounce sheet write
+
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    sheetsWrite(currentDate, name, rec.status, rec.note);
+    firestoreWrite(currentDate, name, rec.status, rec.note);
   }, 800);
 }
 
@@ -617,7 +668,7 @@ function saveNote(name, value) {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     const rec = getRecord(currentDate, name);
-    sheetsWrite(currentDate, name, rec.status, value);
+    firestoreWrite(currentDate, name, rec.status, value);
   }, 1200);
 }
 
@@ -643,22 +694,13 @@ function markAll(status) {
   renderHistory();
   renderWeeklySummary();
   renderSwimmerPct();
-  // Bulk write to sheets
-  if (scriptsConfigured) {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(async () => {
-      setSyncStatus('syncing', '⟳ Saving…');
-      try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({ action:'writeDay', date:currentDate, records: attendance[currentDate] })
-        });
-        setSyncStatus('synced', '✓ Saved');
-      } catch(e) { setSyncStatus('error', '✗ Offline'); }
-    }, 800);
-  }
+
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    firestoreWriteDay(currentDate, attendance[currentDate]);
+  }, 800);
 }
+
 
 function updateStats() {
   ensureDate(currentDate);
@@ -676,12 +718,14 @@ function updateStats() {
 // VIEW TABS
 // ─────────────────────────────────────────────────────────────────────────────
 function switchView(view) {
-  document.querySelectorAll('.view-tab').forEach((t,i) => {
-    t.classList.toggle('active', ['history','weekly','swimmers'][i] === view);
+  document.querySelectorAll('.view-tab').forEach((t) => {
+    t.classList.toggle('active', t.dataset.view === view);
   });
   document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
   document.getElementById(`panel-${view}`).classList.add('active');
+  if (view === 'monthly') renderMonthly();
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HISTORY
@@ -702,7 +746,6 @@ function renderHistory() {
       const s = attendance[d][sw.name]?.status;
       if (s==='present') p++; else if (s==='absent') a++; else u++;
     });
-    const T = SWIMMERS.length;
     const label = new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
     const card = document.createElement('div');
     card.className = 'history-card';
@@ -759,7 +802,6 @@ function renderWeeklySummary() {
     <div class="week-stat-card"><div class="week-stat-label">Avg Attendance</div><div class="week-stat-num" style="color:var(--green2)">${avgPct}%</div></div>
   </div>`;
 
-  // Day-by-day breakdown
   html += '<div style="border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">';
   const dayNames = ['Mon','Tue','Wed','Thu','Fri'];
   weekDates.forEach((d, i) => {
@@ -780,7 +822,6 @@ function renderWeeklySummary() {
     </div>`;
   });
   html += '</div>';
-
   container.innerHTML = html;
 }
 
@@ -826,6 +867,319 @@ function renderSwimmerPct() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// MONTHLY VIEW
+// ─────────────────────────────────────────────────────────────────────────────
+let monthlyYear  = new Date().getFullYear();
+let monthlyMonth = new Date().getMonth(); // 0-indexed
+
+function renderMonthly() {
+  const container = document.getElementById('monthly-container');
+  const year  = monthlyYear;
+  const month = monthlyMonth;
+
+  const monthName = new Date(year, month, 1).toLocaleDateString('en-US', { month:'long', year:'numeric' });
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayFull   = todayStr();
+
+  // Collect all practice dates in this month
+  const pad = n => String(n).padStart(2,'0');
+  const monthPrefix = `${year}-${pad(month+1)}`;
+  const sessionDates = Object.keys(attendance)
+    .filter(d => d.startsWith(monthPrefix) && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status));
+
+  // ── TOP STATS ──
+  const totalSessions = sessionDates.length;
+  let totalPresent = 0, totalPossible = 0;
+  sessionDates.forEach(d => {
+    SWIMMERS.forEach(sw => {
+      const s = attendance[d]?.[sw.name]?.status;
+      if (s === 'present' || s === 'absent') {
+        totalPossible++;
+        if (s === 'present') totalPresent++;
+      }
+    });
+  });
+  const avgPct = totalPossible > 0 ? Math.round(totalPresent / totalPossible * 100) : null;
+
+  // ── ROLLING 4-WEEK AVERAGE (all session dates in last 28 days before month start) ──
+  const monthStart = new Date(year, month, 1);
+  const fourWeeksAgo = new Date(monthStart);
+  fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
+  const rollingDates = Object.keys(attendance).filter(d => {
+    const dt = new Date(d + 'T12:00:00');
+    return dt >= fourWeeksAgo && dt < monthStart && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status);
+  });
+  let rollingPresent = 0, rollingPossible = 0;
+  rollingDates.forEach(d => {
+    SWIMMERS.forEach(sw => {
+      const s = attendance[d]?.[sw.name]?.status;
+      if (s === 'present' || s === 'absent') { rollingPossible++; if (s === 'present') rollingPresent++; }
+    });
+  });
+  const rollingPct = rollingPossible > 0 ? Math.round(rollingPresent / rollingPossible * 100) : null;
+  const trendDelta = (avgPct !== null && rollingPct !== null) ? avgPct - rollingPct : null;
+  const trendStr = trendDelta === null ? '—'
+    : trendDelta > 0 ? `▲ ${trendDelta}% vs 4-wk avg`
+    : trendDelta < 0 ? `▼ ${Math.abs(trendDelta)}% vs 4-wk avg`
+    : '= 4-wk avg';
+  const trendColor = trendDelta === null ? 'var(--grey)' : trendDelta > 0 ? 'var(--green2)' : trendDelta < 0 ? 'var(--red2)' : 'var(--grey)';
+
+  // ── PER-SWIMMER MONTHLY STATS ──
+  const swimmerStats = SWIMMERS.map(sw => {
+    let p = 0, total = 0;
+    sessionDates.forEach(d => {
+      const s = attendance[d]?.[sw.name]?.status;
+      if (s === 'present' || s === 'absent') { total++; if (s === 'present') p++; }
+    });
+
+    // Rolling 4-week avg per swimmer
+    let rp = 0, rt = 0;
+    rollingDates.forEach(d => {
+      const s = attendance[d]?.[sw.name]?.status;
+      if (s === 'present' || s === 'absent') { rt++; if (s === 'present') rp++; }
+    });
+    const pct     = total > 0 ? Math.round(p / total * 100) : null;
+    const rolling = rt > 0 ? Math.round(rp / rt * 100) : null;
+    const delta   = (pct !== null && rolling !== null) ? pct - rolling : null;
+
+    // Current active streak — scan chronologically, track the LAST unbroken run
+    const sortedDates = [...sessionDates].sort();
+    let streakCount = 0, streakType = null;
+    sortedDates.forEach(d => {
+      const s = attendance[d]?.[sw.name]?.status;
+      if (s === 'present' || s === 'absent') {
+        if (s === streakType) {
+          streakCount++;
+        } else {
+          streakType  = s;
+          streakCount = 1;
+        }
+      }
+    });
+    // maxConsec still needed for alerts
+    let maxConsec = 0, curConsec = 0;
+    sortedDates.forEach(d => {
+      const s = attendance[d]?.[sw.name]?.status;
+      if (s === 'absent') { curConsec++; maxConsec = Math.max(maxConsec, curConsec); }
+      else if (s === 'present') curConsec = 0;
+    });
+
+    return { sw, p, total, pct, delta, streakCount, streakType, maxConsec };
+  });
+
+  // ── ABSENCE ALERTS (3+ consecutive) ──
+  const alerts = swimmerStats.filter(r => r.maxConsec >= 3).sort((a,b) => b.maxConsec - a.maxConsec);
+
+  // ── MOM CHART DATA (last 6 months) ──
+  const momMonths = [];
+  for (let i = 5; i >= 0; i--) {
+    let m = month - i, y = year;
+    if (m < 0) { m += 12; y--; }
+    const pfx = `${y}-${pad(m+1)}`;
+    const mDates = Object.keys(attendance).filter(d => d.startsWith(pfx) && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status));
+    let mp = 0, mt = 0;
+    mDates.forEach(d => {
+      SWIMMERS.forEach(sw => {
+        const s = attendance[d]?.[sw.name]?.status;
+        if (s === 'present' || s === 'absent') { mt++; if (s === 'present') mp++; }
+      });
+    });
+    momMonths.push({
+      label: new Date(y, m, 1).toLocaleDateString('en-US', { month:'short' }),
+      pct: mt > 0 ? Math.round(mp / mt * 100) : null
+    });
+  }
+
+  // ── HEATMAP ──
+  const firstDow = new Date(year, month, 1).getDay(); // 0=Sun
+  const heatCells = [];
+  for (let i = 0; i < firstDow; i++) heatCells.push({ empty: true });
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${monthPrefix}-${pad(day)}`;
+    const isSession = sessionDates.includes(dateStr);
+    let pct = null;
+    if (isSession) {
+      let p = 0, t = 0;
+      SWIMMERS.forEach(sw => {
+        const s = attendance[dateStr]?.[sw.name]?.status;
+        if (s === 'present' || s === 'absent') { t++; if (s === 'present') p++; }
+      });
+      pct = t > 0 ? Math.round(p / t * 100) : null;
+    }
+    heatCells.push({ day, dateStr, isSession, pct, isToday: dateStr === todayFull });
+  }
+
+  // ── BUILD HTML ──
+  let html = '';
+
+  // Month nav
+  html += `<div class="month-nav">
+    <button class="month-nav-btn" id="month-prev-btn">◀ Prev</button>
+    <div class="month-nav-label">${monthName}</div>
+    <button class="month-nav-btn" id="month-next-btn">Next ▶</button>
+  </div>`;
+
+  // Top stats
+  html += `<div class="month-stats-grid">
+    <div class="month-stat">
+      <div class="month-stat-label">Sessions</div>
+      <div class="month-stat-num" style="color:var(--mid)">${totalSessions}</div>
+    </div>
+    <div class="month-stat">
+      <div class="month-stat-label">Avg Attendance</div>
+      <div class="month-stat-num" style="color:var(--green2)">${avgPct !== null ? avgPct+'%' : '—'}</div>
+    </div>
+    <div class="month-stat">
+      <div class="month-stat-label">vs Last Month</div>
+      <div class="month-stat-num" style="font-size:1rem;padding-top:.4rem;color:${trendColor}">${trendStr}</div>
+    </div>
+  </div>`;
+
+  // Heatmap
+  html += `<div class="heatmap-wrap">
+    <div class="heatmap-header">
+      ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="heatmap-dow">${d}</div>`).join('')}
+    </div>
+    <div class="heatmap-grid">`;
+  heatCells.forEach(cell => {
+    if (cell.empty) { html += `<div class="heatmap-cell empty"></div>`; return; }
+    let cls = 'heatmap-cell';
+    let title = '';
+    if (!cell.isSession) { cls += ' no-session'; title = 'No session'; }
+    else if (cell.pct >= 80) { cls += ' pct-high'; title = cell.pct+'% present'; }
+    else if (cell.pct >= 60) { cls += ' pct-mid'; title = cell.pct+'% present'; }
+    else { cls += ' pct-low'; title = cell.pct !== null ? cell.pct+'% present' : 'Session'; }
+    if (cell.isToday) cls += ' today-cell';
+    html += `<div class="${cls}" title="${title}">${cell.day}</div>`;
+  });
+  html += `</div></div>`;
+
+  // Heatmap legend
+  html += `<div style="display:flex;gap:1rem;margin-bottom:1.25rem;font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;align-items:center;flex-wrap:wrap;">
+    <span>Legend:</span>
+    <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(46,125,50,0.7);display:inline-block"></span>≥80%</span>
+    <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(249,168,37,0.5);display:inline-block"></span>60–79%</span>
+    <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(198,40,40,0.55);display:inline-block"></span>&lt;60%</span>
+    <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.04);display:inline-block"></span>No session</span>
+  </div>`;
+
+  // Month-over-month chart
+  html += `<div class="mom-chart">
+    <div class="mom-chart-title">Month-over-Month Attendance %</div>
+    <div class="mom-bars">`;
+  const maxPct = Math.max(...momMonths.map(m => m.pct ?? 0), 1);
+  momMonths.forEach(m => {
+    const h = m.pct !== null ? Math.round((m.pct / 100) * 72) : 2;
+    const barColor = m.pct === null ? 'rgba(255,255,255,0.08)' : m.pct >= 80 ? 'var(--green2)' : m.pct >= 60 ? 'var(--gold)' : 'var(--red2)';
+    html += `<div class="mom-bar-wrap">
+      <div class="mom-bar-pct">${m.pct !== null ? m.pct+'%' : ''}</div>
+      <div class="mom-bar" style="height:${h}px;background:${barColor}"></div>
+      <div class="mom-bar-label">${m.label}</div>
+    </div>`;
+  });
+  html += `</div></div>`;
+
+  // Absence alerts
+  html += `<div class="alert-section">
+    <div class="alert-section-title">⚠ Absence Alerts — 3+ Consecutive Days</div>`;
+  if (alerts.length === 0) {
+    html += `<div class="no-alerts">✓ No swimmers with 3+ consecutive absences this month</div>`;
+  } else {
+    alerts.forEach(r => {
+      html += `<div class="alert-card">
+        <div>
+          <div class="alert-name">${r.sw.name}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey);margin-top:.15rem">Lane ${r.sw.lane} · ${r.p}/${r.total} sessions attended</div>
+        </div>
+        <div class="alert-detail">${r.maxConsec} consecutive absences</div>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+
+  // Per-swimmer monthly table
+  const sorted = [...swimmerStats].sort((a,b) => (b.pct ?? -1) - (a.pct ?? -1));
+  html += `<div class="month-swimmer-table">
+    <div class="month-swimmer-row msw-header">
+      <div>Swimmer</div>
+      <div style="text-align:center">Present</div>
+      <div style="text-align:center">%</div>
+      <div style="text-align:center">Streak</div>
+      <div style="text-align:right">vs 4-wk</div>
+    </div>`;
+  sorted.forEach(({ sw, p, total, pct, delta, streakCount, streakType }) => {
+    const color = pct === null ? 'var(--grey)' : pct >= 80 ? 'var(--green2)' : pct >= 60 ? 'var(--gold)' : 'var(--red2)';
+    const trendCls = delta === null ? 'trend-eq' : delta > 0 ? 'trend-up' : delta < 0 ? 'trend-dn' : 'trend-eq';
+    const trendIcon = delta === null ? '—' : delta > 0 ? `▲ ${delta}%` : delta < 0 ? `▼ ${Math.abs(delta)}%` : '=';
+    const streakColor = streakType === 'present' ? 'var(--green2)' : streakType === 'absent' ? 'var(--red2)' : 'var(--grey)';
+    const streakIcon  = streakType === 'present' ? '✓' : streakType === 'absent' ? '✗' : '';
+    const streakLabel = streakCount > 0 ? `${streakIcon} ${streakCount}` : '—';
+    html += `<div class="month-swimmer-row">
+      <div>
+        <div style="font-size:.85rem;font-weight:500">${sw.name}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.53rem;color:var(--grey);text-transform:uppercase;margin-top:.1rem">Lane ${sw.lane}</div>
+      </div>
+      <div style="text-align:center;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--grey)">${p}/${total}</div>
+      <div style="text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:500;color:${color}">${pct !== null ? pct+'%' : '—'}</div>
+      <div style="text-align:center;font-family:'DM Mono',monospace;font-size:.65rem;color:${streakColor}">${streakLabel}</div>
+      <div style="text-align:right;font-family:'DM Mono',monospace;font-size:.65rem;" class="${trendCls}">${trendIcon}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Monthly CSV export
+  html += `<div style="margin-top:1rem;">
+    <button class="export-btn" id="export-monthly-csv-btn" style="width:100%">⬇ Export Monthly CSV</button>
+  </div>`;
+
+  container.innerHTML = html;
+
+  // Wire up nav + export after render
+  document.getElementById('month-prev-btn').addEventListener('click', () => {
+    if (monthlyMonth === 0) { monthlyMonth = 11; monthlyYear--; }
+    else { monthlyMonth--; }
+    renderMonthly();
+  });
+  document.getElementById('month-next-btn').addEventListener('click', () => {
+    if (monthlyMonth === 11) { monthlyMonth = 0; monthlyYear++; }
+    else { monthlyMonth++; }
+    renderMonthly();
+  });
+  document.getElementById('export-monthly-csv-btn').addEventListener('click', exportMonthlyCSV);
+}
+
+function exportMonthlyCSV() {
+  const year  = monthlyYear;
+  const month = monthlyMonth;
+  const pad   = n => String(n).padStart(2,'0');
+  const monthPrefix = `${year}-${pad(month+1)}`;
+  const sessionDates = Object.keys(attendance)
+    .filter(d => d.startsWith(monthPrefix) && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status))
+    .sort();
+
+  if (!sessionDates.length) { alert('No session data for this month.'); return; }
+
+  let csv = 'Name,Lane,' + sessionDates.join(',') + ',Total Present,Total Sessions,%\n';
+  SWIMMERS.forEach(sw => {
+    const row = [sw.name, sw.lane];
+    let p = 0, t = 0;
+    sessionDates.forEach(d => {
+      const s = attendance[d]?.[sw.name]?.status;
+      row.push(s === 'present' ? 'P' : s === 'absent' ? 'A' : '');
+      if (s === 'present' || s === 'absent') { t++; if (s === 'present') p++; }
+    });
+    row.push(p, t, t > 0 ? Math.round(p/t*100)+'%' : '—');
+    csv += row.map(v => `"${v}"`).join(',') + '\n';
+  });
+
+  const monthName = new Date(year, month, 1).toLocaleDateString('en-US', { month:'long', year:'numeric' }).replace(' ','_');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' }));
+  a.download = `purple_attendance_${monthName}.csv`;
+  a.click();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // EXPORT
 // ─────────────────────────────────────────────────────────────────────────────
 function exportCSV() {
@@ -845,6 +1199,7 @@ function exportCSV() {
   a.download = `purple_attendance_${todayStr()}.csv`;
   a.click();
 }
+
 
 function exportSummary() {
   ensureDate(currentDate);
@@ -869,13 +1224,47 @@ function exportSummary() {
   }).catch(()=>prompt('Copy this summary:',text));
 }
 
+
 // ─────────────────────────────────────────────────────────────────────────────
 // BOOT
 // ─────────────────────────────────────────────────────────────────────────────
-if (sessionStorage.getItem(SESSION_KEY) === '1') {
-  document.getElementById('att-gate').style.display = 'none';
-  document.getElementById('att-app').style.display  = 'block';
+function boot() {
+  // Mark all
+  document.getElementById('mark-present-btn').addEventListener('click', () => markAll('present'));
+  document.getElementById('mark-absent-btn').addEventListener('click',  () => markAll('absent'));
+  document.getElementById('mark-clear-btn').addEventListener('click',   () => markAll('clear'));
+
+  // View tabs
+  document.querySelectorAll('.view-tab[data-view]').forEach(tab => {
+    tab.addEventListener('click', () => switchView(tab.dataset.view));
+  });
+
+  // Roster event delegation
+  const rosterContent = document.getElementById('roster-content');
+  rosterContent.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const name = btn.dataset.name;
+    const action = btn.dataset.action;
+    if (action === 'present' || action === 'absent') setStatus(name, action);
+    else if (action === 'note') toggleNote(name);
+  });
+  rosterContent.addEventListener('input', e => {
+    const ta = e.target.closest('textarea[data-name]');
+    if (ta) saveNote(ta.dataset.name, ta.value);
+  });
+
+  // Export
+  document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
+  document.getElementById('export-summary-btn').addEventListener('click', exportSummary);
+
   initApp();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
 }
 </script>
 </body>
