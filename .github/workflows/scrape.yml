@@ -22,7 +22,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r scraper/requirements.txt
-          playwright install --with-deps chromium
+          playwright install chromium
+          sudo apt-get install -y libasound2t64
+          sudo apt-get install -y libgbm1 libnss3 libxss1 libatk-bridge2.0-0 libgtk-3-0
 
       - name: Run scraper
         env:
