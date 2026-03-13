@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sign In — Purple Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0B1F3A; --deep:#071429; --mid:#2196F3; --light:#64B5F6;
+    --white:#F0F6FF; --grey:#8BA3C0; --gold:#F9A825;
+    --green2:#43A047; --red2:#EF5350;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem 1rem;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.03) 58px,rgba(33,150,243,0.03) 60px);pointer-events:none;z-index:0;}
+
+  .card{width:100%;max-width:400px;position:relative;z-index:1;}
+
+  .brand{text-align:center;margin-bottom:2rem;}
+  .brand-title{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.04em;line-height:1;}
+  .brand-sub{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.18em;color:var(--grey);text-transform:uppercase;margin-top:.3rem;}
+
+  .auth-card{background:linear-gradient(135deg,rgba(33,150,243,0.06),rgba(33,150,243,0.01));border:1px solid rgba(33,150,243,0.15);border-radius:2px;padding:2rem;position:relative;overflow:hidden;}
+  .auth-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--mid),rgba(33,150,243,0.1));}
+
+  .auth-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;margin-bottom:1.5rem;}
+
+  .field{margin-bottom:1rem;}
+  .field label{display:block;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;margin-bottom:.4rem;}
+  .field input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:2px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.95rem;padding:.65rem .9rem;outline:none;transition:border-color .2s;}
+  .field input:focus{border-color:var(--mid);}
+  .field input::placeholder{color:rgba(139,163,192,0.4);}
+
+  .btn-primary{width:100%;padding:.75rem;background:var(--mid);border:none;border-radius:2px;color:var(--white);font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.06em;cursor:pointer;transition:background .2s;margin-top:.5rem;}
+  .btn-primary:hover{background:#1976D2;}
+  .btn-primary:disabled{background:rgba(33,150,243,0.3);cursor:not-allowed;}
+
+  .divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;}
+  .divider-line{flex:1;height:1px;background:rgba(255,255,255,0.08);}
+  .divider-text{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;}
+
+  .btn-google{width:100%;padding:.7rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:2px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:400;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.65rem;}
+  .btn-google:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);}
+  .btn-google svg{width:18px;height:18px;flex-shrink:0;}
+
+  .error-msg{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--red2);text-transform:uppercase;margin-top:.75rem;display:none;padding:.5rem .75rem;background:rgba(198,40,40,0.08);border:1px solid rgba(198,40,40,0.2);border-radius:2px;}
+  .success-msg{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--green2);text-transform:uppercase;margin-top:.75rem;display:none;padding:.5rem .75rem;background:rgba(46,125,50,0.08);border:1px solid rgba(46,125,50,0.2);border-radius:2px;}
+
+  .footer-links{text-align:center;margin-top:1.5rem;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;}
+  .footer-links a{color:var(--light);text-decoration:none;transition:color .2s;}
+  .footer-links a:hover{color:var(--white);}
+  .footer-links span{margin:0 .5rem;opacity:.4;}
+
+  .loading{opacity:.5;pointer-events:none;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="brand">
+    <div class="brand-title">Purple Group</div>
+    <div class="brand-sub">SSF Swim Team · Member Portal</div>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-title">Sign In</div>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <button class="btn-primary" id="signin-btn">Sign In</button>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-text">or</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <button class="btn-google" id="google-btn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <div class="error-msg" id="error-msg"></div>
+    <div class="success-msg" id="success-msg"></div>
+  </div>
+
+  <div class="footer-links">
+    <a href="register.html">Create account</a>
+    <span>·</span>
+    <a href="index.html">← Back to site</a>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword,
+  GoogleAuthProvider, signInWithPopup, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
+  authDomain: "ssfaquatics.firebaseapp.com",
+  projectId: "ssfaquatics",
+  storageBucket: "ssfaquatics.firebasestorage.app",
+  messagingSenderId: "21079628309",
+  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// If already signed in, redirect
+onAuthStateChanged(auth, async user => {
+  if (user) await redirectByRole(user);
+});
+
+async function redirectByRole(user) {
+  const snap = await getDoc(doc(db, 'users', user.uid));
+  const role = snap.exists() ? snap.data().role : null;
+  if (role === 'coach') window.location.href = 'coach-hub.html';
+  else window.location.href = 'dashboard.html';
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('success-msg').style.display = 'none';
+}
+
+function setLoading(on) {
+  document.getElementById('signin-btn').disabled = on;
+  document.getElementById('google-btn').disabled = on;
+  document.body.classList.toggle('loading', on);
+}
+
+// Email/password sign in
+document.getElementById('signin-btn').addEventListener('click', async () => {
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if (!email || !password) { showError('Please enter your email and password'); return; }
+  setLoading(true);
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    await redirectByRole(cred.user);
+  } catch(e) {
+    const msgs = {
+      'auth/user-not-found':  'No account found with this email',
+      'auth/wrong-password':  'Incorrect password',
+      'auth/invalid-email':   'Invalid email address',
+      'auth/too-many-requests': 'Too many attempts — try again later',
+      'auth/invalid-credential': 'Incorrect email or password',
+    };
+    showError(msgs[e.code] || 'Sign in failed — please try again');
+    setLoading(false);
+  }
+});
+
+// Enter key
+document.getElementById('password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('signin-btn').click();
+});
+
+// Google sign in
+document.getElementById('google-btn').addEventListener('click', async () => {
+  setLoading(true);
+  try {
+    const provider = new GoogleAuthProvider();
+    const cred = await signInWithPopup(auth, provider);
+    // Check if user doc exists; if not, they need to register
+    const snap = await getDoc(doc(db, 'users', cred.user.uid));
+    if (!snap.exists()) {
+      // New Google user — send to register to pick role
+      sessionStorage.setItem('google_pending_uid',   cred.user.uid);
+      sessionStorage.setItem('google_pending_name',  cred.user.displayName || '');
+      sessionStorage.setItem('google_pending_email', cred.user.email || '');
+      window.location.href = 'register.html?google=1';
+    } else {
+      await redirectByRole(cred.user);
+    }
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') {
+      showError('Google sign in failed — please try again');
+    }
+    setLoading(false);
+  }
+});
+</script>
+</body>
+</html>

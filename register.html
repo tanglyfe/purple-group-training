@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Create Account — Purple Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0B1F3A; --deep:#071429; --mid:#2196F3; --light:#64B5F6;
+    --white:#F0F6FF; --grey:#8BA3C0; --gold:#F9A825;
+    --green2:#43A047; --red2:#EF5350;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem 1rem;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.03) 58px,rgba(33,150,243,0.03) 60px);pointer-events:none;z-index:0;}
+
+  .card{width:100%;max-width:420px;position:relative;z-index:1;}
+
+  .brand{text-align:center;margin-bottom:2rem;}
+  .brand-title{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.04em;line-height:1;}
+  .brand-sub{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.18em;color:var(--grey);text-transform:uppercase;margin-top:.3rem;}
+
+  .auth-card{background:linear-gradient(135deg,rgba(33,150,243,0.06),rgba(33,150,243,0.01));border:1px solid rgba(33,150,243,0.15);border-radius:2px;padding:2rem;position:relative;overflow:hidden;}
+  .auth-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--mid),rgba(33,150,243,0.1));}
+
+  .auth-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;margin-bottom:1.5rem;}
+
+  .field{margin-bottom:1rem;}
+  .field label{display:block;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;margin-bottom:.4rem;}
+  .field input, .field select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:2px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.95rem;padding:.65rem .9rem;outline:none;transition:border-color .2s;-webkit-appearance:none;}
+  .field input:focus, .field select:focus{border-color:var(--mid);}
+  .field input::placeholder{color:rgba(139,163,192,0.4);}
+  .field select option{background:var(--navy);color:var(--white);}
+
+  /* Role selector */
+  .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem;}
+  .role-card{border:1px solid rgba(255,255,255,0.1);border-radius:2px;padding:.9rem .75rem;cursor:pointer;transition:all .15s;text-align:center;position:relative;}
+  .role-card:hover{border-color:rgba(33,150,243,0.4);background:rgba(33,150,243,0.05);}
+  .role-card.selected{border-color:var(--mid);background:rgba(33,150,243,0.12);}
+  .role-card input[type=radio]{position:absolute;opacity:0;width:0;height:0;}
+  .role-icon{font-size:1.5rem;margin-bottom:.35rem;}
+  .role-label{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--light);}
+  .role-desc{font-size:.72rem;color:var(--grey);margin-top:.2rem;line-height:1.4;}
+
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+
+  .btn-primary{width:100%;padding:.75rem;background:var(--mid);border:none;border-radius:2px;color:var(--white);font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.06em;cursor:pointer;transition:background .2s;margin-top:.5rem;}
+  .btn-primary:hover{background:#1976D2;}
+  .btn-primary:disabled{background:rgba(33,150,243,0.3);cursor:not-allowed;}
+
+  .divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;}
+  .divider-line{flex:1;height:1px;background:rgba(255,255,255,0.08);}
+  .divider-text{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;}
+
+  .btn-google{width:100%;padding:.7rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:2px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.9rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.65rem;}
+  .btn-google:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);}
+  .btn-google svg{width:18px;height:18px;flex-shrink:0;}
+
+  /* Google pending banner */
+  .google-banner{background:rgba(33,150,243,0.08);border:1px solid rgba(33,150,243,0.2);border-radius:2px;padding:.75rem 1rem;margin-bottom:1.25rem;display:none;align-items:center;gap:.6rem;}
+  .google-banner.show{display:flex;}
+  .google-banner-text{font-size:.82rem;color:var(--light);}
+  .google-avatar{width:28px;height:28px;border-radius:50%;background:rgba(33,150,243,0.2);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+
+  .error-msg{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--red2);text-transform:uppercase;margin-top:.75rem;display:none;padding:.5rem .75rem;background:rgba(198,40,40,0.08);border:1px solid rgba(198,40,40,0.2);border-radius:2px;}
+  .success-msg{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--green2);text-transform:uppercase;margin-top:.75rem;display:none;padding:.5rem .75rem;background:rgba(46,125,50,0.08);border:1px solid rgba(46,125,50,0.2);border-radius:2px;}
+
+  .footer-links{text-align:center;margin-top:1.5rem;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;}
+  .footer-links a{color:var(--light);text-decoration:none;transition:color .2s;}
+  .footer-links a:hover{color:var(--white);}
+  .footer-links span{margin:0 .5rem;opacity:.4;}
+
+  /* Parent child name field */
+  .child-field{display:none;}
+  .child-field.show{display:block;}
+
+  .section-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;margin-bottom:.75rem;margin-top:.25rem;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="brand">
+    <div class="brand-title">Purple Group</div>
+    <div class="brand-sub">SSF Swim Team · Create Account</div>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-title">Join the Team</div>
+
+    <!-- Google pending banner (shown when coming from Google sign-in) -->
+    <div class="google-banner" id="google-banner">
+      <div class="google-avatar">G</div>
+      <div class="google-banner-text">Signed in with Google — just pick your role to finish setup</div>
+    </div>
+
+    <!-- Role selection -->
+    <div class="section-label">I am a</div>
+    <div class="role-grid">
+      <label class="role-card" id="role-swimmer">
+        <input type="radio" name="role" value="swimmer">
+        <div class="role-icon">🏊</div>
+        <div class="role-label">Swimmer</div>
+        <div class="role-desc">View my times, attendance & workouts</div>
+      </label>
+      <label class="role-card" id="role-parent">
+        <input type="radio" name="role" value="parent">
+        <div class="role-icon">👨‍👩‍👧</div>
+        <div class="role-label">Parent</div>
+        <div class="role-desc">Track my child's progress & attendance</div>
+      </label>
+    </div>
+
+    <!-- Child name (parents only) -->
+    <div class="field child-field" id="child-field">
+      <label>Swimmer's Full Name</label>
+      <input type="text" id="child-name" placeholder="e.g. Lorenzo Navarro">
+    </div>
+
+    <div id="email-section">
+      <!-- Name -->
+      <div class="field-row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" id="first-name" placeholder="First" autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" id="last-name" placeholder="Last" autocomplete="family-name">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Min 6 characters" autocomplete="new-password">
+      </div>
+
+      <button class="btn-primary" id="register-btn">Create Account</button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">or</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <button class="btn-google" id="google-btn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z" fill="#EA4335"/>
+        </svg>
+        Sign up with Google
+      </button>
+    </div>
+
+    <!-- Google pending: just need role + child name -->
+    <div id="google-complete-section" style="display:none;">
+      <button class="btn-primary" id="complete-google-btn">Complete Setup</button>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+    <div class="success-msg" id="success-msg"></div>
+  </div>
+
+  <div class="footer-links">
+    <a href="login.html">Already have an account? Sign in</a>
+    <span>·</span>
+    <a href="index.html">← Back to site</a>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }        from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, updateProfile,
+  GoogleAuthProvider, signInWithPopup, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import {
+  getFirestore, doc, setDoc, getDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
+  authDomain: "ssfaquatics.firebaseapp.com",
+  projectId: "ssfaquatics",
+  storageBucket: "ssfaquatics.firebasestorage.app",
+  messagingSenderId: "21079628309",
+  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ── Role UI ──
+let selectedRole = null;
+document.querySelectorAll('.role-card').forEach(card => {
+  card.addEventListener('click', () => {
+    selectedRole = card.querySelector('input').value;
+    document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    document.getElementById('child-field').classList.toggle('show', selectedRole === 'parent');
+  });
+});
+
+// ── Google pending flow ──
+const isGooglePending = new URLSearchParams(window.location.search).get('google') === '1';
+const pendingUid   = sessionStorage.getItem('google_pending_uid');
+const pendingName  = sessionStorage.getItem('google_pending_name');
+const pendingEmail = sessionStorage.getItem('google_pending_email');
+
+if (isGooglePending && pendingUid) {
+  document.getElementById('google-banner').classList.add('show');
+  document.getElementById('email-section').style.display = 'none';
+  document.getElementById('google-complete-section').style.display = 'block';
+}
+
+// If already fully registered, redirect
+onAuthStateChanged(auth, async user => {
+  if (user && !isGooglePending) {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (snap.exists()) window.location.href = 'dashboard.html';
+  }
+});
+
+// ── Helpers ──
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('success-msg').style.display = 'none';
+}
+function showSuccess(msg) {
+  const el = document.getElementById('success-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('error-msg').style.display = 'none';
+}
+function setLoading(on) {
+  ['register-btn','google-btn','complete-google-btn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = on;
+  });
+}
+
+async function createUserProfile(uid, data) {
+  await setDoc(doc(db, 'users', uid), {
+    ...data,
+    status: 'active',
+    createdAt: serverTimestamp()
+  });
+}
+
+// ── Email/password register ──
+document.getElementById('register-btn')?.addEventListener('click', async () => {
+  const first    = document.getElementById('first-name').value.trim();
+  const last     = document.getElementById('last-name').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const child    = document.getElementById('child-name').value.trim();
+
+  if (!selectedRole)          { showError('Please select your role'); return; }
+  if (!first || !last)        { showError('Please enter your full name'); return; }
+  if (!email)                 { showError('Please enter your email'); return; }
+  if (password.length < 6)   { showError('Password must be at least 6 characters'); return; }
+  if (selectedRole === 'parent' && !child) { showError("Please enter your swimmer's name"); return; }
+
+  setLoading(true);
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(cred.user, { displayName: `${first} ${last}` });
+    await createUserProfile(cred.user.uid, {
+      displayName: `${first} ${last}`,
+      email,
+      role: selectedRole,
+      ...(selectedRole === 'parent' ? { childName: child } : {})
+    });
+    showSuccess('Account created! Redirecting…');
+    setTimeout(() => window.location.href = 'dashboard.html', 1200);
+  } catch(e) {
+    const msgs = {
+      'auth/email-already-in-use': 'An account with this email already exists',
+      'auth/invalid-email':        'Invalid email address',
+      'auth/weak-password':        'Password is too weak',
+    };
+    showError(msgs[e.code] || 'Registration failed — please try again');
+    setLoading(false);
+  }
+});
+
+// ── Google register (new user) ──
+document.getElementById('google-btn')?.addEventListener('click', async () => {
+  if (!selectedRole) { showError('Please select your role first'); return; }
+  const child = document.getElementById('child-name').value.trim();
+  if (selectedRole === 'parent' && !child) { showError("Please enter your swimmer's name"); return; }
+
+  setLoading(true);
+  try {
+    const provider = new GoogleAuthProvider();
+    const cred = await signInWithPopup(auth, provider);
+    // Check not already registered
+    const snap = await getDoc(doc(db, 'users', cred.user.uid));
+    if (snap.exists()) { window.location.href = 'dashboard.html'; return; }
+
+    await createUserProfile(cred.user.uid, {
+      displayName: cred.user.displayName || '',
+      email: cred.user.email || '',
+      role: selectedRole,
+      ...(selectedRole === 'parent' ? { childName: child } : {})
+    });
+    showSuccess('Account created! Redirecting…');
+    setTimeout(() => window.location.href = 'dashboard.html', 1200);
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') showError('Google sign up failed');
+    setLoading(false);
+  }
+});
+
+// ── Complete Google pending (came from login.html) ──
+document.getElementById('complete-google-btn')?.addEventListener('click', async () => {
+  if (!selectedRole) { showError('Please select your role'); return; }
+  const child = document.getElementById('child-name').value.trim();
+  if (selectedRole === 'parent' && !child) { showError("Please enter your swimmer's name"); return; }
+  if (!pendingUid) { showError('Session expired — please sign in again'); return; }
+
+  setLoading(true);
+  try {
+    await createUserProfile(pendingUid, {
+      displayName: pendingName,
+      email: pendingEmail,
+      role: selectedRole,
+      ...(selectedRole === 'parent' ? { childName: child } : {})
+    });
+    sessionStorage.removeItem('google_pending_uid');
+    sessionStorage.removeItem('google_pending_name');
+    sessionStorage.removeItem('google_pending_email');
+    showSuccess('Setup complete! Redirecting…');
+    setTimeout(() => window.location.href = 'dashboard.html', 1200);
+  } catch(e) {
+    showError('Setup failed — please try again');
+    setLoading(false);
+  }
+});
+</script>
+</body>
+</html>
