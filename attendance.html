@@ -189,26 +189,19 @@
   .mom-bar-label{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.06em;color:var(--grey);text-align:center;}
   .mom-bar-pct{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--light);text-align:center;}
 </style>
+  <script src="sidebar.js"></script>
+
+<style>
+  /* Sidebar layout scroll fix */
+  .ssf-main { overflow-y: auto !important; }
+  body::before { z-index: -1; }
+  .shimmer-bg { z-index: -1; }
+</style>
 </head>
 <body>
 
 <!-- MAIN APP -->
 <div id="att-app">
-
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="topbar-inner">
-    <a class="back-btn" href="index.html">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      Home
-    </a>
-    <div class="topbar-title">
-      <h1>Attendance</h1>
-      <div class="topbar-date" id="topbar-date">Purple Group</div>
-    </div>
-    <span class="sync-status" id="sync-status"></span>
-  </div>
-</div>
 
 <!-- DATE BAR -->
 <div class="date-bar">
@@ -1266,6 +1259,10 @@ if (document.readyState === 'loading') {
 } else {
   boot();
 }
+</script>
+<script>
+// Inject shared sidebar
+if(typeof injectSidebar!=="undefined")injectSidebar("attendance");
 </script>
 </body>
 </html>

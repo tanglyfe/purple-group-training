@@ -7,112 +7,141 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy:#0B1F3A; --deep:#071429; --mid:#2196F3; --light:#64B5F6;
-    --gold:#F9A825; --white:#F0F6FF; --grey:#8BA3C0;
+    --deep:#071429; --navy:#0B1F3A; --panel:#0D1E38; --mid:#2196F3;
+    --light:#64B5F6; --gold:#F9A825; --white:#F0F6FF; --grey:#8BA3C0;
+    --border:rgba(33,150,243,0.12); --hover:rgba(33,150,243,0.06);
     --free:#2196F3; --back:#43A047; --breast:#FB8C00; --fly:#8E24AA; --im:#E53935;
+    --sidebar:240px;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
-  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.04) 58px,rgba(33,150,243,0.04) 60px);pointer-events:none;z-index:0;}
-  .shimmer-bg{position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(21,101,192,0.18) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(249,168,37,0.07) 0%,transparent 60%);pointer-events:none;z-index:0;}
-  .container{max-width:1100px;margin:0 auto;padding:0 2rem;position:relative;z-index:1;}
+  html,body{height:100%;overflow:hidden;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;display:flex;}
 
-  nav{position:sticky;top:0;z-index:100;background:rgba(7,20,41,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,0.15);padding:1rem 2rem;display:flex;align-items:center;gap:1.5rem;}
-  nav a{color:var(--grey);text-decoration:none;font-size:.85rem;letter-spacing:.04em;transition:color .2s;}
-  nav a:hover{color:var(--white);}
-  nav .brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;color:var(--white);margin-right:auto;}
-  nav .nav-active{color:var(--gold);}
+  /* SIDEBAR */
+  .sidebar{width:var(--sidebar);flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;}
+  .sidebar-brand{padding:1.4rem 1.25rem 1rem;border-bottom:1px solid var(--border);}
+  .brand-name{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:var(--white);line-height:1;}
+  .brand-sub{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;margin-top:.2rem;}
+  .nav-section{padding:.75rem 0;}
+  .nav-label{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(139,163,192,0.4);padding:.3rem 1.25rem;}
+  .nav-item{display:flex;align-items:center;gap:.65rem;padding:.55rem 1.25rem;font-size:.85rem;color:var(--grey);text-decoration:none;transition:all .15s;border-left:2px solid transparent;}
+  .nav-item:hover{color:var(--white);background:var(--hover);}
+  .nav-item.active{color:var(--white);background:rgba(33,150,243,0.1);border-left-color:var(--mid);}
+  .nav-icon{font-size:.95rem;width:18px;text-align:center;flex-shrink:0;}
+  .nav-divider{height:1px;background:var(--border);margin:.5rem 1.25rem;}
 
-  .page-header{padding:3.5rem 0 2rem;border-bottom:1px solid rgba(33,150,243,0.1);margin-bottom:2rem;}
-  .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,4rem);letter-spacing:.06em;line-height:1;}
-  .page-header h1 span{color:var(--gold);}
-  .page-header p{color:var(--grey);margin-top:.5rem;font-size:.9rem;}
-
-  /* TIER LEGEND */
-  .tier-legend{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2.5rem;}
-  .tier-chip{padding:.28rem .65rem;border-radius:4px;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;font-weight:500;}
-
-  /* CONTROLS */
-  .controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-bottom:1.5rem;}
-  .filter-pills{display:flex;gap:.4rem;}
-  .pill{padding:.35rem .85rem;border-radius:20px;border:1px solid rgba(33,150,243,0.25);background:transparent;color:var(--grey);font-family:inherit;font-size:.78rem;cursor:pointer;transition:all .2s;}
+  /* MAIN */
+  .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+  .topbar{padding:.9rem 1.75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.06em;}
+  .topbar-title span{color:var(--gold);}
+  .filter-pills{display:flex;gap:.35rem;}
+  .pill{padding:.3rem .75rem;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--grey);font-family:inherit;font-size:.75rem;cursor:pointer;transition:all .15s;}
   .pill:hover{border-color:var(--mid);color:var(--white);}
   .pill.active{background:var(--mid);border-color:var(--mid);color:#fff;}
 
-  /* EVENT FILTER */
-  .event-filter{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.75rem;}
-  .ev-btn{padding:.32rem .75rem;border-radius:6px;border:1px solid rgba(33,150,243,0.18);background:transparent;color:var(--grey);font-family:'DM Mono',monospace;font-size:.7rem;cursor:pointer;transition:all .2s;}
-  .ev-btn:hover{border-color:rgba(255,255,255,0.3);color:var(--white);}
-  .ev-btn.selected{color:#fff;}
-  .ev-btn.free.selected{background:rgba(33,150,243,0.22);border-color:var(--free);}
-  .ev-btn.back.selected{background:rgba(67,160,71,0.22);border-color:var(--back);}
-  .ev-btn.breast.selected{background:rgba(251,140,0,0.22);border-color:var(--breast);}
-  .ev-btn.fly.selected{background:rgba(142,36,170,0.22);border-color:var(--fly);}
-  .ev-btn.im.selected{background:rgba(229,57,53,0.22);border-color:var(--im);}
+  /* EVENT BAR */
+  .event-bar{padding:.75rem 1.75rem;border-bottom:1px solid var(--border);display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;flex-shrink:0;background:rgba(7,20,41,0.5);}
+  .event-bar-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-right:.25rem;white-space:nowrap;}
+  .ev-btn{padding:.28rem .65rem;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--grey);font-family:'DM Mono',monospace;font-size:.68rem;cursor:pointer;transition:all .15s;}
+  .ev-btn:hover{color:var(--white);border-color:rgba(255,255,255,0.2);}
+  .ev-btn.sel{color:#fff;}
+  .ev-btn.free.sel{background:rgba(33,150,243,0.2);border-color:var(--free);}
+  .ev-btn.back.sel{background:rgba(67,160,71,0.2);border-color:var(--back);}
+  .ev-btn.breast.sel{background:rgba(251,140,0,0.2);border-color:var(--breast);}
+  .ev-btn.fly.sel{background:rgba(142,36,170,0.2);border-color:var(--fly);}
+  .ev-btn.im.sel{background:rgba(229,57,53,0.2);border-color:var(--im);}
+
+  /* STATS */
+  .stats-strip{padding:.55rem 1.75rem;border-bottom:1px solid var(--border);display:flex;gap:1.5rem;align-items:center;flex-shrink:0;background:rgba(7,20,41,0.3);}
+  .stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--light);}
+  .stat-label{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-left:.35rem;}
+
+  /* TABLE AREA */
+  .table-wrap{flex:1;overflow-y:auto;}
 
   /* PODIUM */
-  .podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:1rem;margin-bottom:2.5rem;align-items:end;}
-  .podium-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.25rem 1rem;text-align:center;text-decoration:none;color:inherit;display:block;transition:border-color .2s;}
-  .podium-card:hover{border-color:rgba(255,255,255,0.2);}
-  .podium-card.first{border-color:rgba(255,215,0,0.3);background:rgba(255,215,0,0.04);}
-  .podium-card.second{border-color:rgba(192,192,192,0.25);}
-  .podium-card.third{border-color:rgba(205,127,50,0.25);}
-  .podium-medal{font-size:2rem;margin-bottom:.4rem;}
-  .podium-rank{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:.1em;color:var(--grey);margin-bottom:.3rem;}
-  .podium-name{font-weight:500;font-size:.95rem;margin-bottom:.2rem;}
-  .podium-time{font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500;}
-  .podium-tier{display:inline-block;font-family:'DM Mono',monospace;font-size:.6rem;padding:.18rem .5rem;border-radius:3px;margin-top:.4rem;}
-  .podium-gender{font-size:.68rem;padding:.15rem .4rem;border-radius:3px;font-weight:500;margin-left:.3rem;}
-  .gender-M{background:rgba(33,150,243,0.15);color:var(--light);}
-  .gender-F{background:rgba(123,31,162,0.2);color:#CE93D8;}
+  .podium-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border-bottom:2px solid var(--border);}
+  .podium-card{background:var(--deep);padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.9rem;text-decoration:none;color:inherit;transition:background .15s;}
+  .podium-card:hover{background:var(--hover);}
+  .podium-card.first{background:rgba(255,215,0,0.025);}
+  .podium-medal{font-size:1.5rem;flex-shrink:0;}
+  .podium-rank-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;line-height:1;flex-shrink:0;}
+  .r1{color:#FFD700;} .r2{color:#C0C0C0;} .r3{color:#CD7F32;}
+  .podium-info{flex:1;min-width:0;}
+  .podium-name{font-weight:500;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .podium-meta{margin-top:.15rem;display:flex;gap:.4rem;align-items:center;}
+  .podium-time{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;flex-shrink:0;margin-left:auto;}
+  .tier-badge{font-family:'DM Mono',monospace;font-size:.58rem;padding:.14rem .4rem;border-radius:3px;font-weight:500;}
+  .gender-tag{display:inline-block;font-family:'DM Mono',monospace;font-size:.6rem;padding:.13rem .4rem;border-radius:3px;font-weight:500;letter-spacing:.04em;}
+  .gender-tag.M{background:rgba(33,150,243,0.15);color:var(--light);}
+  .gender-tag.F{background:rgba(123,31,162,0.18);color:#CE93D8;}
 
-  /* LEADERBOARD TABLE */
-  .lb-table{width:100%;border-collapse:collapse;margin-bottom:4rem;}
-  .lb-table th{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);padding:.55rem .9rem;text-align:left;border-bottom:1px solid rgba(33,150,243,0.15);}
-  .lb-table td{padding:.7rem .9rem;border-bottom:1px solid rgba(255,255,255,0.04);font-size:.88rem;vertical-align:middle;}
-  .lb-table tr:hover td{background:rgba(33,150,243,0.035);}
-  .lb-rank{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--grey);min-width:2.2rem;}
-  .lb-rank.r1{color:#FFD700;} .lb-rank.r2{color:#C0C0C0;} .lb-rank.r3{color:#CD7F32;}
-  .lb-name a{color:var(--white);text-decoration:none;}
-  .lb-name a:hover{color:var(--light);}
-  .lb-time{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:500;}
-  .lb-tier-badge{font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .45rem;border-radius:3px;font-weight:500;}
-
-  /* SECTION HEADERS */
-  .section-label{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem;}
-  .section-label::after{content:'';flex:1;height:1px;background:rgba(33,150,243,0.1);}
-
-  .loading-state,.empty-state{text-align:center;padding:3rem 2rem;color:var(--grey);}
-  .spinner{width:32px;height:32px;border:2px solid rgba(33,150,243,0.2);border-top-color:var(--mid);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem;}
+  /* TABLE */
+  table{width:100%;border-collapse:collapse;}
+  thead th{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);padding:.55rem 1rem;text-align:left;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--navy);z-index:10;white-space:nowrap;}
+  thead th.c{text-align:center;}
+  tbody tr{border-bottom:1px solid rgba(255,255,255,0.03);transition:background .1s;}
+  tbody tr:hover{background:var(--hover);}
+  tbody td{padding:.6rem 1rem;font-size:.86rem;vertical-align:middle;}
+  .td-rank{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;min-width:3rem;}
+  .td-name a{color:var(--white);text-decoration:none;font-weight:500;}
+  .td-name a:hover{color:var(--light);}
+  .td-c{text-align:center;}
+  .td-age{text-align:center;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--grey);}
+  .td-time{font-family:'DM Mono',monospace;font-size:.9rem;font-weight:500;}
+  .td-bar-cell{width:90px;}
+  .bar-track{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;}
+  .bar-fill{height:100%;border-radius:2px;}
+  .view-btn{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:4px;transition:all .15s;display:inline-block;}
+  .view-btn:hover{color:var(--white);border-color:var(--mid);}
+  .empty-row td{text-align:center;padding:3rem;color:var(--grey);}
+  .spinner-wrap{display:flex;align-items:center;justify-content:center;padding:4rem;}
+  .spinner{width:28px;height:28px;border:2px solid rgba(33,150,243,0.2);border-top-color:var(--mid);border-radius:50%;animation:spin .8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
-  footer{border-top:1px solid rgba(33,150,243,0.1);padding:2rem;text-align:center;color:var(--grey);font-size:.8rem;position:relative;z-index:1;}
-
-  @media(max-width:600px){.podium{grid-template-columns:1fr;}.podium-card.second,.podium-card.third{order:1;}}
+  @media(max-width:768px){
+    .sidebar{display:none;}
+    .td-bar-cell,.td-age{display:none;}
+    .podium-row{grid-template-columns:1fr;}
+  }
 </style>
 </head>
 <body>
-<div class="shimmer-bg"></div>
 
-<nav>
-  <span class="brand">SSF Aquatics</span>
-  <a href="index.html">Home</a>
-  <a href="times.html">Times</a>
-  <a href="leaderboard.html" class="nav-active">Leaderboard</a>
-  <a href="dashboard.html">My Account</a>
-</nav>
-
-<div class="container">
-  <div class="page-header">
-    <h1>Team <span>Leaderboard</span></h1>
-    <p>Top performers by event · USA Swimming motivational time standards · SCY</p>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-name">SSF Aquatics</div>
+    <div class="brand-sub">Team Portal</div>
   </div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <a class="nav-item" href="dashboard.html"><span class="nav-icon">&#9744;</span>Dashboard</a>
+      <a class="nav-item" href="times.html"><span class="nav-icon">&#9203;</span>Times</a>
+      <a class="nav-item active" href="leaderboard.html"><span class="nav-icon">&#127942;</span>Leaderboard</a>
+      <a class="nav-item" href="attendance.html"><span class="nav-icon">&#9989;</span>Attendance</a>
+      <a class="nav-item" href="dryland.html"><span class="nav-icon">&#128170;</span>Dryland</a>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-section">
+      <div class="nav-label">Roster</div>
+      <a class="nav-item" href="times.html"><span class="nav-icon">&#127946;</span>Swimmers</a>
+      <a class="nav-item" href="register.html"><span class="nav-icon">&#128106;</span>Parents</a>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-section">
+      <div class="nav-label">Management</div>
+      <a class="nav-item" href="coach-hub.html"><span class="nav-icon">&#11088;</span>Coach Hub</a>
+      <a class="nav-item" href="coach-analytics.html"><span class="nav-icon">&#128200;</span>Analytics</a>
+      <a class="nav-item" href="login.html"><span class="nav-icon">&#128273;</span>My Account</a>
+    </div>
+  </nav>
+</aside>
 
-  <!-- Tier legend -->
-  <div class="tier-legend" id="tier-legend"></div>
-
-  <!-- Controls -->
-  <div class="controls">
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Team <span>Leaderboard</span></div>
     <div class="filter-pills" id="gender-pills">
       <button class="pill active" data-gender="all">All</button>
       <button class="pill" data-gender="M">Boys</button>
@@ -120,16 +149,21 @@
     </div>
   </div>
 
-  <!-- Event selector -->
-  <div class="event-filter" id="event-filter"></div>
+  <div class="event-bar">
+    <span class="event-bar-label">Event</span>
+    <div id="event-btns" style="display:flex;gap:.4rem;flex-wrap:wrap;"></div>
+  </div>
 
-  <!-- Content -->
-  <div id="lb-content">
-    <div class="loading-state"><div class="spinner"></div><p>Loading leaderboard…</p></div>
+  <div class="stats-strip" id="stats-strip" style="display:none">
+    <span class="stat-val" id="stat-count">0</span><span class="stat-label">swimmers</span>
+    <span id="stat-ev" style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--grey);margin-left:.5rem">—</span>
+    <span class="stat-label" style="margin-left:auto">SCY · Updated weekly</span>
+  </div>
+
+  <div class="table-wrap" id="table-wrap">
+    <div class="spinner-wrap"><div class="spinner"></div></div>
   </div>
 </div>
-
-<footer>SSF Aquatics · South San Francisco · 2026</footer>
 
 <script type="module">
 import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
@@ -146,200 +180,130 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-// ── USA Swimming SCY Motivational Standards (Mixed / unisex for simplicity) ──
-// Times in seconds. Tiers: B, BB, A, AA, AAA, AAAA
 const STANDARDS = {
-  '50 Free':   { B:40,  BB:35,  A:30,  AA:27,  AAA:24.5, AAAA:22.9 },
-  '100 Free':  { B:90,  BB:78,  A:67,  AA:59,  AAA:53,   AAAA:49.5 },
-  '200 Free':  { B:200, BB:175, A:150, AA:132, AAA:118,  AAAA:110  },
-  '500 Free':  { B:540, BB:475, A:410, AA:360, AAA:325,  AAAA:303  },
-  '100 Back':  { B:100, BB:87,  A:75,  AA:67,  AAA:60,   AAAA:56   },
-  '200 Back':  { B:215, BB:190, A:163, AA:145, AAA:130,  AAAA:121  },
-  '100 Breast':{ B:110, BB:96,  A:83,  AA:74,  AAA:66,   AAAA:62   },
-  '200 Breast':{ B:240, BB:212, A:183, AA:163, AAA:145,  AAAA:136  },
-  '100 Fly':   { B:103, BB:90,  A:77,  AA:69,  AAA:62,   AAAA:57.5 },
-  '200 Fly':   { B:225, BB:198, A:170, AA:152, AAA:136,  AAAA:126  },
-  '200 IM':    { B:215, BB:190, A:163, AA:144, AAA:130,  AAAA:121  },
-  '400 IM':    { B:465, BB:412, A:355, AA:315, AAA:283,  AAAA:263  },
+  "50 Free":{B:40,BB:35,A:30,AA:27,AAA:24.5,AAAA:22.9},
+  "100 Free":{B:90,BB:78,A:67,AA:59,AAA:53,AAAA:49.5},
+  "200 Free":{B:200,BB:175,A:150,AA:132,AAA:118,AAAA:110},
+  "500 Free":{B:540,BB:475,A:410,AA:360,AAA:325,AAAA:303},
+  "1000 Free":{B:1140,BB:1000,A:870,AA:770,AAA:695,AAAA:650},
+  "1650 Free":{B:1980,BB:1740,A:1500,AA:1320,AAA:1190,AAAA:1110},
+  "50 Back":{B:46,BB:40,A:34,AA:31,AAA:28,AAAA:26},
+  "100 Back":{B:100,BB:87,A:75,AA:67,AAA:60,AAAA:56},
+  "200 Back":{B:215,BB:190,A:163,AA:145,AAA:130,AAAA:121},
+  "50 Breast":{B:52,BB:45,A:39,AA:35,AAA:31.5,AAAA:29.5},
+  "100 Breast":{B:110,BB:96,A:83,AA:74,AAA:66,AAAA:62},
+  "200 Breast":{B:240,BB:212,A:183,AA:163,AAA:145,AAAA:136},
+  "50 Fly":{B:44,BB:38,A:33,AA:29.5,AAA:26.5,AAAA:24.8},
+  "100 Fly":{B:103,BB:90,A:77,AA:69,AAA:62,AAAA:57.5},
+  "200 Fly":{B:225,BB:198,A:170,AA:152,AAA:136,AAAA:126},
+  "100 IM":{B:78,BB:68,A:58,AA:52,AAA:47,AAAA:43.5},
+  "200 IM":{B:215,BB:190,A:163,AA:144,AAA:130,AAAA:121},
+  "400 IM":{B:465,BB:412,A:355,AA:315,AAA:283,AAAA:263},
 };
-
-const TIERS = [
-  { key:'AAAA', label:'AAAA',  bg:'rgba(156,39,176,0.25)', color:'#CE93D8' },
-  { key:'AAA',  label:'AAA',   bg:'rgba(233,30,99,0.2)',   color:'#F48FB1' },
-  { key:'AA',   label:'AA',    bg:'rgba(0,188,212,0.18)',  color:'#80DEEA' },
-  { key:'A',    label:'A',     bg:'rgba(255,215,0,0.18)',  color:'#FFD700' },
-  { key:'BB',   label:'BB',    bg:'rgba(192,192,192,0.15)',color:'#C0C0C0' },
-  { key:'B',    label:'B',     bg:'rgba(205,127,50,0.15)', color:'#CD7F32' },
+const TIERS=[
+  {key:"AAAA",bg:"rgba(156,39,176,0.25)",color:"#CE93D8"},
+  {key:"AAA",bg:"rgba(233,30,99,0.2)",color:"#F48FB1"},
+  {key:"AA",bg:"rgba(0,188,212,0.18)",color:"#80DEEA"},
+  {key:"A",bg:"rgba(255,215,0,0.18)",color:"#FFD700"},
+  {key:"BB",bg:"rgba(192,192,192,0.15)",color:"#C0C0C0"},
+  {key:"B",bg:"rgba(205,127,50,0.15)",color:"#CD7F32"},
 ];
+function getTier(ev,s){const std=STANDARDS[ev];if(!std)return null;for(const t of TIERS){if(s<=std[t.key])return t;}return null;}
+function strokeOf(ev){const e=ev.toUpperCase();if(e.includes("FREE"))return"free";if(e.includes("BACK"))return"back";if(e.includes("BREAST"))return"breast";if(e.includes("FLY"))return"fly";if(e.includes("IM"))return"im";return"free";}
+const SC={free:"var(--free)",back:"var(--back)",breast:"var(--breast)",fly:"var(--fly)",im:"var(--im)"};
+const EV_ORDER=["50 Free","100 Free","200 Free","500 Free","1000 Free","1650 Free","50 Back","100 Back","200 Back","50 Breast","100 Breast","200 Breast","50 Fly","100 Fly","200 Fly","100 IM","200 IM","400 IM"];
+function ps(t){t=t.trim();if(t.includes(":")){const[m,s]=t.split(":");return parseInt(m)*60+parseFloat(s);}return parseFloat(t);}
 
-function getTier(event, secs) {
-  const std = STANDARDS[event];
-  if (!std) return null;
-  for (const t of TIERS) {
-    if (secs <= std[t.key]) return t;
-  }
-  return null;
+let all=[],gf="all",sel=null;
+
+async function load(){
+  const snap=await getDocs(query(collection(db,"swimmers"),where("active","==",true)));
+  all=snap.docs.map(d=>({id:d.id,...d.data()}));
+  buildBtns();render();
 }
 
-function tierBadge(tier) {
-  if (!tier) return '';
-  return `<span class="lb-tier-badge" style="background:${tier.bg};color:${tier.color}">${tier.label}</span>`;
-}
-
-// Helpers
-function strokeOf(ev) {
-  const e = ev.toUpperCase();
-  if (e.includes('FREE'))   return 'free';
-  if (e.includes('BACK'))   return 'back';
-  if (e.includes('BREAST')) return 'breast';
-  if (e.includes('FLY'))    return 'fly';
-  if (e.includes('IM'))     return 'im';
-  return 'free';
-}
-const EVENT_ORDER = ['50 Free','100 Free','200 Free','500 Free','1000 Free','1650 Free',
-  '100 Back','200 Back','100 Breast','200 Breast','100 Fly','200 Fly','200 IM','400 IM'];
-
-function parseSecs(t) {
-  t = t.trim();
-  if (t.includes(':')) { const [m,s] = t.split(':'); return parseInt(m)*60+parseFloat(s); }
-  return parseFloat(t);
-}
-
-const strokeColors = { free:'var(--free)', back:'var(--back)', breast:'var(--breast)', fly:'var(--fly)', im:'var(--im)' };
-
-// State
-let allSwimmers = [];
-let genderFilter = 'all';
-let selectedEvent = null;
-
-async function load() {
-  const q = query(collection(db, 'swimmers'), where('active','==',true));
-  const snap = await getDocs(q);
-  allSwimmers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-  buildTierLegend();
-  buildEventFilter();
-  render();
-}
-
-function buildTierLegend() {
-  document.getElementById('tier-legend').innerHTML = TIERS.map(t =>
-    `<span class="tier-chip" style="background:${t.bg};color:${t.color}">${t.label}</span>`
-  ).join('') + `<span class="tier-chip" style="background:rgba(255,255,255,0.05);color:var(--grey)">No standard</span>`;
-}
-
-function buildEventFilter() {
-  const eventSet = new Set();
-  allSwimmers.forEach(s => Object.keys(s.times||{}).forEach(ev => eventSet.add(ev)));
-  const events = [...eventSet].sort((a,b) => {
-    const ai = EVENT_ORDER.indexOf(a), bi = EVENT_ORDER.indexOf(b);
-    if (ai===-1&&bi===-1) return a.localeCompare(b);
-    if (ai===-1) return 1; if (bi===-1) return -1;
-    return ai - bi;
-  });
-  if (!selectedEvent && events.length) selectedEvent = events[0];
-  const wrap = document.getElementById('event-filter');
-  wrap.innerHTML = events.map(ev => {
-    const s = strokeOf(ev);
-    return `<button class="ev-btn ${s}${selectedEvent===ev?' selected':''}" data-ev="${ev}">${ev}</button>`;
-  }).join('');
-  wrap.querySelectorAll('.ev-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      selectedEvent = btn.dataset.ev;
-      wrap.querySelectorAll('.ev-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      render();
-    });
+function buildBtns(){
+  const evSet=new Set();
+  all.forEach(s=>Object.keys(s.times||{}).forEach(ev=>evSet.add(ev)));
+  const evs=EV_ORDER.filter(ev=>evSet.has(ev));
+  if(!sel&&evs.length)sel=evs[0];
+  const w=document.getElementById("event-btns");
+  w.innerHTML=evs.map(ev=>`<button class="ev-btn ${strokeOf(ev)}${sel===ev?" sel":""}" data-ev="${ev}">${ev}</button>`).join("");
+  w.querySelectorAll(".ev-btn").forEach(b=>{
+    b.addEventListener("click",()=>{sel=b.dataset.ev;w.querySelectorAll(".ev-btn").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");render();});
   });
 }
 
-function render() {
-  const container = document.getElementById('lb-content');
-  if (!selectedEvent) { container.innerHTML = `<div class="empty-state">No events found</div>`; return; }
+function render(){
+  if(!sel)return;
+  const color=SC[strokeOf(sel)];
+  const rows=all
+    .filter(s=>(gf==="all"||s.gender===gf)&&(s.times||{})[sel])
+    .map(s=>({...s,secs:ps(s.times[sel]),display:s.times[sel],tier:getTier(sel,ps(s.times[sel]))}))
+    .sort((a,b)=>a.secs-b.secs);
 
-  const stroke = strokeOf(selectedEvent);
-  const color  = strokeColors[stroke];
+  document.getElementById("stat-count").textContent=rows.length;
+  document.getElementById("stat-ev").textContent=sel;
+  document.getElementById("stats-strip").style.display=rows.length?"flex":"none";
 
-  let rows = allSwimmers
-    .filter(s => {
-      if (genderFilter !== 'all' && s.gender !== genderFilter) return false;
-      return s.times && s.times[selectedEvent];
-    })
-    .map(s => {
-      const secs = parseSecs(s.times[selectedEvent]);
-      const tier = getTier(selectedEvent, secs);
-      return { ...s, secs, display: s.times[selectedEvent], tier };
-    });
+  const w=document.getElementById("table-wrap");
+  if(!rows.length){w.innerHTML=`<table><tbody><tr class="empty-row"><td colspan="8">No times for ${sel} yet.</td></tr></tbody></table>`;return;}
 
-  rows.sort((a,b) => a.secs - b.secs);
+  const fastest=rows[0].secs;
+  const top3=rows.slice(0,3);
+  const po=top3.length>=3?[top3[1],top3[0],top3[2]]:top3;
+  const pc=top3.length>=3?["r2","r1","r3"]:["r1","r2","r3"];
+  const rn=top3.length>=3?[2,1,3]:[1,2,3];
+  const me=["&#129752;","&#129751;","&#129753;"];
 
-  if (!rows.length) {
-    container.innerHTML = `<div class="empty-state"><p>No times recorded for <strong>${selectedEvent}</strong> yet.</p></div>`;
-    return;
-  }
+  const podium=`<div class="podium-row">${po.map((r,i)=>`
+    <a class="podium-card${rn[i]===1?" first":""}" href="swimmer.html?id=${r.id}">
+      <div class="podium-medal">${me[i]}</div>
+      <div class="podium-rank-num ${pc[i]}">${rn[i]}</div>
+      <div class="podium-info">
+        <div class="podium-name">${r.name}</div>
+        <div class="podium-meta">
+          <span class="gender-tag ${r.gender}">${r.gender}</span>
+          ${r.tier?`<span class="tier-badge" style="background:${r.tier.bg};color:${r.tier.color}">${r.tier.key}</span>`:""}
+        </div>
+      </div>
+      <div class="podium-time" style="color:${color}">${r.display}</div>
+    </a>`).join("")}</div>`;
 
-  // Podium (top 3)
-  const podium3 = rows.slice(0, 3);
-  const medals = ['🥇','🥈','🥉'];
-  const podiumOrder = podium3.length >= 3 ? [podium3[1], podium3[0], podium3[2]] : podium3;
-  const podiumClasses = podium3.length >= 3 ? ['second','first','third'] : ['first','second','third'];
+  const tbl=`<table>
+    <thead><tr>
+      <th style="width:3.5rem">#</th><th>Name</th>
+      <th class="c">Gender</th><th class="c">Age</th>
+      <th>Time</th><th class="c">Tier</th>
+      <th class="td-bar-cell"></th><th class="c">Action</th>
+    </tr></thead>
+    <tbody>${rows.map((r,i)=>{
+      const rc=i===0?"#FFD700":i===1?"#C0C0C0":i===2?"#CD7F32":"var(--grey)";
+      const pct=Math.round((fastest/r.secs)*100);
+      return`<tr>
+        <td class="td-rank" style="color:${rc}">${i+1}</td>
+        <td class="td-name"><a href="swimmer.html?id=${r.id}">${r.name}</a></td>
+        <td class="td-c"><span class="gender-tag ${r.gender}">${r.gender==="M"?"Boy":"Girl"}</span></td>
+        <td class="td-age">${r.age||"&#8212;"}</td>
+        <td class="td-time" style="color:${color}">${r.display}</td>
+        <td class="td-c">${r.tier?`<span class="tier-badge" style="background:${r.tier.bg};color:${r.tier.color}">${r.tier.key}</span>`:`<span style="color:rgba(139,163,192,0.3);font-size:.75rem">&#8212;</span>`}</td>
+        <td class="td-bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color};opacity:.55"></div></div></td>
+        <td class="td-c"><a class="view-btn" href="swimmer.html?id=${r.id}">View &#8594;</a></td>
+      </tr>`;
+    }).join("")}</tbody>
+  </table>`;
 
-  const podiumHtml = `
-    <div class="section-label">Top Performers</div>
-    <div class="podium" style="margin-bottom:2.5rem">
-      ${podiumOrder.map((r, idx) => {
-        const cls = podiumClasses[idx];
-        const rank = cls === 'first' ? 1 : cls === 'second' ? 2 : 3;
-        return `<a class="podium-card ${cls}" href="swimmer.html?id=${r.id}">
-          <div class="podium-medal">${medals[rank-1]}</div>
-          <div class="podium-rank">${cls.toUpperCase()}</div>
-          <div class="podium-name">${r.name} <span class="podium-gender gender-${r.gender}">${r.gender}</span></div>
-          <div class="podium-time" style="color:${color}">${r.display}</div>
-          ${r.tier ? `<div class="podium-tier" style="background:${r.tier.bg};color:${r.tier.color}">${r.tier.label}</div>` : ''}
-        </a>`;
-      }).join('')}
-    </div>`;
-
-  // Full table
-  const tableHtml = `
-    <div class="section-label">Full Rankings · ${selectedEvent}</div>
-    <table class="lb-table">
-      <thead>
-        <tr><th>#</th><th>Swimmer</th><th>Time</th><th>Tier</th></tr>
-      </thead>
-      <tbody>
-        ${rows.map((r,i) => {
-          const rc = i===0?'r1':i===1?'r2':i===2?'r3':'';
-          return `<tr>
-            <td><span class="lb-rank ${rc}">${i+1}</span></td>
-            <td class="lb-name">
-              <a href="swimmer.html?id=${r.id}">${r.name}</a>
-              <span class="podium-gender gender-${r.gender}" style="margin-left:.4rem;font-size:.65rem;padding:.12rem .35rem;border-radius:3px;">${r.gender}</span>
-            </td>
-            <td><span class="lb-time" style="color:${color}">${r.display}</span></td>
-            <td>${r.tier ? tierBadge(r.tier) : '<span style="color:var(--grey);font-size:.78rem">—</span>'}</td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>`;
-
-  container.innerHTML = podiumHtml + tableHtml;
+  w.innerHTML=podium+tbl;
 }
 
-// Gender pills
-document.querySelectorAll('#gender-pills .pill').forEach(p => {
-  p.addEventListener('click', () => {
-    document.querySelectorAll('#gender-pills .pill').forEach(x => x.classList.remove('active'));
-    p.classList.add('active');
-    genderFilter = p.dataset.gender;
-    render();
+document.querySelectorAll("#gender-pills .pill").forEach(p=>{
+  p.addEventListener("click",()=>{
+    document.querySelectorAll("#gender-pills .pill").forEach(x=>x.classList.remove("active"));
+    p.classList.add("active");gf=p.dataset.gender;render();
   });
 });
 
-load().catch(e => {
-  console.error(e);
-  document.getElementById('lb-content').innerHTML = `<div class="empty-state"><p>Failed to load leaderboard.</p></div>`;
-});
+load().catch(e=>{console.error(e);document.getElementById("table-wrap").innerHTML=`<div class="spinner-wrap"><p style="color:var(--grey)">Failed to load.</p></div>`;});
 </script>
 </body>
 </html>

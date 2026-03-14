@@ -30,7 +30,7 @@
   .loading-text{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.18em;color:var(--grey);text-transform:uppercase;}
   .loading-sub{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;color:rgba(139,163,192,0.4);text-transform:uppercase;}
 
-  .content{max-width:680px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1;}
+  .content{max-width:900px;margin:0 auto;padding:1.5rem 1.5rem;position:relative;z-index:1;}
 
   .welcome{margin-bottom:2rem;}
   .welcome-name{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.03em;line-height:1;}
@@ -68,16 +68,18 @@
   .remove-btn:hover{border-color:var(--red2);color:var(--red2);}
   .empty-state{padding:2rem;text-align:center;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:rgba(139,163,192,0.35);text-transform:uppercase;}
 </style>
+  <script src="sidebar.js"></script>
+
+<style>
+  /* Sidebar layout scroll fix */
+  .ssf-main { overflow-y: auto !important; }
+  body::before { z-index: -1; }
+  .shimmer-bg { z-index: -1; }
+</style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-inner">
-    <a class="back-btn" href="index.html">← Home</a>
-    <div class="topbar-title">
-      <h1>Dashboard</h1>
-      <div class="topbar-sub" id="topbar-sub">Purple Group</div>
-    </div>
+</div>
     <button class="signout-btn" id="signout-btn">Sign Out</button>
   </div>
 </div>
@@ -330,6 +332,10 @@ async function renderCoachDash() {
   html += `</div>`;
   return html;
 }
+</script>
+<script>
+// Inject shared sidebar
+if(typeof injectSidebar!=="undefined")injectSidebar("dashboard");
 </script>
 </body>
 </html>

@@ -61,10 +61,22 @@ async def scrape_roster(page) -> list[dict]:
             m = re.search(r"/swimmer/(\d+)", href)
             if not m:
                 continue
+            # Try to grab age from row cells (SwimCloud shows age as a number)
+            age = None
+            cells = await row.query_selector_all("td")
+            for cell in cells:
+                text = (await cell.inner_text()).strip()
+                if re.match(r"^\d{1,2}$", text):
+                    val = int(text)
+                    if 6 <= val <= 22:
+                        age = val
+                        break
+
             swimmers.append({
                 "swimcloudId": m.group(1),
                 "name": name,
                 "gender": gender,
+                "age": age,
             })
     print(f"  Found {len(swimmers)} swimmers total")
     return swimmers
@@ -263,6 +275,7 @@ def sync_to_firestore(db, scraped_swimmers: list[dict], history_map: dict):
                 "name":           swimmer["name"],
                 "gender":         swimmer["gender"],
                 "active":         True,
+                "age":            swimmer.get("age"),
                 "times":          merged,
                 "season_history": season_history,
                 "lastUpdated":    datetime.now(timezone.utc),
@@ -274,6 +287,7 @@ def sync_to_firestore(db, scraped_swimmers: list[dict], history_map: dict):
                 "name":           swimmer["name"],
                 "gender":         swimmer["gender"],
                 "active":         True,
+                "age":            swimmer.get("age"),
                 "times":          best_times,
                 "season_history": season_history,
                 "createdAt":      datetime.now(timezone.utc),

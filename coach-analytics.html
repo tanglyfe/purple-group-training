@@ -115,21 +115,20 @@
 
   footer{border-top:1px solid rgba(33,150,243,0.1);padding:1.5rem 2rem;text-align:center;color:var(--grey);font-size:.78rem;position:relative;z-index:1;}
 </style>
+  <script src="sidebar.js"></script>
+
+<style>
+  /* Sidebar layout scroll fix */
+  .ssf-main { overflow-y: auto !important; }
+  body::before { z-index: -1; }
+  .shimmer-bg { z-index: -1; }
+</style>
 </head>
 <body>
 <div class="shimmer-bg"></div>
 
 <!-- MAIN CONTENT -->
 <div id="main-content">
-<nav>
-  <span class="brand">SSF Aquatics</span>
-  <a href="index.html">Home</a>
-  <a href="times.html">Times</a>
-  <a href="leaderboard.html">Leaderboard</a>
-  <a href="coach-hub.html">Coach Hub</a>
-  <a href="coach-analytics.html" class="nav-active">Analytics</a>
-</nav>
-
 <div class="container">
   <div class="page-header">
     <h1>Coach <span>Analytics</span></h1>
@@ -439,6 +438,10 @@ wireFilter('imp-direction',   'impDir',     renderImprovement);
 
 // AUTO-INIT
 init().catch(console.error);
+</script>
+<script>
+// Inject shared sidebar
+if(typeof injectSidebar!=="undefined")injectSidebar("analytics");
 </script>
 </body>
 </html>

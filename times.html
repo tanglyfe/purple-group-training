@@ -13,10 +13,10 @@
     --fly:#8E24AA; --im:#E53935;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;}
   body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.04) 58px,rgba(33,150,243,0.04) 60px);pointer-events:none;z-index:0;}
   .shimmer-bg{position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(21,101,192,0.18) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(123,31,162,0.10) 0%,transparent 60%);pointer-events:none;z-index:0;}
-  .container{max-width:1200px;margin:0 auto;padding:0 2rem;position:relative;z-index:1;}
+  .container{max-width:100%;margin:0 auto;padding:0 2rem;position:relative;z-index:1;}
 
   /* NAV */
   nav{position:sticky;top:0;z-index:100;background:rgba(7,20,41,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,0.15);padding:1rem 2rem;display:flex;align-items:center;gap:1.5rem;}
@@ -132,17 +132,17 @@
     .swimmer-grid{grid-template-columns:1fr;}
   }
 </style>
+  <script src="sidebar.js"></script>
+
+<style>
+  /* Sidebar layout scroll fix */
+  .ssf-main { overflow-y: auto !important; }
+  body::before { z-index: -1; }
+  .shimmer-bg { z-index: -1; }
+</style>
 </head>
 <body>
 <div class="shimmer-bg"></div>
-
-<nav>
-  <span class="brand">SSF Aquatics</span>
-  <a href="index.html">Home</a>
-  <a href="times.html" class="nav-active">Times</a>
-  <a href="leaderboard.html">Leaderboard</a>
-  <a href="dashboard.html">My Account</a>
-</nav>
 
 <div class="container">
   <div class="page-header">
@@ -436,6 +436,10 @@ loadSwimmers().catch(e => {
   document.getElementById('rankings-container').innerHTML =
     `<div class="empty-state"><p>⚠️ Failed to load. Please try again.</p></div>`;
 });
+</script>
+<script>
+// Inject shared sidebar
+if(typeof injectSidebar!=="undefined")injectSidebar("times");
 </script>
 </body>
 </html>
