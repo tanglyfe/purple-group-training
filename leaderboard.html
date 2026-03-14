@@ -268,6 +268,14 @@ function swimmerMatchesGroup(swimmer) {
   return (group.swimmerIds || []).includes(swimmer.id);
 }
 
+
+function calcAge(swimmer) {
+  if (swimmer.birthYear) {
+    const now = new Date();
+    return now.getFullYear() - swimmer.birthYear;
+  }
+  return swimmer.age || null;
+}
 async function load(){
   const snap=await getDocs(query(collection(db,"swimmers"),where("active","==",true)));
   all=snap.docs.map(d=>({id:d.id,...d.data()}));
@@ -336,7 +344,7 @@ function render(){
         <td class="td-rank" style="color:${rc}">${i+1}</td>
         <td class="td-name"><a href="swimmer.html?id=${r.id}">${r.name}</a></td>
         <td class="td-c"><span class="gender-tag ${r.gender}">${r.gender==="M"?"Boy":"Girl"}</span></td>
-        <td class="td-age">${r.age||"&#8212;"}</td>
+        <td class="td-age">${calcAge(r)||"&#8212;"}</td>
         <td class="td-time" style="color:${color}">${r.display}</td>
         <td class="td-c">${r.tier?`<span class="tier-badge" style="background:${r.tier.bg};color:${r.tier.color}">${r.tier.key}</span>`:`<span style="color:rgba(139,163,192,0.3);font-size:.75rem">&#8212;</span>`}</td>
         <td class="td-bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color};opacity:.55"></div></div></td>
