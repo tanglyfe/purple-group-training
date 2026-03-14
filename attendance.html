@@ -3,218 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Attendance — Purple Group</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --navy:#0B1F3A; --deep:#071429; --mid:#2196F3; --light:#64B5F6;
-    --white:#F0F6FF; --grey:#8BA3C0; --gold:#F9A825;
-    --green:#2E7D32; --green2:#43A047; --red:#C62828; --red2:#EF5350;
-    --present-bg:rgba(46,125,50,0.18); --present-border:#43A047;
-    --absent-bg:rgba(198,40,40,0.18);  --absent-border:#EF5350;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
-  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;padding-bottom:6rem;}
-  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.03) 58px,rgba(33,150,243,0.03) 60px);pointer-events:none;z-index:0;}
-
-  /* TOPBAR */
-  .topbar{position:sticky;top:0;z-index:100;background:rgba(7,20,41,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,0.15);padding:.75rem 1rem;}
-  .topbar-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:.75rem;}
-  .back-btn{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:var(--grey);text-decoration:none;text-transform:uppercase;padding:.4rem .6rem;border:1px solid rgba(255,255,255,0.08);border-radius:2px;transition:color .2s,border-color .2s;flex-shrink:0;}
-  .back-btn:hover{color:var(--light);border-color:rgba(33,150,243,0.3);}
-  .back-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;}
-  .topbar-title{flex:1;min-width:0;}
-  .topbar-title h1{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.04em;line-height:1;}
-  .topbar-date{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;margin-top:.15rem;}
-  .sync-status{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;flex-shrink:0;transition:color .3s;}
-  .sync-status.syncing{color:var(--gold);}
-  .sync-status.synced{color:var(--green2);}
-  .sync-status.error{color:var(--red2);}
-  .lock-btn{background:none;border:1px solid rgba(255,255,255,0.08);border-radius:2px;color:var(--grey);font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .6rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
-  .lock-btn:hover{border-color:rgba(198,40,40,.4);color:#EF9A9A;}
-
-  /* DATE BAR */
-  .date-bar{max-width:680px;margin:0 auto;padding:1rem 1rem 0;position:relative;z-index:1;}
-  .date-row{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
-  .date-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;flex-shrink:0;}
-  .date-input{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:2px;color:var(--white);font-family:'DM Mono',monospace;font-size:.85rem;padding:.45rem .75rem;outline:none;cursor:pointer;transition:border-color .2s;-webkit-appearance:none;}
-  .date-input:focus{border-color:var(--mid);}
-  .day-quick-btns{display:flex;gap:.4rem;flex-wrap:wrap;}
-  .day-btn{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;padding:.35rem .6rem;border:1px solid rgba(255,255,255,0.08);border-radius:2px;background:transparent;color:var(--grey);cursor:pointer;text-transform:uppercase;transition:all .15s;white-space:nowrap;}
-  .day-btn:hover{border-color:var(--mid);color:var(--light);}
-  .day-btn.active{background:rgba(33,150,243,0.15);border-color:var(--mid);color:var(--light);}
-
-  /* STATS */
-  .stats-bar{max-width:900px;margin:.75rem auto 0;padding:0 1rem;display:flex;gap:1rem;position:relative;z-index:1;flex-wrap:wrap;}
-  .stat-pill{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;}
-  .stat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;line-height:1;}
-
-  /* MARK ALL */
-  .mark-all-bar{max-width:900px;margin:.75rem auto 0;padding:0 1rem;display:flex;gap:.5rem;position:relative;z-index:1;}
-  .mark-all-btn{flex:1;padding:.6rem;border-radius:2px;border:1px solid rgba(255,255,255,0.08);background:transparent;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
-  .mark-all-btn.present{color:var(--green2);border-color:rgba(67,160,71,0.3);}
-  .mark-all-btn.present:hover{background:rgba(46,125,50,0.15);border-color:var(--green2);}
-  .mark-all-btn.absent{color:var(--red2);border-color:rgba(239,83,80,0.3);}
-  .mark-all-btn.absent:hover{background:rgba(198,40,40,0.15);border-color:var(--red2);}
-  .mark-all-btn.clear{color:var(--grey);border-color:rgba(255,255,255,0.08);flex:0 0 auto;padding:.6rem 1rem;}
-  .mark-all-btn.clear:hover{border-color:rgba(255,255,255,0.2);color:var(--white);}
-
-  /* ROSTER */
-  .content{max-width:680px;margin:1rem auto 0;padding:0 1rem;position:relative;z-index:1;}
-  .lane-header{display:flex;align-items:center;gap:.75rem;padding:.6rem .9rem;border-radius:2px 2px 0 0;margin-top:1.25rem;margin-bottom:1px;}
-  .lane-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;flex:1;}
-  .lane-count{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;opacity:.7;}
-  .swimmer-row{display:flex;align-items:center;gap:.75rem;padding:.65rem .9rem;background:rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s;position:relative;}
-  .swimmer-row:last-child{border-bottom:none;border-radius:0 0 2px 2px;}
-  .swimmer-row:hover{background:rgba(255,255,255,0.04);}
-  .swimmer-row.is-present{background:var(--present-bg);border-left:3px solid var(--present-border);}
-  .swimmer-row.is-absent{background:var(--absent-bg);border-left:3px solid var(--absent-border);}
-  .swimmer-row.unset{border-left:3px solid transparent;}
-  .swimmer-info{flex:1;min-width:0;}
-  .swimmer-name{font-size:.92rem;font-weight:500;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .swimmer-meta{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;margin-top:.1rem;}
-  .att-btns{display:flex;gap:.4rem;flex-shrink:0;}
-  .att-btn{width:42px;height:42px;border-radius:2px;border:1px solid rgba(255,255,255,0.1);background:transparent;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-  .att-btn.present-btn{color:var(--green2);border-color:rgba(67,160,71,0.25);}
-  .att-btn.absent-btn{color:var(--red2);border-color:rgba(239,83,80,0.25);}
-  .att-btn.note-btn{color:var(--grey);border-color:rgba(255,255,255,0.08);font-size:.9rem;}
-  .att-btn.present-btn.active{background:rgba(46,125,50,0.3);border-color:var(--green2);box-shadow:0 0 0 2px rgba(67,160,71,0.2);}
-  .att-btn.absent-btn.active{background:rgba(198,40,40,0.3);border-color:var(--red2);box-shadow:0 0 0 2px rgba(239,83,80,0.2);}
-  .att-btn.note-btn.has-note{color:var(--gold);border-color:rgba(249,168,37,0.4);}
-  .note-panel{display:none;padding:.5rem .9rem .75rem;background:rgba(249,168,37,0.05);border-left:3px solid var(--gold);border-bottom:1px solid rgba(255,255,255,0.04);}
-  .note-panel.open{display:block;}
-  .note-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(249,168,37,0.2);border-radius:2px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.5rem .75rem;outline:none;resize:none;transition:border-color .2s;min-height:60px;}
-  .note-input:focus{border-color:var(--gold);}
-  .note-input::placeholder{color:rgba(139,163,192,0.5);}
-
-  /* VIEW TABS */
-  .view-tabs{max-width:900px;margin:2rem auto 0;padding:0 1rem;display:flex;gap:1px;position:relative;z-index:1;}
-  .view-tab{flex:1;padding:.6rem;text-align:center;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);color:var(--grey);transition:all .15s;}
-  .view-tab:first-child{border-radius:2px 0 0 2px;}
-  .view-tab:last-child{border-radius:0 2px 2px 0;}
-  .view-tab.active{background:rgba(33,150,243,0.1);border-color:rgba(33,150,243,0.3);color:var(--light);}
-  .view-panel{max-width:900px;margin:.75rem auto 0;padding:0 1rem;position:relative;z-index:1;display:none;}
-  .view-panel.active{display:block;}
-
-  /* HISTORY GRID */
-  .history-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
-  .history-card{background:var(--deep);padding:.9rem 1rem;cursor:pointer;transition:background .15s;}
-  .history-card:hover{background:rgba(33,150,243,0.06);}
-  .history-date{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.1em;color:var(--light);margin-bottom:.3rem;}
-  .history-summary{font-size:.8rem;color:var(--grey);line-height:1.5;}
-  .history-bar{display:flex;gap:2px;margin-top:.5rem;height:4px;border-radius:2px;overflow:hidden;}
-  .history-bar-present{background:var(--green2);}
-  .history-bar-absent{background:var(--red2);}
-  .history-bar-unset{background:rgba(255,255,255,0.1);}
-
-  /* WEEKLY SUMMARY */
-  .week-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1rem;}
-  .week-stat-card{background:var(--deep);padding:1rem 1.25rem;}
-  .week-stat-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;margin-bottom:.3rem;}
-  .week-stat-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;}
-
-  /* SWIMMER % TABLE */
-  .swimmer-pct-table{border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
-  .pct-row{display:grid;grid-template-columns:1fr 80px 60px;gap:.5rem;align-items:center;padding:.6rem .9rem;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s;}
-  .pct-row:last-child{border-bottom:none;}
-  .pct-row:hover{background:rgba(255,255,255,0.02);}
-  .pct-row.header{background:rgba(255,255,255,0.03);font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;}
-  .pct-name{font-size:.85rem;font-weight:500;}
-  .pct-bar-wrap{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
-  .pct-bar-fill{height:100%;background:var(--green2);border-radius:2px;transition:width .4s;}
-  .pct-num{font-family:'DM Mono',monospace;font-size:.72rem;text-align:right;}
-
-  /* EXPORT */
-  .export-bar{max-width:680px;margin:1.5rem auto 0;padding:0 1rem;display:flex;gap:.5rem;}
-  .export-btn{flex:1;padding:.75rem;border-radius:2px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--grey);font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
-  .export-btn:hover{border-color:var(--mid);color:var(--light);}
-
-  /* EMPTY */
-  .empty-state{padding:1.5rem;text-align:center;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;color:rgba(139,163,192,0.4);text-transform:uppercase;border:1px solid rgba(255,255,255,0.06);border-radius:2px;}
-
-  /* LOADING */
-  .loading-row{padding:.75rem .9rem;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;text-align:center;background:rgba(249,168,37,0.03);border:1px solid rgba(249,168,37,0.08);border-radius:2px;margin-top:.5rem;}
-
-  /* MONTHLY VIEW */
-  .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
-  .month-nav-btn{background:none;border:1px solid rgba(255,255,255,0.1);border-radius:2px;color:var(--grey);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;padding:.4rem .8rem;cursor:pointer;transition:all .15s;}
-  .month-nav-btn:hover{border-color:var(--mid);color:var(--light);}
-  .month-nav-label{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.05em;}
-
-  .month-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.25rem;}
-  .month-stat{background:var(--deep);padding:.9rem 1rem;}
-  .month-stat-label{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;margin-bottom:.25rem;}
-  .month-stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1;}
-
-  /* HEATMAP */
-  .heatmap-wrap{border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.25rem;}
-  .heatmap-header{display:grid;grid-template-columns:repeat(7,1fr);background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);}
-  .heatmap-dow{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;text-align:center;padding:.4rem 0;}
-  .heatmap-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:.5rem;}
-  .heatmap-cell{aspect-ratio:1;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.55rem;color:rgba(255,255,255,0.5);cursor:default;transition:transform .1s;position:relative;}
-  .heatmap-cell:hover{transform:scale(1.15);z-index:2;}
-  .heatmap-cell.empty{background:transparent;cursor:default;}
-  .heatmap-cell.no-session{background:rgba(255,255,255,0.04);}
-  .heatmap-cell.pct-high{background:rgba(46,125,50,0.7);}
-  .heatmap-cell.pct-mid{background:rgba(249,168,37,0.5);}
-  .heatmap-cell.pct-low{background:rgba(198,40,40,0.55);}
-  .heatmap-cell.today-cell{outline:2px solid var(--mid);outline-offset:-2px;}
-
-  /* ABSENCE ALERTS */
-  .alert-section{margin-bottom:1.25rem;}
-  .alert-section-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem;}
-  .alert-card{background:rgba(198,40,40,0.08);border:1px solid rgba(198,40,40,0.2);border-left:3px solid var(--red2);border-radius:2px;padding:.7rem 1rem;margin-bottom:.4rem;display:flex;align-items:center;justify-content:space-between;}
-  .alert-name{font-size:.88rem;font-weight:500;}
-  .alert-detail{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--red2);text-transform:uppercase;}
-  .no-alerts{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;color:var(--green2);text-transform:uppercase;padding:.6rem 0;}
-
-  /* MONTHLY SWIMMER TABLE */
-  .month-swimmer-table{border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.25rem;}
-  .month-swimmer-row{display:grid;grid-template-columns:1fr 55px 55px 55px 70px;gap:.4rem;align-items:center;padding:.6rem .9rem;border-bottom:1px solid rgba(255,255,255,0.04);}
-  .month-swimmer-row:last-child{border-bottom:none;}
-  .month-swimmer-row:hover{background:rgba(255,255,255,0.02);}
-  .month-swimmer-row.msw-header{background:rgba(255,255,255,0.03);font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;}
-  .trend-up{color:var(--green2);}
-  .trend-dn{color:var(--red2);}
-  .trend-eq{color:var(--grey);}
-
-  /* MOM CHART */
-  .mom-chart{border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.25rem;}
-  .mom-chart-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;padding:.75rem 1rem .5rem;}
-  .mom-bars{display:flex;align-items:flex-end;gap:4px;height:80px;padding:0 1rem .75rem;}
-  .mom-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;}
-  .mom-bar{width:100%;border-radius:2px 2px 0 0;transition:height .4s;min-height:2px;background:var(--mid);}
-  .mom-bar-label{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.06em;color:var(--grey);text-align:center;}
-  .mom-bar-pct{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--light);text-align:center;}
-
-  /* GROUP SELECTOR */
-  .group-bar{background:rgba(7,20,41,0.8);border-bottom:1px solid rgba(33,150,243,0.12);padding:.6rem 1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
-  .group-bar-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);white-space:nowrap;}
-  .group-pill{padding:.3rem .8rem;border-radius:20px;border:1px solid rgba(33,150,243,0.2);background:transparent;color:var(--grey);font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;transition:all .15s;}
-  .group-pill:hover{color:var(--white);}
-  .group-pill.active{color:#fff;border-color:transparent;}
-
-</style>
-  <script src="sidebar.js" defer></script>
-
+<title>Attendance — SSF Aquatics</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="sidebar.js" defer></script>
 <style>
   /* Sidebar layout scroll fix */
   .ssf-main { overflow-y: auto !important; }
   body::before { z-index: -1; }
   .shimmer-bg { z-index: -1; }
+
+  :root {
+    --deep:#071429; --navy:#0B1F3A; --mid:#2196F3; --light:#64B5F6;
+    --gold:#F9A825; --white:#F0F6FF; --grey:#8BA3C0;
+    --border:rgba(33,150,243,0.12);
+    --green2:#66BB6A; --red2:#EF5350; --present-bg:rgba(27,94,32,0.12);
+    --present-border:rgba(102,187,106,0.5); --absent-bg:rgba(183,28,28,0.1);
+    --absent-border:rgba(239,83,80,0.5);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.04) 58px,rgba(33,150,243,0.04) 60px);pointer-events:none;z-index:0;}
+  .shimmer-bg{position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(21,101,192,0.15) 0%,transparent 70%);pointer-events:none;z-index:0;}
+
+  /* ── GROUP BAR ── */
+  .group-bar{position:sticky;top:0;z-index:50;background:rgba(7,20,41,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.55rem 1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+  .group-bar-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);white-space:nowrap;}
+  .group-pill{padding:.28rem .75rem;border-radius:20px;border:1px solid rgba(33,150,243,0.2);background:transparent;color:var(--grey);font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .group-pill:hover{color:var(--white);}
+  .group-pill.active{color:#fff;}
+
+  /* ── DATE BAR ── */
+  .date-bar{position:sticky;top:41px;z-index:49;background:rgba(7,20,41,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.55rem 1rem;}
+  .date-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+  .date-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);}
+  .date-input{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:4px;color:var(--white);font-family:'DM Mono',monospace;font-size:.8rem;padding:.3rem .6rem;outline:none;}
+  .day-quick-btns{display:flex;gap:.3rem;flex-wrap:wrap;}
+  .day-btn{padding:.25rem .55rem;border-radius:4px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--grey);font-family:'DM Mono',monospace;font-size:.65rem;cursor:pointer;transition:all .15s;}
+  .day-btn:hover{color:var(--white);border-color:rgba(255,255,255,0.2);}
+  .day-btn.today{border-color:rgba(33,150,243,0.4);color:var(--light);}
+  .date-meta{display:flex;align-items:center;gap:.75rem;margin-top:.3rem;}
+  .current-date-label{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--grey);}
+  .sync-status{font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .5rem;border-radius:3px;margin-left:auto;}
+  .sync-status.synced{color:var(--green2);background:rgba(102,187,106,0.08);}
+  .sync-status.syncing{color:var(--gold);background:rgba(249,168,37,0.08);}
+  .sync-status.error{color:var(--red2);background:rgba(239,83,80,0.08);}
+
+  /* ── STATS BAR ── */
+  .stats-bar{display:flex;gap:.75rem;align-items:center;padding:.5rem 1rem;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .stat-pill{display:flex;align-items:center;gap:.4rem;font-size:.82rem;}
+  .stat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;}
+
+  /* ── MARK ALL ── */
+  .mark-all-bar{display:flex;gap:.5rem;padding:.5rem 1rem;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .mark-all-btn{padding:.35rem .9rem;border-radius:6px;border:none;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.08em;cursor:pointer;transition:all .15s;}
+  .mark-all-btn.present{background:rgba(46,125,50,0.2);color:var(--green2);}
+  .mark-all-btn.present:hover{background:rgba(46,125,50,0.35);}
+  .mark-all-btn.absent{background:rgba(198,40,40,0.2);color:var(--red2);}
+  .mark-all-btn.absent:hover{background:rgba(198,40,40,0.35);}
+  .mark-all-btn.clear{background:rgba(255,255,255,0.05);color:var(--grey);}
+  .mark-all-btn.clear:hover{background:rgba(255,255,255,0.1);color:var(--white);}
+
+  /* ── ROSTER ── */
+  .content{padding:.75rem 1rem 1rem;position:relative;z-index:1;}
+  .lane-header{padding:.55rem .9rem;display:flex;align-items:center;justify-content:space-between;border-radius:2px 2px 0 0;}
+  .lane-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.04em;}
+  .lane-count{font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,0.5);}
+  .swimmer-row{display:flex;align-items:center;gap:.75rem;padding:.6rem .9rem;background:rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s;position:relative;border-left:3px solid transparent;}
+  .swimmer-row:last-child{border-bottom:none;}
+  .swimmer-row.is-present{background:var(--present-bg);border-left-color:var(--present-border);}
+  .swimmer-row.is-absent{background:var(--absent-bg);border-left-color:var(--absent-border);}
+  .swimmer-info{flex:1;min-width:0;}
+  .swimmer-name{font-size:.9rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .swimmer-meta{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.08em;color:var(--grey);text-transform:uppercase;margin-top:.1rem;}
+  .att-btns{display:flex;gap:.35rem;flex-shrink:0;}
+  .att-btn{width:40px;height:40px;border-radius:2px;border:1px solid rgba(255,255,255,0.08);background:transparent;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+  .att-btn.present-btn{color:var(--green2);border-color:rgba(102,187,106,0.2);}
+  .att-btn.absent-btn{color:var(--red2);border-color:rgba(239,83,80,0.2);}
+  .att-btn.note-btn{color:var(--grey);border-color:rgba(255,255,255,0.08);font-size:.85rem;}
+  .att-btn.present-btn.active{background:rgba(46,125,50,0.3);border-color:var(--green2);}
+  .att-btn.absent-btn.active{background:rgba(198,40,40,0.3);border-color:var(--red2);}
+  .att-btn.note-btn.has-note{color:var(--gold);border-color:rgba(249,168,37,0.4);}
+  .note-panel{display:none;padding:.4rem .9rem .5rem;background:rgba(0,0,0,0.2);}
+  .note-panel.open{display:block;}
+  .note-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:2px;color:var(--white);font-family:'DM Mono',monospace;font-size:.72rem;padding:.4rem .6rem;outline:none;resize:vertical;min-height:50px;}
+
+  /* ── VIEW TABS ── */
+  .view-tabs{display:flex;gap:1px;margin:.75rem 1rem 0;border-bottom:1px solid var(--border);}
+  .view-tab{padding:.5rem .9rem;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:var(--grey);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;}
+  .view-tab:hover{color:var(--white);}
+  .view-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+  .view-panel{display:none;padding:.75rem 1rem 3rem;}
+  .view-panel.active{display:block;}
+
+  /* ── HISTORY ── */
+  .history-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;}
+  .history-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:.75rem;cursor:pointer;transition:background .15s;}
+  .history-card:hover{background:rgba(33,150,243,0.07);}
+  .history-date{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--grey);margin-bottom:.4rem;}
+  .history-summary{font-size:.78rem;line-height:1.6;margin-bottom:.4rem;}
+  .history-bar{display:flex;height:4px;border-radius:2px;overflow:hidden;gap:1px;}
+  .history-bar-present{background:var(--green2);}
+  .history-bar-absent{background:var(--red2);}
+  .history-bar-unset{background:rgba(255,255,255,0.1);}
+
+  /* ── WEEKLY ── */
+  .week-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;}
+  .week-stat-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:.75rem;}
+  .week-stat-label{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey);text-transform:uppercase;margin-bottom:.25rem;}
+  .week-stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1;}
+  .pct-row{display:grid;gap:.5rem;padding:.45rem .75rem;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center;font-size:.82rem;}
+  .pct-row:last-child{border-bottom:none;}
+  .pct-row.header{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;background:rgba(255,255,255,0.02);}
+
+  /* ── SWIMMER PCT ── */
+  .swimmer-pct-table{border:1px solid rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+  .pct-name{font-size:.85rem;font-weight:500;}
+  .pct-bar-wrap{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-bottom:.2rem;}
+  .pct-bar-fill{height:100%;border-radius:2px;transition:width .4s;}
+  .pct-num{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;text-align:right;}
+
+  /* ── MONTHLY ── */
+  .month-nav{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;}
+  .month-nav-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:4px;color:var(--white);font-size:.9rem;cursor:pointer;padding:.25rem .6rem;transition:background .15s;}
+  .month-nav-btn:hover{background:rgba(255,255,255,0.1);}
+  .month-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;}
+  .month-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.75rem;}
+  .month-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:.6rem .75rem;}
+  .month-stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;line-height:1;}
+  .month-stat-label{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);text-transform:uppercase;}
+  .month-swimmer-table{border:1px solid rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;margin-bottom:1rem;}
+  .month-swimmer-row{display:grid;grid-template-columns:1fr 55px 55px 55px 70px;gap:.4rem;align-items:center;padding:.5rem .75rem;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .month-swimmer-row:last-child{border-bottom:none;}
+  .month-swimmer-row:hover{background:rgba(255,255,255,0.02);}
+  .month-swimmer-row.msw-header{background:rgba(255,255,255,0.03);font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;}
+
+  /* ── EXPORT ── */
+  .export-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;}
+  .export-btn{padding:.35rem .8rem;border-radius:6px;border:1px solid rgba(33,150,243,0.2);background:transparent;color:var(--light);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;cursor:pointer;transition:all .15s;}
+  .export-btn:hover{background:rgba(33,150,243,0.1);}
+  .empty-state{text-align:center;padding:2rem;color:var(--grey);font-size:.85rem;}
 </style>
 </head>
 <body data-page="attendance">
-
-<!-- MAIN APP -->
-<div id="att-app">
+<div class="shimmer-bg"></div>
 
 <!-- GROUP SELECTOR -->
 <div class="group-bar" id="group-bar">
   <span class="group-bar-label">Group</span>
-  <div id="group-pills"></div>
+  <div id="group-pills" style="display:flex;gap:.4rem;flex-wrap:wrap;"></div>
 </div>
 
 <!-- DATE BAR -->
@@ -224,32 +161,24 @@
     <input type="date" class="date-input" id="date-picker">
     <div class="day-quick-btns" id="week-btns"></div>
   </div>
+  <div class="date-meta">
+    <span class="current-date-label" id="current-date-label"></span>
+    <span class="sync-status synced" id="sync-status">✓ Ready</span>
+  </div>
 </div>
 
 <!-- STATS -->
 <div class="stats-bar">
-  <div class="stat-pill">
-    <div class="stat-dot" style="background:var(--green2)"></div>
-    <span class="stat-num" id="stat-present">0</span>
-    <span style="color:var(--grey)">Present</span>
-  </div>
-  <div class="stat-pill">
-    <div class="stat-dot" style="background:var(--red2)"></div>
-    <span class="stat-num" id="stat-absent">0</span>
-    <span style="color:var(--grey)">Absent</span>
-  </div>
-  <div class="stat-pill">
-    <div class="stat-dot" style="background:rgba(255,255,255,0.15)"></div>
-    <span class="stat-num" id="stat-unset">35</span>
-    <span style="color:var(--grey)">Unmarked</span>
-  </div>
+  <div class="stat-pill"><div class="stat-dot" style="background:var(--green2)"></div><span class="stat-num" id="stat-present">0</span><span style="color:var(--grey);font-size:.82rem">Present</span></div>
+  <div class="stat-pill"><div class="stat-dot" style="background:var(--red2)"></div><span class="stat-num" id="stat-absent">0</span><span style="color:var(--grey);font-size:.82rem">Absent</span></div>
+  <div class="stat-pill"><div class="stat-dot" style="background:rgba(255,255,255,0.15)"></div><span class="stat-num" id="stat-unset">0</span><span style="color:var(--grey);font-size:.82rem">Unmarked</span></div>
 </div>
 
 <!-- MARK ALL -->
 <div class="mark-all-bar">
   <button class="mark-all-btn present" id="mark-present-btn">✓ Mark All Present</button>
-  <button class="mark-all-btn absent"  id="mark-absent-btn">✗ Mark All Absent</button>
-  <button class="mark-all-btn clear"   id="mark-clear-btn">Clear</button>
+  <button class="mark-all-btn absent" id="mark-absent-btn">✗ Mark All Absent</button>
+  <button class="mark-all-btn clear" id="mark-clear-btn">Clear</button>
 </div>
 
 <!-- ROSTER -->
@@ -257,41 +186,33 @@
 
 <!-- VIEW TABS -->
 <div class="view-tabs">
-  <div class="view-tab active" data-view="history">📅 History</div>
-  <div class="view-tab" data-view="weekly">📊 Weekly</div>
-  <div class="view-tab" data-view="swimmers">🏊 Swimmers</div>
-  <div class="view-tab" data-view="monthly">📆 Monthly</div>
+  <button class="view-tab active" data-view="history">📅 History</button>
+  <button class="view-tab" data-view="weekly">📊 Weekly</button>
+  <button class="view-tab" data-view="swimmers">🏊 Swimmers</button>
+  <button class="view-tab" data-view="monthly">📆 Monthly</button>
 </div>
 
-<!-- HISTORY PANEL -->
-<div class="view-panel active" id="panel-history">
-  <div id="history-container"></div>
-</div>
-
-<!-- WEEKLY SUMMARY PANEL -->
-<div class="view-panel" id="panel-weekly">
-  <div id="weekly-container"></div>
-</div>
-
-<!-- SWIMMER % PANEL -->
-<div class="view-panel" id="panel-swimmers">
-  <div id="swimmers-container"></div>
-</div>
-
-<!-- MONTHLY PANEL -->
+<div class="view-panel active" id="panel-history"><div id="history-container"></div></div>
+<div class="view-panel" id="panel-weekly"><div id="weekly-container"></div></div>
+<div class="view-panel" id="panel-swimmers"><div id="swimmers-container"></div></div>
 <div class="view-panel" id="panel-monthly">
+  <div class="month-nav">
+    <button class="month-nav-btn" id="month-prev-btn">&#8592;</button>
+    <span class="month-title" id="month-title"></span>
+    <button class="month-nav-btn" id="month-next-btn">&#8594;</button>
+  </div>
+  <div class="month-stats-row" id="month-stats-row"></div>
+  <div class="export-bar">
+    <button class="export-btn" id="export-monthly-csv-btn">&#128229; Export Monthly CSV</button>
+  </div>
   <div id="monthly-container"></div>
 </div>
 
-<!-- EXPORT -->
-<div class="export-bar">
-  <button class="export-btn" id="export-csv-btn">⬇ Export CSV</button>
-  <button class="export-btn" id="export-summary-btn">📋 Copy Today's Summary</button>
+<div style="padding:.75rem 1rem;border-top:1px solid var(--border);display:flex;gap:.5rem;flex-wrap:wrap;">
+  <button class="export-btn" id="export-csv-btn">&#128229; Export Full CSV</button>
+  <button class="export-btn" id="export-summary-btn">&#128203; Copy Today Summary</button>
 </div>
 
-</div><!-- end #att-app -->
-
-<!-- Firebase SDK (modular v10) -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
@@ -299,76 +220,45 @@ import {
   collection, query, where, deleteField
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FIREBASE CONFIG
-// ─────────────────────────────────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
   authDomain: "ssfaquatics.firebaseapp.com",
   projectId: "ssfaquatics",
   storageBucket: "ssfaquatics.firebasestorage.app",
   messagingSenderId: "21079628309",
-  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c",
-  measurementId: "G-VRNWV4VDP4"
+  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c"
 };
-
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
+const LS_KEY = 'ssf_attendance_v2';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CONFIG
-// ─────────────────────────────────────────────────────────────────────────────
-const LS_KEY = 'purple_attendance';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ROSTER
-// ─────────────────────────────────────────────────────────────────────────────
-// SWIMMERS loaded dynamically from Firestore based on selected group
-let SWIMMERS = [];  // { name, age, gen, id, groupId }
-let allGroups = []; // { id, name, color, swimmerIds }
-let selectedGroupId = 'all'; // 'all' or group id
-
-// Lane colors/labels replaced by group-based display
-
-// ─────────────────────────────────────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────────────────────────────────────
+// ── STATE ──
+let SWIMMERS = [];
+let allGroups = [];
+let selectedGroupId = 'all';
 let currentDate = todayStr();
-let attendance  = {};   // { "YYYY-MM-DD": { "Name": { status, note } } }
-let saveTimer   = null;
+let attendance = {};
+let saveTimer = null;
 
-function todayStr() {
-  return new Date().toISOString().split('T')[0];
-}
+function todayStr() { return new Date().toISOString().split('T')[0]; }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SYNC STATUS
-// ─────────────────────────────────────────────────────────────────────────────
+// ── SYNC STATUS ──
 function setSyncStatus(state, msg) {
   const el = document.getElementById('sync-status');
   el.className = 'sync-status ' + state;
   el.textContent = msg;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FIRESTORE — READ ONE DATE
-// ─────────────────────────────────────────────────────────────────────────────
+// ── FIRESTORE ──
 async function firestoreReadDate(date) {
   try {
     setSyncStatus('syncing', '⟳ Loading…');
     const snap = await getDoc(doc(db, 'attendance', date));
     setSyncStatus('synced', '✓ Synced');
     return snap.exists() ? snap.data() : null;
-  } catch(e) {
-    setSyncStatus('error', '✗ Offline');
-    console.error('Firestore read error:', e);
-    return null;
-  }
+  } catch(e) { setSyncStatus('error', '✗ Offline'); return null; }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FIRESTORE — READ ALL DATES (for history / stats panels)
-// ─────────────────────────────────────────────────────────────────────────────
 async function firestoreReadAll() {
   try {
     setSyncStatus('syncing', '⟳ Loading…');
@@ -377,80 +267,47 @@ async function firestoreReadAll() {
     const result = {};
     snap.forEach(d => { result[d.id] = d.data(); });
     return result;
-  } catch(e) {
-    setSyncStatus('error', '✗ Offline');
-    console.error('Firestore read all error:', e);
-    return null;
-  }
+  } catch(e) { setSyncStatus('error', '✗ Offline'); return null; }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FIRESTORE — WRITE ONE SWIMMER RECORD
-// ─────────────────────────────────────────────────────────────────────────────
 async function firestoreWrite(date, name, status, note) {
   try {
     setSyncStatus('syncing', '⟳ Saving…');
-    const ref = doc(db, 'attendance', date);
-    await setDoc(ref, {
+    await setDoc(doc(db, 'attendance', date), {
       [name]: { status: status || '', note: note || '' }
     }, { merge: true });
     setSyncStatus('synced', '✓ Saved');
     lsSave();
-  } catch(e) {
-    setSyncStatus('error', '✗ Offline');
-    console.error('Firestore write error:', e);
-  }
+  } catch(e) { setSyncStatus('error', '✗ Offline'); }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FIRESTORE — WRITE FULL DAY (mark all)
-// ─────────────────────────────────────────────────────────────────────────────
 async function firestoreWriteDay(date, records) {
   try {
     setSyncStatus('syncing', '⟳ Saving…');
     await setDoc(doc(db, 'attendance', date), records);
     setSyncStatus('synced', '✓ Saved');
     lsSave();
-  } catch(e) {
-    setSyncStatus('error', '✗ Offline');
-    console.error('Firestore write day error:', e);
-  }
+  } catch(e) { setSyncStatus('error', '✗ Offline'); }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// LOCAL STORAGE CACHE (offline fallback)
-// ─────────────────────────────────────────────────────────────────────────────
-function lsLoad() {
-  try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
-  catch(e) { return {}; }
-}
+// ── LOCAL STORAGE ──
+function lsLoad() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) { return {}; } }
+function lsSave() { try { localStorage.setItem(LS_KEY, JSON.stringify(attendance)); } catch(e) {} }
 
-function lsSave() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(attendance)); }
-  catch(e) { /* storage full — ignore */ }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DATA HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
+// ── DATA HELPERS ──
 function ensureDate(d) {
   if (!attendance[d]) {
     attendance[d] = {};
     SWIMMERS.forEach(s => { attendance[d][s.name] = { status: null, note: '' }; });
   }
 }
-
 function getRecord(d, name) {
   ensureDate(d);
   if (!attendance[d][name]) attendance[d][name] = { status: null, note: '' };
   return attendance[d][name];
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────────────────────────────────────
-
-// ── LOAD GROUPS + SWIMMERS FROM FIRESTORE ──────────────────────────────────
+// ── LOAD GROUPS + SWIMMERS ──
 async function loadGroupsAndSwimmers() {
   const [grSnap, swSnap] = await Promise.all([
     getDocs(collection(db, 'groups')),
@@ -460,192 +317,166 @@ async function loadGroupsAndSwimmers() {
   allGroups = grSnap.docs.map(d => ({ id: d.id, ...d.data() }))
     .sort((a,b) => a.name.localeCompare(b.name));
 
-  const firestoreSwimmers = swSnap.docs.map(d => ({ firestoreId: d.id, ...d.data() }))
+  const all = swSnap.docs.map(d => ({ firestoreId: d.id, ...d.data() }))
     .sort((a,b) => a.name.localeCompare(b.name));
 
-  // Build group pills UI
+  // Build group pills
   const pillsEl = document.getElementById('group-pills');
-  const allPill = `<button class="group-pill active" data-gid="all" style="background:rgba(33,150,243,0.2);border-color:var(--mid)">All (${firestoreSwimmers.length})</button>`;
-  const groupPills = allGroups.map(g => 
-    `<button class="group-pill" data-gid="${g.id}" style="--gc:${g.color||'#1565C0'}"
-      data-color="${g.color||'#1565C0'}">${g.name} (${(g.swimmerIds||[]).length})</button>`
-  ).join('');
-  pillsEl.innerHTML = allPill + groupPills;
+  const total = all.length;
+  const pills = [
+    `<button class="group-pill active" data-gid="all" style="background:rgba(33,150,243,0.2);border-color:var(--mid);color:#fff">All (${total})</button>`,
+    ...allGroups.map(g => {
+      const cnt = (g.swimmerIds||[]).length;
+      return `<button class="group-pill" data-gid="${g.id}" data-color="${g.color||'#1565C0'}">${g.name} (${cnt})</button>`;
+    })
+  ].join('');
+  pillsEl.innerHTML = pills;
 
   pillsEl.querySelectorAll('.group-pill').forEach(btn => {
     btn.addEventListener('click', () => {
       pillsEl.querySelectorAll('.group-pill').forEach(b => {
         b.classList.remove('active');
-        b.style.background = '';
-        b.style.borderColor = '';
+        b.style.background = ''; b.style.borderColor = ''; b.style.color = '';
       });
       btn.classList.add('active');
       const color = btn.dataset.color || '#2196F3';
-      btn.style.background = `${color}33`;
+      btn.style.background = color + '33';
       btn.style.borderColor = color;
+      btn.style.color = '#fff';
       selectedGroupId = btn.dataset.gid;
-      updateSwimmerList(firestoreSwimmers);
+      updateSwimmerList(all);
       ensureDate(currentDate);
       renderRoster();
       updateStats();
     });
   });
 
-  // Initial swimmer list (all)
-  updateSwimmerList(firestoreSwimmers);
+  updateSwimmerList(all);
 }
 
-function updateSwimmerList(firestoreSwimmers) {
-  if (selectedGroupId === 'all') {
-    SWIMMERS = firestoreSwimmers.map(s => ({
-      name: s.name,
-      age: s.age || null,
-      gen: s.gender || '',
-      id: s.firestoreId,
-      groupId: s.groupId || null,
-      groupName: s.groupName || null,
-      groupColor: s.groupColor || null,
-    }));
-  } else {
+function updateSwimmerList(allFirestoreSwimmers) {
+  let src = allFirestoreSwimmers;
+  if (selectedGroupId !== 'all') {
     const group = allGroups.find(g => g.id === selectedGroupId);
     const ids = new Set(group?.swimmerIds || []);
-    SWIMMERS = firestoreSwimmers
-      .filter(s => ids.has(s.firestoreId))
-      .map(s => ({
-        name: s.name,
-        age: s.age || null,
-        gen: s.gender || '',
-        id: s.firestoreId,
-        groupId: s.groupId || null,
-        groupName: s.groupName || null,
-        groupColor: s.groupColor || null,
-      }));
+    src = src.filter(s => ids.has(s.firestoreId));
   }
+  SWIMMERS = src.map(s => ({
+    name: s.name,
+    age: s.age || null,
+    gen: s.gender || '',
+    id: s.firestoreId,
+    groupId: s.groupId || null,
+    groupName: s.groupName || null,
+    groupColor: s.groupColor || null,
+  }));
 }
 
+// ── INIT ──
 async function initApp() {
-  // 1. Load groups + swimmers from Firestore first
   await loadGroupsAndSwimmers();
 
-  // 2. Load localStorage immediately for instant render
   attendance = lsLoad();
   currentDate = todayStr();
-
   document.getElementById('date-picker').value = currentDate;
   document.getElementById('date-picker').addEventListener('change', e => switchDate(e.target.value));
 
   buildWeekBtns();
-  updateTopbarDate();
+  updateCurrentDateLabel();
   ensureDate(currentDate);
   renderRoster();
   updateStats();
 
-  // 2. Load today from Firestore and merge
+  // Merge today from Firestore
   const todayData = await firestoreReadDate(currentDate);
   if (todayData) {
     attendance[currentDate] = {};
     SWIMMERS.forEach(sw => {
-    attendance[currentDate][sw.name] = {
+      attendance[currentDate][sw.name] = {
         status: todayData[sw.name]?.status || null,
         note: todayData[sw.name]?.note || ''
       };
     });
-    lsSave();
-    renderRoster();
-    updateStats();
+    lsSave(); renderRoster(); updateStats();
   }
 
-  // 3. Load all dates in background for history/stats panels
+  // Load all history for analytics tabs
   const allData = await firestoreReadAll();
   if (allData) {
     Object.keys(allData).forEach(date => {
-      attendance[date] = attendance[date] || {};
+      if (!attendance[date]) {
+        attendance[date] = {};
+        SWIMMERS.forEach(sw => { attendance[date][sw.name] = { status: null, note: '' }; });
+      }
       SWIMMERS.forEach(sw => {
-        const raw = allData[date][sw.name];
-        attendance[date][sw.name] = {
-          status: raw?.status || null,
-          note: raw?.note || ''
-        };
+        attendance[date][sw.name] = allData[date][sw.name] || { status: null, note: '' };
       });
     });
     lsSave();
   }
-
-  renderHistory();
-  renderWeeklySummary();
-  renderSwimmerPct();
-  renderMonthly();
+  renderHistory(); renderWeeklySummary(); renderSwimmerPct();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// DATE / WEEK BUTTONS
-// ─────────────────────────────────────────────────────────────────────────────
 function buildWeekBtns() {
-  const container = document.getElementById('week-btns');
-  const days = ['Mon','Tue','Wed','Thu','Fri'];
   const today = new Date();
   const dow = today.getDay();
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1));
+  const mon = new Date(today);
+  mon.setDate(today.getDate() - (dow===0?6:dow-1));
+  const days = ['M','T','W','Th','F'];
+  const container = document.getElementById('week-btns');
   container.innerHTML = '';
-  for (let i = 0; i < 5; i++) {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    const str = d.toISOString().split('T')[0];
+  for (let i=0;i<5;i++) {
+    const d = new Date(mon); d.setDate(mon.getDate()+i);
+    const ds = d.toISOString().split('T')[0];
     const btn = document.createElement('button');
-    btn.className = 'day-btn' + (str === currentDate ? ' active' : '');
+    btn.className = 'day-btn' + (ds===currentDate?' today':'');
     btn.textContent = days[i];
-    btn.dataset.date = str;
-    btn.onclick = () => switchDate(str);
+    btn.dataset.date = ds;
+    btn.addEventListener('click', () => switchDate(ds));
     container.appendChild(btn);
   }
+}
+
+function updateCurrentDateLabel() {
+  const d = new Date(currentDate + 'T12:00:00');
+  document.getElementById('current-date-label').textContent =
+    d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
 }
 
 async function switchDate(d) {
   currentDate = d;
   document.getElementById('date-picker').value = d;
-  document.querySelectorAll('.day-btn').forEach(b => b.classList.toggle('active', b.dataset.date === d));
-  updateTopbarDate();
+  updateCurrentDateLabel();
+  buildWeekBtns();
   ensureDate(d);
   renderRoster();
   updateStats();
 
-  // Load this date from Firestore if not already cached
-  const firestoreData = await firestoreReadDate(d);
-  if (firestoreData) {
+  const data = await firestoreReadDate(d);
+  if (data) {
     attendance[d] = {};
     SWIMMERS.forEach(sw => {
-      attendance[d][sw.name] = firestoreData[sw.name] || { status: null, note: '' };
+      attendance[d][sw.name] = { status: data[sw.name]?.status || null, note: data[sw.name]?.note || '' };
     });
-    lsSave();
-    renderRoster();
-    updateStats();
+    lsSave(); renderRoster(); updateStats();
   }
+  renderHistory(); renderWeeklySummary();
 }
 
-function updateTopbarDate() {
-  const d = new Date(currentDate + 'T12:00:00');
-  document.getElementById('topbar-date').textContent =
-    d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ROSTER RENDER
-// ─────────────────────────────────────────────────────────────────────────────
+// ── ROSTER RENDER ──
 function renderRoster() {
   ensureDate(currentDate);
   const container = document.getElementById('roster-content');
   container.innerHTML = '';
 
   if (!SWIMMERS.length) {
-    container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--grey);font-size:.85rem">No swimmers in this group yet.<br><a href="groups.html" style="color:var(--light)">Manage Groups →</a></div>';
+    container.innerHTML = '<div class="empty-state">No swimmers in this group.<br><a href="groups.html" style="color:var(--light)">Manage Groups →</a></div>';
     return;
   }
 
-  // Group swimmers by their group, or show as one flat list if 'all'
+  // Build sections
   let sections;
   if (selectedGroupId === 'all') {
-    // Group by groupName
     const byGroup = {};
     SWIMMERS.forEach(sw => {
       const key = sw.groupName || 'Unassigned';
@@ -653,35 +484,35 @@ function renderRoster() {
       if (!byGroup[key]) byGroup[key] = { swimmers: [], color };
       byGroup[key].swimmers.push(sw);
     });
-    sections = Object.entries(byGroup).map(([name, {swimmers, color}]) => ({ name, swimmers, color }));
+    sections = Object.entries(byGroup).map(([name, { swimmers, color }]) => ({ name, swimmers, color }));
   } else {
     const group = allGroups.find(g => g.id === selectedGroupId);
     sections = [{ name: group?.name || 'Group', swimmers: SWIMMERS, color: group?.color || '#2196F3' }];
   }
 
   sections.forEach(section => {
-    const swimmers = section.swimmers;
-    if (!swimmers.length) return;
+    if (!section.swimmers.length) return;
+
     const hdr = document.createElement('div');
     hdr.className = 'lane-header';
-    hdr.style.cssText = `background:${section.color}22;border-left:4px solid ${section.color};`;
-    hdr.innerHTML = `<h2 style="color:#90CAF9">${section.name}</h2><span class="lane-count">${swimmers.length} swimmers</span>`;
+    hdr.style.cssText = `background:${section.color}22;border-left:4px solid ${section.color};border-radius:2px 2px 0 0;margin-top:.5rem;`;
+    hdr.innerHTML = `<h2>${section.name}</h2><span class="lane-count">${section.swimmers.length} swimmers</span>`;
     container.appendChild(hdr);
 
-    const group = document.createElement('div');
-    group.style.cssText = 'border-radius:0 0 2px 2px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);border-top:none;margin-bottom:.5rem;';
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'border:1px solid rgba(255,255,255,0.06);border-top:none;border-radius:0 0 4px 4px;margin-bottom:.5rem;overflow:hidden;';
 
-    swimmers.forEach(sw => {
+    section.swimmers.forEach(sw => {
       const rec = getRecord(currentDate, sw.name);
       const k = sw.name.replace(/\s+/g,'_');
 
       const row = document.createElement('div');
-      row.className = `swimmer-row ${rec.status ? 'is-'+rec.status : 'unset'}`;
+      row.className = `swimmer-row ${rec.status ? 'is-'+rec.status : ''}`;
       row.id = `row-${k}`;
       row.innerHTML = `
         <div class="swimmer-info">
           <div class="swimmer-name">${sw.name}</div>
-          <div class="swimmer-meta">Age ${sw.age||'?'} · ${sw.gen}${sw.groupName ? ' · '+sw.groupName : ''}</div>
+          <div class="swimmer-meta">${sw.age ? 'Age '+sw.age+' · ' : ''}${sw.gen}</div>
         </div>
         <div class="att-btns">
           <button class="att-btn present-btn ${rec.status==='present'?'active':''}"
@@ -689,25 +520,23 @@ function renderRoster() {
           <button class="att-btn absent-btn ${rec.status==='absent'?'active':''}"
             data-name="${sw.name}" data-action="absent" title="Absent">✗</button>
           <button class="att-btn note-btn ${rec.note?'has-note':''}"
-            data-name="${sw.name}" data-action="note" title="Add note">📝</button>
+            data-name="${sw.name}" data-action="note" title="Note">📝</button>
         </div>`;
-      group.appendChild(row);
+      wrap.appendChild(row);
 
       const notePanel = document.createElement('div');
       notePanel.className = 'note-panel';
       notePanel.id = `note-panel-${k}`;
       notePanel.innerHTML = `<textarea class="note-input" placeholder="Note for ${sw.name.split(' ')[0]}…"
         data-name="${sw.name}">${rec.note||''}</textarea>`;
-      group.appendChild(notePanel);
+      wrap.appendChild(notePanel);
     });
-    container.appendChild(group);
-  });
 
+    container.appendChild(wrap);
+  });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ACTIONS
-// ─────────────────────────────────────────────────────────────────────────────
+// ── ACTIONS ──
 function setStatus(name, status) {
   ensureDate(currentDate);
   const rec = getRecord(currentDate, name);
@@ -718,32 +547,25 @@ function setStatus(name, status) {
   renderHistory();
   renderWeeklySummary();
   renderSwimmerPct();
-
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    firestoreWrite(currentDate, name, rec.status, rec.note);
-  }, 800);
+  saveTimer = setTimeout(() => firestoreWrite(currentDate, name, rec.status, rec.note), 800);
 }
 
 function toggleNote(name) {
   const k = name.replace(/\s+/g,'_');
-  const panel = document.getElementById(`note-panel-${k}`);
-  panel.classList.toggle('open');
-  if (panel.classList.contains('open')) panel.querySelector('textarea').focus();
+  document.getElementById(`note-panel-${k}`)?.classList.toggle('open');
 }
 
 function saveNote(name, value) {
   ensureDate(currentDate);
-  getRecord(currentDate, name).note = value;
+  const rec = getRecord(currentDate, name);
+  rec.note = value;
   lsSave();
   const k = name.replace(/\s+/g,'_');
   const noteBtn = document.querySelector(`#row-${k} .note-btn`);
-  if (noteBtn) noteBtn.classList.toggle('has-note', value.trim().length > 0);
+  if (noteBtn) noteBtn.classList.toggle('has-note', !!value);
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    const rec = getRecord(currentDate, name);
-    firestoreWrite(currentDate, name, rec.status, value);
-  }, 1200);
+  saveTimer = setTimeout(() => firestoreWrite(currentDate, name, rec.status, rec.note), 1200);
 }
 
 function updateRowUI(name) {
@@ -751,85 +573,57 @@ function updateRowUI(name) {
   const row = document.getElementById(`row-${k}`);
   if (!row) return;
   const rec = getRecord(currentDate, name);
-  row.className = `swimmer-row ${rec.status ? 'is-'+rec.status : 'unset'}`;
+  row.className = `swimmer-row ${rec.status ? 'is-'+rec.status : ''}`;
   row.querySelector('.present-btn')?.classList.toggle('active', rec.status==='present');
   row.querySelector('.absent-btn')?.classList.toggle('active', rec.status==='absent');
 }
 
 function markAll(status) {
   ensureDate(currentDate);
-  SWIMMERS.forEach(sw => {
-    const rec = getRecord(currentDate, sw.name);
-    rec.status = status === 'clear' ? null : status;
-  });
-  lsSave();
-  renderRoster();
-  updateStats();
-  renderHistory();
-  renderWeeklySummary();
-  renderSwimmerPct();
-
+  SWIMMERS.forEach(sw => { getRecord(currentDate, sw.name).status = status === 'clear' ? null : status; });
+  lsSave(); renderRoster(); updateStats(); renderHistory(); renderWeeklySummary();
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    firestoreWriteDay(currentDate, attendance[currentDate]);
-  }, 800);
+  saveTimer = setTimeout(() => firestoreWriteDay(currentDate, attendance[currentDate]), 800);
 }
-
 
 function updateStats() {
   ensureDate(currentDate);
   let p=0, a=0, u=0;
   SWIMMERS.forEach(sw => {
-    const s = attendance[currentDate][sw.name]?.status;
+    const s = attendance[currentDate]?.[sw.name]?.status;
     if (s==='present') p++; else if (s==='absent') a++; else u++;
   });
   document.getElementById('stat-present').textContent = p;
-  document.getElementById('stat-absent').textContent  = a;
-  document.getElementById('stat-unset').textContent   = u;
+  document.getElementById('stat-absent').textContent = a;
+  document.getElementById('stat-unset').textContent = u;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// VIEW TABS
-// ─────────────────────────────────────────────────────────────────────────────
+// ── VIEW TABS ──
 function switchView(view) {
-  document.querySelectorAll('.view-tab').forEach((t) => {
-    t.classList.toggle('active', t.dataset.view === view);
-  });
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
   document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
   document.getElementById(`panel-${view}`).classList.add('active');
   if (view === 'monthly') renderMonthly();
 }
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// HISTORY
-// ─────────────────────────────────────────────────────────────────────────────
+// ── HISTORY ──
 function renderHistory() {
   const container = document.getElementById('history-container');
   const dates = Object.keys(attendance)
     .filter(d => SWIMMERS.some(sw => attendance[d][sw.name]?.status))
     .sort((a,b) => b.localeCompare(a)).slice(0, 20);
-
   if (!dates.length) { container.innerHTML = '<div class="empty-state">No sessions recorded yet</div>'; return; }
-
   const grid = document.createElement('div');
   grid.className = 'history-grid';
   dates.forEach(d => {
     let p=0,a=0,u=0;
-    SWIMMERS.forEach(sw => {
-      const s = attendance[d][sw.name]?.status;
-      if (s==='present') p++; else if (s==='absent') a++; else u++;
-    });
+    SWIMMERS.forEach(sw => { const s=attendance[d][sw.name]?.status; if(s==='present')p++; else if(s==='absent')a++; else u++; });
     const label = new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
     const card = document.createElement('div');
     card.className = 'history-card';
     card.onclick = () => switchDate(d);
-    card.innerHTML = `
-      <div class="history-date">${label}</div>
-      <div class="history-summary">
-        <span style="color:var(--green2)">${p} present</span><br>
-        <span style="color:var(--red2)">${a} absent</span>
-      </div>
+    card.innerHTML = `<div class="history-date">${label}</div>
+      <div class="history-summary"><span style="color:var(--green2)">${p} present</span><br><span style="color:var(--red2)">${a} absent</span></div>
       <div class="history-bar">
         <div class="history-bar-present" style="flex:${p}"></div>
         <div class="history-bar-absent" style="flex:${a}"></div>
@@ -837,23 +631,15 @@ function renderHistory() {
       </div>`;
     grid.appendChild(card);
   });
-  container.innerHTML = '';
-  container.appendChild(grid);
+  container.innerHTML = ''; container.appendChild(grid);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// WEEKLY SUMMARY
-// ─────────────────────────────────────────────────────────────────────────────
+// ── WEEKLY ──
 function getWeekDates() {
-  const today = new Date();
-  const dow = today.getDay();
-  const mon = new Date(today);
-  mon.setDate(today.getDate() - (dow===0?6:dow-1));
+  const today = new Date(); const dow = today.getDay();
+  const mon = new Date(today); mon.setDate(today.getDate()-(dow===0?6:dow-1));
   const dates = [];
-  for (let i=0;i<5;i++) {
-    const d = new Date(mon); d.setDate(mon.getDate()+i);
-    dates.push(d.toISOString().split('T')[0]);
-  }
+  for (let i=0;i<5;i++) { const d=new Date(mon); d.setDate(mon.getDate()+i); dates.push(d.toISOString().split('T')[0]); }
   return dates;
 }
 
@@ -862,36 +648,23 @@ function renderWeeklySummary() {
   const weekDates = getWeekDates();
   const sessionsHeld = weekDates.filter(d => SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status)).length;
   let totalPresent=0, totalPossible=0;
-  weekDates.forEach(d => {
-    if (!attendance[d]) return;
-    SWIMMERS.forEach(sw => {
-      const s = attendance[d][sw.name]?.status;
-      if (s==='present'||s==='absent') { totalPossible++; if(s==='present') totalPresent++; }
-    });
-  });
+  weekDates.forEach(d => { if(!attendance[d])return; SWIMMERS.forEach(sw => { const s=attendance[d][sw.name]?.status; if(s==='present'||s==='absent'){totalPossible++;if(s==='present')totalPresent++;}}); });
   const avgPct = totalPossible > 0 ? Math.round(totalPresent/totalPossible*100) : 0;
-
   let html = `<div class="week-summary-grid">
     <div class="week-stat-card"><div class="week-stat-label">Sessions This Week</div><div class="week-stat-num" style="color:var(--mid)">${sessionsHeld}/5</div></div>
     <div class="week-stat-card"><div class="week-stat-label">Avg Attendance</div><div class="week-stat-num" style="color:var(--green2)">${avgPct}%</div></div>
   </div>`;
-
-  html += '<div style="border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">';
-  const dayNames = ['Mon','Tue','Wed','Thu','Fri'];
-  weekDates.forEach((d, i) => {
-    let p=0,a=0;
-    if (attendance[d]) SWIMMERS.forEach(sw => {
-      const s = attendance[d][sw.name]?.status;
-      if (s==='present') p++; else if (s==='absent') a++;
-    });
-    const total = p+a;
-    const pct = total>0 ? Math.round(p/total*100) : null;
-    const isToday = d===todayStr();
-    const label = new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    html += `<div class="pct-row" style="grid-template-columns:80px 1fr 1fr 60px;${isToday?'background:rgba(33,150,243,0.06);':''}">
+  html += '<div style="border:1px solid rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">';
+  const dayNames=['Mon','Tue','Wed','Thu','Fri'];
+  weekDates.forEach((d,i) => {
+    let p=0,a=0; if(attendance[d])SWIMMERS.forEach(sw=>{const s=attendance[d][sw.name]?.status;if(s==='present')p++;else if(s==='absent')a++;});
+    const total=p+a; const pct=total>0?Math.round(p/total*100):null;
+    const isToday=d===todayStr();
+    const label=new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    html+=`<div class="pct-row" style="grid-template-columns:80px 1fr 1fr 60px;${isToday?'background:rgba(33,150,243,0.06);':''}">
       <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--grey)">${dayNames[i]} ${label}</div>
-      <div style="font-size:.82rem;color:var(--green2)">${p > 0 ? p+' present' : '—'}</div>
-      <div style="font-size:.82rem;color:var(--red2)">${a > 0 ? a+' absent' : '—'}</div>
+      <div style="font-size:.82rem;color:var(--green2)">${p>0?p+' present':'—'}</div>
+      <div style="font-size:.82rem;color:var(--red2)">${a>0?a+' absent':'—'}</div>
       <div style="font-family:'DM Mono',monospace;font-size:.72rem;text-align:right;color:${pct!==null?'var(--white)':'var(--grey)'}">${pct!==null?pct+'%':'—'}</div>
     </div>`;
   });
@@ -899,381 +672,105 @@ function renderWeeklySummary() {
   container.innerHTML = html;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SWIMMER ATTENDANCE %
-// ─────────────────────────────────────────────────────────────────────────────
+// ── SWIMMER % ──
 function renderSwimmerPct() {
   const container = document.getElementById('swimmers-container');
-  const allDates = Object.keys(attendance).filter(d =>
-    SWIMMERS.some(sw => attendance[d][sw.name]?.status));
-
+  const allDates = Object.keys(attendance).filter(d => SWIMMERS.some(sw => attendance[d][sw.name]?.status));
   if (!allDates.length) { container.innerHTML = '<div class="empty-state">No data yet</div>'; return; }
-
   const rows = SWIMMERS.map(sw => {
-    let p=0, total=0;
-    allDates.forEach(d => {
-      const s = attendance[d]?.[sw.name]?.status;
-      if (s==='present'||s==='absent') { total++; if(s==='present') p++; }
-    });
-    const pct = total > 0 ? Math.round(p/total*100) : null;
-    return { sw, p, total, pct };
-  }).sort((a,b) => (b.pct??-1) - (a.pct??-1));
-
+    let p=0,total=0;
+    allDates.forEach(d => { const s=attendance[d]?.[sw.name]?.status; if(s==='present'||s==='absent'){total++;if(s==='present')p++;} });
+    return { sw, p, total, pct: total>0?Math.round(p/total*100):null };
+  }).sort((a,b) => (b.pct??-1)-(a.pct??-1));
   let html = '<div class="swimmer-pct-table">';
-  html += `<div class="pct-row header" style="grid-template-columns:1fr 80px 60px;">
-    <div>Swimmer</div><div>Attendance</div><div style="text-align:right">%</div></div>`;
+  html += `<div class="pct-row header" style="grid-template-columns:1fr 80px 60px"><div>Swimmer</div><div>Attendance</div><div style="text-align:right">%</div></div>`;
   rows.forEach(({sw,p,total,pct}) => {
     const color = pct===null?'var(--grey)':pct>=80?'var(--green2)':pct>=60?'var(--gold)':'var(--red2)';
-    html += `<div class="pct-row" style="grid-template-columns:1fr 80px 60px;">
-      <div>
-        <div class="pct-name">${sw.name}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);text-transform:uppercase;margin-top:.1rem">${sw.groupName||''}</div>
-      </div>
-      <div>
-        <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:${pct??0}%;background:${color}"></div></div>
-        <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey);margin-top:.2rem">${p}/${total} sessions</div>
-      </div>
+    html += `<div class="pct-row" style="grid-template-columns:1fr 80px 60px">
+      <div><div class="pct-name">${sw.name}</div><div style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey)">${sw.groupName||''}</div></div>
+      <div><div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:${pct??0}%;background:${color}"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey)">${p}/${total} sessions</div></div>
       <div class="pct-num" style="color:${color}">${pct!==null?pct+'%':'—'}</div>
     </div>`;
   });
-  html += '</div>';
-  container.innerHTML = html;
+  html += '</div>'; container.innerHTML = html;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MONTHLY VIEW
-// ─────────────────────────────────────────────────────────────────────────────
-let monthlyYear  = new Date().getFullYear();
-let monthlyMonth = new Date().getMonth(); // 0-indexed
+// ── MONTHLY ──
+let monthlyYear = new Date().getFullYear();
+let monthlyMonth = new Date().getMonth();
 
 function renderMonthly() {
   const container = document.getElementById('monthly-container');
-  const year  = monthlyYear;
-  const month = monthlyMonth;
-
-  const monthName = new Date(year, month, 1).toLocaleDateString('en-US', { month:'long', year:'numeric' });
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const todayFull   = todayStr();
-
-  // Collect all practice dates in this month
+  const year=monthlyYear, month=monthlyMonth;
+  const monthName = new Date(year,month,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  document.getElementById('month-title').textContent = monthName;
   const pad = n => String(n).padStart(2,'0');
   const monthPrefix = `${year}-${pad(month+1)}`;
   const sessionDates = Object.keys(attendance)
-    .filter(d => d.startsWith(monthPrefix) && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status));
-
-  // ── TOP STATS ──
-  const totalSessions = sessionDates.length;
-  let totalPresent = 0, totalPossible = 0;
-  sessionDates.forEach(d => {
-    SWIMMERS.forEach(sw => {
-      const s = attendance[d]?.[sw.name]?.status;
-      if (s === 'present' || s === 'absent') {
-        totalPossible++;
-        if (s === 'present') totalPresent++;
-      }
-    });
-  });
-  const avgPct = totalPossible > 0 ? Math.round(totalPresent / totalPossible * 100) : null;
-
-  // ── ROLLING 4-WEEK AVERAGE (all session dates in last 28 days before month start) ──
-  const monthStart = new Date(year, month, 1);
-  const fourWeeksAgo = new Date(monthStart);
-  fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
-  const rollingDates = Object.keys(attendance).filter(d => {
-    const dt = new Date(d + 'T12:00:00');
-    return dt >= fourWeeksAgo && dt < monthStart && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status);
-  });
-  let rollingPresent = 0, rollingPossible = 0;
-  rollingDates.forEach(d => {
-    SWIMMERS.forEach(sw => {
-      const s = attendance[d]?.[sw.name]?.status;
-      if (s === 'present' || s === 'absent') { rollingPossible++; if (s === 'present') rollingPresent++; }
-    });
-  });
-  const rollingPct = rollingPossible > 0 ? Math.round(rollingPresent / rollingPossible * 100) : null;
-  const trendDelta = (avgPct !== null && rollingPct !== null) ? avgPct - rollingPct : null;
-  const trendStr = trendDelta === null ? '—'
-    : trendDelta > 0 ? `▲ ${trendDelta}% vs 4-wk avg`
-    : trendDelta < 0 ? `▼ ${Math.abs(trendDelta)}% vs 4-wk avg`
-    : '= 4-wk avg';
-  const trendColor = trendDelta === null ? 'var(--grey)' : trendDelta > 0 ? 'var(--green2)' : trendDelta < 0 ? 'var(--red2)' : 'var(--grey)';
-
-  // ── PER-SWIMMER MONTHLY STATS ──
+    .filter(d => d.startsWith(monthPrefix) && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status)).sort();
+  let totalPresent=0,totalPossible=0;
+  sessionDates.forEach(d => { SWIMMERS.forEach(sw => { const s=attendance[d]?.[sw.name]?.status; if(s==='present'||s==='absent'){totalPossible++;if(s==='present')totalPresent++;} }); });
+  const avgPct = totalPossible>0?Math.round(totalPresent/totalPossible*100):null;
+  document.getElementById('month-stats-row').innerHTML = `
+    <div class="month-stat"><div class="month-stat-val" style="color:var(--mid)">${sessionDates.length}</div><div class="month-stat-label">Sessions</div></div>
+    <div class="month-stat"><div class="month-stat-val" style="color:var(--green2)">${avgPct!==null?avgPct+'%':'—'}</div><div class="month-stat-label">Avg Attendance</div></div>
+    <div class="month-stat"><div class="month-stat-val" style="color:var(--white)">${SWIMMERS.length}</div><div class="month-stat-label">Swimmers</div></div>`;
+  if (!sessionDates.length) { container.innerHTML = '<div class="empty-state">No sessions recorded this month</div>'; return; }
   const swimmerStats = SWIMMERS.map(sw => {
-    let p = 0, total = 0;
-    sessionDates.forEach(d => {
-      const s = attendance[d]?.[sw.name]?.status;
-      if (s === 'present' || s === 'absent') { total++; if (s === 'present') p++; }
-    });
-
-    // Rolling 4-week avg per swimmer
-    let rp = 0, rt = 0;
-    rollingDates.forEach(d => {
-      const s = attendance[d]?.[sw.name]?.status;
-      if (s === 'present' || s === 'absent') { rt++; if (s === 'present') rp++; }
-    });
-    const pct     = total > 0 ? Math.round(p / total * 100) : null;
-    const rolling = rt > 0 ? Math.round(rp / rt * 100) : null;
-    const delta   = (pct !== null && rolling !== null) ? pct - rolling : null;
-
-    // Current active streak — scan chronologically, track the LAST unbroken run
-    const sortedDates = [...sessionDates].sort();
-    let streakCount = 0, streakType = null;
-    sortedDates.forEach(d => {
-      const s = attendance[d]?.[sw.name]?.status;
-      if (s === 'present' || s === 'absent') {
-        if (s === streakType) {
-          streakCount++;
-        } else {
-          streakType  = s;
-          streakCount = 1;
-        }
-      }
-    });
-    // maxConsec still needed for alerts
-    let maxConsec = 0, curConsec = 0;
-    sortedDates.forEach(d => {
-      const s = attendance[d]?.[sw.name]?.status;
-      if (s === 'absent') { curConsec++; maxConsec = Math.max(maxConsec, curConsec); }
-      else if (s === 'present') curConsec = 0;
-    });
-
-    return { sw, p, total, pct, delta, streakCount, streakType, maxConsec };
-  });
-
-  // ── ABSENCE ALERTS (3+ consecutive) ──
-  const alerts = swimmerStats.filter(r => r.maxConsec >= 3).sort((a,b) => b.maxConsec - a.maxConsec);
-
-  // ── MOM CHART DATA (last 6 months) ──
-  const momMonths = [];
-  for (let i = 5; i >= 0; i--) {
-    let m = month - i, y = year;
-    if (m < 0) { m += 12; y--; }
-    const pfx = `${y}-${pad(m+1)}`;
-    const mDates = Object.keys(attendance).filter(d => d.startsWith(pfx) && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status));
-    let mp = 0, mt = 0;
-    mDates.forEach(d => {
-      SWIMMERS.forEach(sw => {
-        const s = attendance[d]?.[sw.name]?.status;
-        if (s === 'present' || s === 'absent') { mt++; if (s === 'present') mp++; }
-      });
-    });
-    momMonths.push({
-      label: new Date(y, m, 1).toLocaleDateString('en-US', { month:'short' }),
-      pct: mt > 0 ? Math.round(mp / mt * 100) : null
-    });
-  }
-
-  // ── HEATMAP ──
-  const firstDow = new Date(year, month, 1).getDay(); // 0=Sun
-  const heatCells = [];
-  for (let i = 0; i < firstDow; i++) heatCells.push({ empty: true });
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${monthPrefix}-${pad(day)}`;
-    const isSession = sessionDates.includes(dateStr);
-    let pct = null;
-    if (isSession) {
-      let p = 0, t = 0;
-      SWIMMERS.forEach(sw => {
-        const s = attendance[dateStr]?.[sw.name]?.status;
-        if (s === 'present' || s === 'absent') { t++; if (s === 'present') p++; }
-      });
-      pct = t > 0 ? Math.round(p / t * 100) : null;
-    }
-    heatCells.push({ day, dateStr, isSession, pct, isToday: dateStr === todayFull });
-  }
-
-  // ── BUILD HTML ──
-  let html = '';
-
-  // Month nav
-  html += `<div class="month-nav">
-    <button class="month-nav-btn" id="month-prev-btn">◀ Prev</button>
-    <div class="month-nav-label">${monthName}</div>
-    <button class="month-nav-btn" id="month-next-btn">Next ▶</button>
-  </div>`;
-
-  // Top stats
-  html += `<div class="month-stats-grid">
-    <div class="month-stat">
-      <div class="month-stat-label">Sessions</div>
-      <div class="month-stat-num" style="color:var(--mid)">${totalSessions}</div>
-    </div>
-    <div class="month-stat">
-      <div class="month-stat-label">Avg Attendance</div>
-      <div class="month-stat-num" style="color:var(--green2)">${avgPct !== null ? avgPct+'%' : '—'}</div>
-    </div>
-    <div class="month-stat">
-      <div class="month-stat-label">vs Last Month</div>
-      <div class="month-stat-num" style="font-size:1rem;padding-top:.4rem;color:${trendColor}">${trendStr}</div>
-    </div>
-  </div>`;
-
-  // Heatmap
-  html += `<div class="heatmap-wrap">
-    <div class="heatmap-header">
-      ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="heatmap-dow">${d}</div>`).join('')}
-    </div>
-    <div class="heatmap-grid">`;
-  heatCells.forEach(cell => {
-    if (cell.empty) { html += `<div class="heatmap-cell empty"></div>`; return; }
-    let cls = 'heatmap-cell';
-    let title = '';
-    if (!cell.isSession) { cls += ' no-session'; title = 'No session'; }
-    else if (cell.pct >= 80) { cls += ' pct-high'; title = cell.pct+'% present'; }
-    else if (cell.pct >= 60) { cls += ' pct-mid'; title = cell.pct+'% present'; }
-    else { cls += ' pct-low'; title = cell.pct !== null ? cell.pct+'% present' : 'Session'; }
-    if (cell.isToday) cls += ' today-cell';
-    html += `<div class="${cls}" title="${title}">${cell.day}</div>`;
-  });
-  html += `</div></div>`;
-
-  // Heatmap legend
-  html += `<div style="display:flex;gap:1rem;margin-bottom:1.25rem;font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;align-items:center;flex-wrap:wrap;">
-    <span>Legend:</span>
-    <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(46,125,50,0.7);display:inline-block"></span>≥80%</span>
-    <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(249,168,37,0.5);display:inline-block"></span>60–79%</span>
-    <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(198,40,40,0.55);display:inline-block"></span>&lt;60%</span>
-    <span style="display:flex;align-items:center;gap:.3rem;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.04);display:inline-block"></span>No session</span>
-  </div>`;
-
-  // Month-over-month chart
-  html += `<div class="mom-chart">
-    <div class="mom-chart-title">Month-over-Month Attendance %</div>
-    <div class="mom-bars">`;
-  const maxPct = Math.max(...momMonths.map(m => m.pct ?? 0), 1);
-  momMonths.forEach(m => {
-    const h = m.pct !== null ? Math.round((m.pct / 100) * 72) : 2;
-    const barColor = m.pct === null ? 'rgba(255,255,255,0.08)' : m.pct >= 80 ? 'var(--green2)' : m.pct >= 60 ? 'var(--gold)' : 'var(--red2)';
-    html += `<div class="mom-bar-wrap">
-      <div class="mom-bar-pct">${m.pct !== null ? m.pct+'%' : ''}</div>
-      <div class="mom-bar" style="height:${h}px;background:${barColor}"></div>
-      <div class="mom-bar-label">${m.label}</div>
-    </div>`;
-  });
-  html += `</div></div>`;
-
-  // Absence alerts
-  html += `<div class="alert-section">
-    <div class="alert-section-title">⚠ Absence Alerts — 3+ Consecutive Days</div>`;
-  if (alerts.length === 0) {
-    html += `<div class="no-alerts">✓ No swimmers with 3+ consecutive absences this month</div>`;
-  } else {
-    alerts.forEach(r => {
-      html += `<div class="alert-card">
-        <div>
-          <div class="alert-name">${r.sw.name}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey);margin-top:.15rem">${r.sw.groupName||''} · ${r.p}/${r.total} sessions attended</div>
-        </div>
-        <div class="alert-detail">${r.maxConsec} consecutive absences</div>
-      </div>`;
-    });
-  }
-  html += `</div>`;
-
-  // Per-swimmer monthly table
-  const sorted = [...swimmerStats].sort((a,b) => (b.pct ?? -1) - (a.pct ?? -1));
-  html += `<div class="month-swimmer-table">
-    <div class="month-swimmer-row msw-header">
-      <div>Swimmer</div>
-      <div style="text-align:center">Present</div>
-      <div style="text-align:center">%</div>
-      <div style="text-align:center">Streak</div>
-      <div style="text-align:right">vs 4-wk</div>
-    </div>`;
-  sorted.forEach(({ sw, p, total, pct, delta, streakCount, streakType }) => {
-    const color = pct === null ? 'var(--grey)' : pct >= 80 ? 'var(--green2)' : pct >= 60 ? 'var(--gold)' : 'var(--red2)';
-    const trendCls = delta === null ? 'trend-eq' : delta > 0 ? 'trend-up' : delta < 0 ? 'trend-dn' : 'trend-eq';
-    const trendIcon = delta === null ? '—' : delta > 0 ? `▲ ${delta}%` : delta < 0 ? `▼ ${Math.abs(delta)}%` : '=';
-    const streakColor = streakType === 'present' ? 'var(--green2)' : streakType === 'absent' ? 'var(--red2)' : 'var(--grey)';
-    const streakIcon  = streakType === 'present' ? '✓' : streakType === 'absent' ? '✗' : '';
-    const streakLabel = streakCount > 0 ? `${streakIcon} ${streakCount}` : '—';
+    let p=0,total=0;
+    sessionDates.forEach(d => { const s=attendance[d]?.[sw.name]?.status; if(s==='present'||s==='absent'){total++;if(s==='present')p++;} });
+    return { sw, p, total, pct: total>0?Math.round(p/total*100):null };
+  }).sort((a,b) => (b.pct??-1)-(a.pct??-1));
+  let html = '<div class="month-swimmer-table">';
+  html += `<div class="month-swimmer-row msw-header"><div>Name</div><div>Present</div><div>Absent</div><div>Total</div><div>%</div></div>`;
+  swimmerStats.forEach(({sw,p,total,pct}) => {
+    const absent=total-p;
+    const color=pct===null?'var(--grey)':pct>=80?'var(--green2)':pct>=60?'var(--gold)':'var(--red2)';
     html += `<div class="month-swimmer-row">
-      <div>
-        <div style="font-size:.85rem;font-weight:500">${sw.name}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:.53rem;color:var(--grey);text-transform:uppercase;margin-top:.1rem">${sw.groupName||''}</div>
-      </div>
-      <div style="text-align:center;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--grey)">${p}/${total}</div>
-      <div style="text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:500;color:${color}">${pct !== null ? pct+'%' : '—'}</div>
-      <div style="text-align:center;font-family:'DM Mono',monospace;font-size:.65rem;color:${streakColor}">${streakLabel}</div>
-      <div style="text-align:right;font-family:'DM Mono',monospace;font-size:.65rem;" class="${trendCls}">${trendIcon}</div>
+      <div><div style="font-size:.85rem;font-weight:500">${sw.name}</div><div style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey)">${sw.groupName||''}</div></div>
+      <div style="font-size:.82rem;color:var(--green2)">${p}</div>
+      <div style="font-size:.82rem;color:var(--red2)">${absent}</div>
+      <div style="font-size:.82rem;color:var(--grey)">${total}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:${color}">${pct!==null?pct+'%':'—'}</div>
     </div>`;
   });
-  html += `</div>`;
-
-  // Monthly CSV export
-  html += `<div style="margin-top:1rem;">
-    <button class="export-btn" id="export-monthly-csv-btn" style="width:100%">⬇ Export Monthly CSV</button>
-  </div>`;
-
-  container.innerHTML = html;
-
-  // Wire up nav + export after render
-  document.getElementById('month-prev-btn').addEventListener('click', () => {
-    if (monthlyMonth === 0) { monthlyMonth = 11; monthlyYear--; }
-    else { monthlyMonth--; }
-    renderMonthly();
-  });
-  document.getElementById('month-next-btn').addEventListener('click', () => {
-    if (monthlyMonth === 11) { monthlyMonth = 0; monthlyYear++; }
-    else { monthlyMonth++; }
-    renderMonthly();
-  });
-  document.getElementById('export-monthly-csv-btn').addEventListener('click', exportMonthlyCSV);
+  html += '</div>'; container.innerHTML = html;
 }
 
-function exportMonthlyCSV() {
-  const year  = monthlyYear;
-  const month = monthlyMonth;
-  const pad   = n => String(n).padStart(2,'0');
-  const monthPrefix = `${year}-${pad(month+1)}`;
-  const sessionDates = Object.keys(attendance)
-    .filter(d => d.startsWith(monthPrefix) && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status))
-    .sort();
-
-  if (!sessionDates.length) { alert('No session data for this month.'); return; }
-
-  let csv = 'Name,Lane,' + sessionDates.join(',') + ',Total Present,Total Sessions,%\n';
-  SWIMMERS.forEach(sw => {
-    const row = [sw.name, sw.groupName||''];
-    let p = 0, t = 0;
-    sessionDates.forEach(d => {
-      const s = attendance[d]?.[sw.name]?.status;
-      row.push(s === 'present' ? 'P' : s === 'absent' ? 'A' : '');
-      if (s === 'present' || s === 'absent') { t++; if (s === 'present') p++; }
-    });
-    row.push(p, t, t > 0 ? Math.round(p/t*100)+'%' : '—');
-    csv += row.map(v => `"${v}"`).join(',') + '\n';
-  });
-
-  const monthName = new Date(year, month, 1).toLocaleDateString('en-US', { month:'long', year:'numeric' }).replace(' ','_');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' }));
-  a.download = `purple_attendance_${monthName}.csv`;
-  a.click();
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// EXPORT
-// ─────────────────────────────────────────────────────────────────────────────
+// ── EXPORTS ──
 function exportCSV() {
   const dates = Object.keys(attendance).sort();
   if (!dates.length) { alert('No data to export yet.'); return; }
-  let csv = 'Name,Lane,Age,Gen,' + dates.join(',') + '\n';
+  let csv = 'Name,Group,Age,Gen,' + dates.join(',') + '\n';
   SWIMMERS.forEach(sw => {
     const row = [sw.name, sw.groupName||'', sw.age||'', sw.gen||''];
-    dates.forEach(d => {
-      const s = attendance[d]?.[sw.name]?.status;
-      row.push(s==='present'?'P':s==='absent'?'A':'');
-    });
+    dates.forEach(d => { const s=attendance[d]?.[sw.name]?.status; row.push(s==='present'?'P':s==='absent'?'A':''); });
     csv += row.map(v=>`"${v}"`).join(',') + '\n';
   });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download = `purple_attendance_${todayStr()}.csv`;
-  a.click();
+  a.download = `ssf_attendance_${todayStr()}.csv`; a.click();
 }
 
+function exportMonthlyCSV() {
+  const pad = n => String(n).padStart(2,'0');
+  const monthPrefix = `${monthlyYear}-${pad(monthlyMonth+1)}`;
+  const sessionDates = Object.keys(attendance).filter(d => d.startsWith(monthPrefix) && SWIMMERS.some(sw => attendance[d]?.[sw.name]?.status)).sort();
+  if (!sessionDates.length) { alert('No session data for this month.'); return; }
+  let csv = 'Name,Group,' + sessionDates.join(',') + ',Total Present,Total Sessions,%\n';
+  SWIMMERS.forEach(sw => {
+    const row = [sw.name, sw.groupName||''];
+    let p=0,t=0;
+    sessionDates.forEach(d => { const s=attendance[d]?.[sw.name]?.status; row.push(s==='present'?'P':s==='absent'?'A':''); if(s==='present'||s==='absent'){t++;if(s==='present')p++;} });
+    row.push(p, t, t>0?Math.round(p/t*100)+'%':'—');
+    csv += row.map(v=>`"${v}"`).join(',') + '\n';
+  });
+  const monthName = new Date(monthlyYear,monthlyMonth,1).toLocaleDateString('en-US',{month:'long',year:'numeric'}).replace(' ','_');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = `ssf_attendance_${monthName}.csv`; a.click();
+}
 
 function exportSummary() {
   ensureDate(currentDate);
@@ -1286,49 +783,52 @@ function exportSummary() {
     else if (rec?.status==='absent') absent.push(sw.name.split(' ')[0]);
     if (rec?.note) notes.push(`${sw.name.split(' ')[0]}: ${rec.note}`);
   });
-  let text = `Purple Group Attendance — ${label}\n`;
+  let text = `SSF Aquatics Attendance — ${label}\n`;
   text += `Present (${present.length}): ${present.join(', ')||'—'}\n`;
   text += `Absent (${absent.length}): ${absent.join(', ')||'—'}\n`;
   if (notes.length) text += `Notes:\n${notes.map(n=>'  '+n).join('\n')}`;
   navigator.clipboard.writeText(text).then(() => {
-    const btn = event.target;
-    const orig = btn.textContent;
-    btn.textContent = '✓ Copied!';
-    setTimeout(()=>btn.textContent=orig, 2000);
-  }).catch(()=>prompt('Copy this summary:',text));
+    const btn = document.getElementById('export-summary-btn');
+    const orig = btn.textContent; btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent=orig, 2000);
+  }).catch(() => prompt('Copy this:', text));
 }
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// BOOT
-// ─────────────────────────────────────────────────────────────────────────────
+// ── BOOT ──
 function boot() {
-  // Mark all
-  document.getElementById('mark-present-btn').addEventListener('click', () => markAll('present'));
-  document.getElementById('mark-absent-btn').addEventListener('click',  () => markAll('absent'));
-  document.getElementById('mark-clear-btn').addEventListener('click',   () => markAll('clear'));
-
-  // View tabs
-  document.querySelectorAll('.view-tab[data-view]').forEach(tab => {
-    tab.addEventListener('click', () => switchView(tab.dataset.view));
-  });
-
-  // Roster event delegation
-  const rosterContent = document.getElementById('roster-content');
-  rosterContent.addEventListener('click', e => {
+  // Roster click delegation
+  document.getElementById('roster-content').addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
-    const name = btn.dataset.name;
-    const action = btn.dataset.action;
+    const name = btn.dataset.name, action = btn.dataset.action;
     if (action === 'present' || action === 'absent') setStatus(name, action);
     else if (action === 'note') toggleNote(name);
   });
-  rosterContent.addEventListener('input', e => {
+  document.getElementById('roster-content').addEventListener('input', e => {
     const ta = e.target.closest('textarea[data-name]');
     if (ta) saveNote(ta.dataset.name, ta.value);
   });
 
-  // Export
+  // View tabs
+  document.querySelectorAll('.view-tab').forEach(t => {
+    t.addEventListener('click', () => switchView(t.dataset.view));
+  });
+
+  // Mark all
+  document.getElementById('mark-present-btn').addEventListener('click', () => markAll('present'));
+  document.getElementById('mark-absent-btn').addEventListener('click', () => markAll('absent'));
+  document.getElementById('mark-clear-btn').addEventListener('click', () => markAll('clear'));
+
+  // Monthly nav
+  document.getElementById('month-prev-btn').addEventListener('click', () => {
+    monthlyMonth--; if(monthlyMonth<0){monthlyMonth=11;monthlyYear--;} renderMonthly();
+  });
+  document.getElementById('month-next-btn').addEventListener('click', () => {
+    monthlyMonth++; if(monthlyMonth>11){monthlyMonth=0;monthlyYear++;} renderMonthly();
+  });
+  document.getElementById('export-monthly-csv-btn').addEventListener('click', exportMonthlyCSV);
+
+  // Exports
   document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
   document.getElementById('export-summary-btn').addEventListener('click', exportSummary);
 
@@ -1337,9 +837,7 @@ function boot() {
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);
-} else {
-  boot();
-}
+} else { boot(); }
 </script>
 </body>
 </html>
