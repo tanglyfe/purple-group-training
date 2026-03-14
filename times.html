@@ -131,6 +131,10 @@
     .rank-bar-wrap{display:none;}
     .swimmer-grid{grid-template-columns:1fr;}
   }
+
+  /* GROUP FILTER */
+  .group-filter-bar{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;}
+  .group-filter-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-right:.1rem;}
 </style>
   <script src="sidebar.js" defer></script>
 
@@ -253,6 +257,7 @@ function parseSecs(t) {
 async function loadSwimmers() {
   const q = query(collection(db, 'swimmers'), where('active', '==', true));
   const snap = await getDocs(q);
+  await loadGroups();
   allSwimmers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
   // Stats

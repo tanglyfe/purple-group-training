@@ -105,6 +105,10 @@
     .td-bar-cell,.td-age{display:none;}
     .podium-row{grid-template-columns:1fr;}
   }
+
+  /* GROUP FILTER */
+  .group-filter-bar{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;}
+  .group-filter-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-right:.1rem;}
 </style>
 </head>
 <body>
@@ -142,7 +146,8 @@
 <div class="main">
   <div class="topbar">
     <div class="topbar-title">Team <span>Leaderboard</span></div>
-    <div class="filter-pills" id="gender-pills">
+    <div class="group-filter-bar"><span class="group-filter-label">Group</span><div id="group-filter-pills" style="display:flex;gap:.35rem;flex-wrap:wrap;"></div></div>
+      <div class="filter-pills" id="gender-pills">
       <button class="pill active" data-gender="all">All</button>
       <button class="pill" data-gender="M">Boys</button>
       <button class="pill" data-gender="F">Girls</button>
@@ -216,6 +221,53 @@ function ps(t){t=t.trim();if(t.includes(":")){const[m,s]=t.split(":");return par
 
 let all=[],gf="all",sel=null;
 
+
+// ── GROUP FILTER ─────────────────────────────────────────────────────────────
+let allGroupsData = [];
+let groupFilter = 'all';
+
+async function loadGroups() {
+  try {
+    const snap = await getDocs(collection(db, 'groups'));
+    allGroupsData = snap.docs.map(d => ({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name));
+    renderGroupPills();
+  } catch(e) { console.warn('Groups load failed', e); }
+}
+
+function renderGroupPills() {
+  const wrap = document.getElementById('group-filter-pills');
+  if (!wrap) return;
+  const pills = [
+    `<button class="pill active" data-gid="all">All Groups</button>`,
+    ...allGroupsData.map(g =>
+      `<button class="pill" data-gid="${g.id}" data-color="${g.color||'#2196F3'}"
+        style="">${g.name}</button>`)
+  ].join('');
+  wrap.innerHTML = pills;
+  wrap.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => {
+      wrap.querySelectorAll('.pill').forEach(x => {
+        x.classList.remove('active');
+        x.style.background=''; x.style.borderColor='';
+      });
+      p.classList.add('active');
+      if (p.dataset.color) {
+        p.style.background = p.dataset.color + '33';
+        p.style.borderColor = p.dataset.color;
+      }
+      groupFilter = p.dataset.gid;
+      render();
+    });
+  });
+}
+
+function swimmerMatchesGroup(swimmer) {
+  if (groupFilter === 'all') return true;
+  const group = allGroupsData.find(g => g.id === groupFilter);
+  if (!group) return true;
+  return (group.swimmerIds || []).includes(swimmer.id);
+}
+
 async function load(){
   const snap=await getDocs(query(collection(db,"swimmers"),where("active","==",true)));
   all=snap.docs.map(d=>({id:d.id,...d.data()}));
@@ -238,7 +290,7 @@ function render(){
   if(!sel)return;
   const color=SC[strokeOf(sel)];
   const rows=all
-    .filter(s=>(gf==="all"||s.gender===gf)&&(s.times||{})[sel])
+    .filter(s=>(gf==="all"||s.gender===gf)&&swimmerMatchesGroup(s)&&(s.times||{})[sel])
     .map(s=>({...s,secs:ps(s.times[sel]),display:s.times[sel],tier:getTier(sel,ps(s.times[sel]))}))
     .sort((a,b)=>a.secs-b.secs);
 

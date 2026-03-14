@@ -61,20 +61,21 @@ const SIDEBAR_STYLES = `
 
 const NAV_ITEMS = [
   { section: 'Main', items: [
-    { key:'dashboard',  icon:'&#9744;',  label:'Dashboard',   href:'dashboard.html' },
-    { key:'times',      icon:'&#9203;',  label:'Times',        href:'times.html' },
-    { key:'leaderboard',icon:'&#127942;',label:'Leaderboard', href:'leaderboard.html' },
-    { key:'attendance', icon:'&#9989;',  label:'Attendance',   href:'attendance.html' },
-    { key:'dryland',    icon:'&#128170;',label:'Dryland',      href:'dryland.html' },
+    { key:'dashboard',   icon:'&#9744;',   label:'Dashboard',   href:'dashboard.html' },
+    { key:'times',       icon:'&#9203;',   label:'Times',       href:'times.html' },
+    { key:'leaderboard', icon:'&#127942;', label:'Leaderboard', href:'leaderboard.html' },
+    { key:'attendance',  icon:'&#9989;',   label:'Attendance',  href:'attendance.html' },
+    { key:'dryland',     icon:'&#128170;', label:'Dryland',     href:'dryland.html' },
   ]},
   { section: 'Roster', items: [
-    { key:'swimmers',   icon:'&#127946;',label:'Swimmers',     href:'times.html' },
-    { key:'parents',    icon:'&#128106;',label:'Parents',      href:'register.html' },
+    { key:'swimmers',    icon:'&#127946;', label:'Swimmers',    href:'times.html' },
+    { key:'groups',      icon:'&#128101;', label:'Groups',      href:'groups.html' },
+    { key:'parents',     icon:'&#128106;', label:'Parents',     href:'register.html' },
   ]},
   { section: 'Management', items: [
-    { key:'coach-hub',  icon:'&#11088;', label:'Coach Hub',    href:'coach-hub.html' },
-    { key:'analytics',  icon:'&#128200;',label:'Analytics',    href:'coach-analytics.html' },
-    { key:'account',    icon:'&#128273;',label:'My Account',   href:'login.html' },
+    { key:'coach-hub',   icon:'&#11088;',  label:'Coach Hub',   href:'coach-hub.html' },
+    { key:'analytics',   icon:'&#128200;', label:'Analytics',   href:'coach-analytics.html' },
+    { key:'account',     icon:'&#128273;', label:'My Account',  href:'login.html' },
   ]},
 ];
 

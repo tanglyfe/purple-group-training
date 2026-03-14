@@ -188,6 +188,14 @@
   .mom-bar{width:100%;border-radius:2px 2px 0 0;transition:height .4s;min-height:2px;background:var(--mid);}
   .mom-bar-label{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.06em;color:var(--grey);text-align:center;}
   .mom-bar-pct{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--light);text-align:center;}
+
+  /* GROUP SELECTOR */
+  .group-bar{background:rgba(7,20,41,0.8);border-bottom:1px solid rgba(33,150,243,0.12);padding:.6rem 1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+  .group-bar-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);white-space:nowrap;}
+  .group-pill{padding:.3rem .8rem;border-radius:20px;border:1px solid rgba(33,150,243,0.2);background:transparent;color:var(--grey);font-family:'DM Sans',sans-serif;font-size:.78rem;cursor:pointer;transition:all .15s;}
+  .group-pill:hover{color:var(--white);}
+  .group-pill.active{color:#fff;border-color:transparent;}
+
 </style>
   <script src="sidebar.js" defer></script>
 
@@ -202,6 +210,12 @@
 
 <!-- MAIN APP -->
 <div id="att-app">
+
+<!-- GROUP SELECTOR -->
+<div class="group-bar" id="group-bar">
+  <span class="group-bar-label">Group</span>
+  <div id="group-pills"></div>
+</div>
 
 <!-- DATE BAR -->
 <div class="date-bar">
@@ -282,7 +296,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
   getFirestore, doc, getDoc, setDoc, getDocs,
-  collection, deleteField
+  collection, query, where, deleteField
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -309,46 +323,12 @@ const LS_KEY = 'purple_attendance';
 // ─────────────────────────────────────────────────────────────────────────────
 // ROSTER
 // ─────────────────────────────────────────────────────────────────────────────
-const SWIMMERS = [
-  { name:"Lorenzo Navarro",   age:11, gen:"M", lane:3 },
-  { name:"Woody Li",          age:13, gen:"M", lane:3 },
-  { name:"Aiden Kiatrungrit", age:10, gen:"M", lane:3 },
-  { name:"Priscilla Silva",   age:13, gen:"F", lane:3 },
-  { name:"Ashley Hong",       age:13, gen:"F", lane:3 },
-  { name:"Aiden Kong",        age:12, gen:"M", lane:3 },
-  { name:"Gisele Barbosa",    age:14, gen:"F", lane:3 },
-  { name:"Edison Cheung",     age:12, gen:"M", lane:3 },
-  { name:"Nathan Cheung",     age:13, gen:"M", lane:3 },
-  { name:"Lucciana Cisneros", age:12, gen:"F", lane:3 },
-  { name:"Noah Gonzales",     age:10, gen:"M", lane:2 },
-  { name:"Kellen Luk",        age:13, gen:"M", lane:2 },
-  { name:"Sean Jiang",        age:11, gen:"M", lane:2 },
-  { name:"Abraham Boukai",    age:12, gen:"M", lane:2 },
-  { name:"Ian An",            age:12, gen:"M", lane:2 },
-  { name:"Kirsten Peredo",    age:8,  gen:"F", lane:2 },
-  { name:"Jaden Manalastas",  age:9,  gen:"M", lane:2 },
-  { name:"Ellie Lung",        age:9,  gen:"F", lane:2 },
-  { name:"Natalie Kitchen",   age:13, gen:"F", lane:2 },
-  { name:"Emily Cheung",      age:9,  gen:"F", lane:2 },
-  { name:"Logan Yip",         age:10, gen:"M", lane:2 },
-  { name:"Maya Hall",         age:10, gen:"F", lane:2 },
-  { name:"Tessa Chun",        age:11, gen:"F", lane:1 },
-  { name:"Ellisha Fu",        age:11, gen:"F", lane:1 },
-  { name:"Milana Ludan",      age:11, gen:"F", lane:1 },
-  { name:"Wilson Zhou",       age:10, gen:"M", lane:1 },
-  { name:"Rachel Cheng",      age:13, gen:"F", lane:1 },
-  { name:"Isabelle Leung",    age:9,  gen:"F", lane:1 },
-  { name:"Evanna Jiang",      age:10, gen:"F", lane:1 },
-  { name:"Leah Wang",         age:9,  gen:"F", lane:1 },
-  { name:"Eli Wu",            age:10, gen:"M", lane:1 },
-  { name:"Maeko Lam",         age:11, gen:"F", lane:1 },
-  { name:"Jadon Jiang",       age:13, gen:"M", lane:1 },
-  { name:"Allison Chan",      age:12, gen:"F", lane:1 },
-  { name:"Ayrton Lee",        age:12, gen:"M", lane:1 },
-];
+// SWIMMERS loaded dynamically from Firestore based on selected group
+let SWIMMERS = [];  // { name, age, gen, id, groupId }
+let allGroups = []; // { id, name, color, swimmerIds }
+let selectedGroupId = 'all'; // 'all' or group id
 
-const LANE_COLORS = { 3:"#1F4E79", 2:"#1976D2", 1:"#0277BD" };
-const LANE_LABELS = { 3:"Lane 3 — Fast", 2:"Lane 2 — Mid", 1:"Lane 1 — Developmental" };
+// Lane colors/labels replaced by group-based display
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STATE
@@ -469,8 +449,85 @@ function getRecord(d, name) {
 // ─────────────────────────────────────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────────────────────────────────────
+
+// ── LOAD GROUPS + SWIMMERS FROM FIRESTORE ──────────────────────────────────
+async function loadGroupsAndSwimmers() {
+  const [grSnap, swSnap] = await Promise.all([
+    getDocs(collection(db, 'groups')),
+    getDocs(query(collection(db, 'swimmers'), where('active', '==', true)))
+  ]);
+
+  allGroups = grSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+    .sort((a,b) => a.name.localeCompare(b.name));
+
+  const firestoreSwimmers = swSnap.docs.map(d => ({ firestoreId: d.id, ...d.data() }))
+    .sort((a,b) => a.name.localeCompare(b.name));
+
+  // Build group pills UI
+  const pillsEl = document.getElementById('group-pills');
+  const allPill = `<button class="group-pill active" data-gid="all" style="background:rgba(33,150,243,0.2);border-color:var(--mid)">All (${firestoreSwimmers.length})</button>`;
+  const groupPills = allGroups.map(g => 
+    `<button class="group-pill" data-gid="${g.id}" style="--gc:${g.color||'#1565C0'}"
+      data-color="${g.color||'#1565C0'}">${g.name} (${(g.swimmerIds||[]).length})</button>`
+  ).join('');
+  pillsEl.innerHTML = allPill + groupPills;
+
+  pillsEl.querySelectorAll('.group-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      pillsEl.querySelectorAll('.group-pill').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = '';
+        b.style.borderColor = '';
+      });
+      btn.classList.add('active');
+      const color = btn.dataset.color || '#2196F3';
+      btn.style.background = `${color}33`;
+      btn.style.borderColor = color;
+      selectedGroupId = btn.dataset.gid;
+      updateSwimmerList(firestoreSwimmers);
+      ensureDate(currentDate);
+      renderRoster();
+      updateStats();
+    });
+  });
+
+  // Initial swimmer list (all)
+  updateSwimmerList(firestoreSwimmers);
+}
+
+function updateSwimmerList(firestoreSwimmers) {
+  if (selectedGroupId === 'all') {
+    SWIMMERS = firestoreSwimmers.map(s => ({
+      name: s.name,
+      age: s.age || null,
+      gen: s.gender || '',
+      id: s.firestoreId,
+      groupId: s.groupId || null,
+      groupName: s.groupName || null,
+      groupColor: s.groupColor || null,
+    }));
+  } else {
+    const group = allGroups.find(g => g.id === selectedGroupId);
+    const ids = new Set(group?.swimmerIds || []);
+    SWIMMERS = firestoreSwimmers
+      .filter(s => ids.has(s.firestoreId))
+      .map(s => ({
+        name: s.name,
+        age: s.age || null,
+        gen: s.gender || '',
+        id: s.firestoreId,
+        groupId: s.groupId || null,
+        groupName: s.groupName || null,
+        groupColor: s.groupColor || null,
+      }));
+  }
+}
+
 async function initApp() {
-  // 1. Load localStorage immediately for instant render
+  // 1. Load groups + swimmers from Firestore first
+  await loadGroupsAndSwimmers();
+
+  // 2. Load localStorage immediately for instant render
   attendance = lsLoad();
   currentDate = todayStr();
 
@@ -579,16 +636,40 @@ function renderRoster() {
   ensureDate(currentDate);
   const container = document.getElementById('roster-content');
   container.innerHTML = '';
-  [3,2,1].forEach(lane => {
-    const swimmers = SWIMMERS.filter(s => s.lane === lane);
+
+  if (!SWIMMERS.length) {
+    container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--grey);font-size:.85rem">No swimmers in this group yet.<br><a href="groups.html" style="color:var(--light)">Manage Groups →</a></div>';
+    return;
+  }
+
+  // Group swimmers by their group, or show as one flat list if 'all'
+  let sections;
+  if (selectedGroupId === 'all') {
+    // Group by groupName
+    const byGroup = {};
+    SWIMMERS.forEach(sw => {
+      const key = sw.groupName || 'Unassigned';
+      const color = sw.groupColor || '#8BA3C0';
+      if (!byGroup[key]) byGroup[key] = { swimmers: [], color };
+      byGroup[key].swimmers.push(sw);
+    });
+    sections = Object.entries(byGroup).map(([name, {swimmers, color}]) => ({ name, swimmers, color }));
+  } else {
+    const group = allGroups.find(g => g.id === selectedGroupId);
+    sections = [{ name: group?.name || 'Group', swimmers: SWIMMERS, color: group?.color || '#2196F3' }];
+  }
+
+  sections.forEach(section => {
+    const swimmers = section.swimmers;
+    if (!swimmers.length) return;
     const hdr = document.createElement('div');
     hdr.className = 'lane-header';
-    hdr.style.cssText = `background:${LANE_COLORS[lane]}22;border-left:4px solid ${LANE_COLORS[lane]};`;
-    hdr.innerHTML = `<h2 style="color:#90CAF9">${LANE_LABELS[lane]}</h2><span class="lane-count">${swimmers.length} swimmers</span>`;
+    hdr.style.cssText = `background:${section.color}22;border-left:4px solid ${section.color};`;
+    hdr.innerHTML = `<h2 style="color:#90CAF9">${section.name}</h2><span class="lane-count">${swimmers.length} swimmers</span>`;
     container.appendChild(hdr);
 
     const group = document.createElement('div');
-    group.style.cssText = 'border-radius:0 0 2px 2px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);border-top:none;';
+    group.style.cssText = 'border-radius:0 0 2px 2px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);border-top:none;margin-bottom:.5rem;';
 
     swimmers.forEach(sw => {
       const rec = getRecord(currentDate, sw.name);
@@ -600,7 +681,7 @@ function renderRoster() {
       row.innerHTML = `
         <div class="swimmer-info">
           <div class="swimmer-name">${sw.name}</div>
-          <div class="swimmer-meta">Age ${sw.age} · ${sw.gen} · Lane ${sw.lane}</div>
+          <div class="swimmer-meta">Age ${sw.age||'?'} · ${sw.gen}${sw.groupName ? ' · '+sw.groupName : ''}</div>
         </div>
         <div class="att-btns">
           <button class="att-btn present-btn ${rec.status==='present'?'active':''}"
@@ -846,7 +927,7 @@ function renderSwimmerPct() {
     html += `<div class="pct-row" style="grid-template-columns:1fr 80px 60px;">
       <div>
         <div class="pct-name">${sw.name}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);text-transform:uppercase;margin-top:.1rem">Lane ${sw.lane}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);text-transform:uppercase;margin-top:.1rem">${sw.groupName||''}</div>
       </div>
       <div>
         <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:${pct??0}%;background:${color}"></div></div>
@@ -1082,7 +1163,7 @@ function renderMonthly() {
       html += `<div class="alert-card">
         <div>
           <div class="alert-name">${r.sw.name}</div>
-          <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey);margin-top:.15rem">Lane ${r.sw.lane} · ${r.p}/${r.total} sessions attended</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey);margin-top:.15rem">${r.sw.groupName||''} · ${r.p}/${r.total} sessions attended</div>
         </div>
         <div class="alert-detail">${r.maxConsec} consecutive absences</div>
       </div>`;
@@ -1110,7 +1191,7 @@ function renderMonthly() {
     html += `<div class="month-swimmer-row">
       <div>
         <div style="font-size:.85rem;font-weight:500">${sw.name}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:.53rem;color:var(--grey);text-transform:uppercase;margin-top:.1rem">Lane ${sw.lane}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.53rem;color:var(--grey);text-transform:uppercase;margin-top:.1rem">${sw.groupName||''}</div>
       </div>
       <div style="text-align:center;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--grey)">${p}/${total}</div>
       <div style="text-align:center;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:500;color:${color}">${pct !== null ? pct+'%' : '—'}</div>
@@ -1154,7 +1235,7 @@ function exportMonthlyCSV() {
 
   let csv = 'Name,Lane,' + sessionDates.join(',') + ',Total Present,Total Sessions,%\n';
   SWIMMERS.forEach(sw => {
-    const row = [sw.name, sw.lane];
+    const row = [sw.name, sw.groupName||''];
     let p = 0, t = 0;
     sessionDates.forEach(d => {
       const s = attendance[d]?.[sw.name]?.status;
@@ -1180,7 +1261,7 @@ function exportCSV() {
   if (!dates.length) { alert('No data to export yet.'); return; }
   let csv = 'Name,Lane,Age,Gen,' + dates.join(',') + '\n';
   SWIMMERS.forEach(sw => {
-    const row = [sw.name, sw.lane, sw.age, sw.gen];
+    const row = [sw.name, sw.groupName||'', sw.age||'', sw.gen||''];
     dates.forEach(d => {
       const s = attendance[d]?.[sw.name]?.status;
       row.push(s==='present'?'P':s==='absent'?'A':'');

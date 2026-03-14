@@ -114,6 +114,10 @@
   @keyframes spin{to{transform:rotate(360deg);}}
 
   footer{border-top:1px solid rgba(33,150,243,0.1);padding:1.5rem 2rem;text-align:center;color:var(--grey);font-size:.78rem;position:relative;z-index:1;}
+
+  /* GROUP FILTER */
+  .group-filter-bar{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;}
+  .group-filter-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-right:.1rem;}
 </style>
   <script src="sidebar.js" defer></script>
 
@@ -146,6 +150,7 @@
   <!-- TAB 1: COVERAGE -->
   <div class="tab-panel active" id="tab-coverage">
     <div class="controls">
+      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.5rem;width:100%"><span class="group-filter-label">Group</span><div id="group-filter-pills" style="display:flex;gap:.35rem;flex-wrap:wrap;"></div></div>
       <div class="search-wrap">
         <span class="search-icon">⌕</span>
         <input type="text" id="cov-search" placeholder="Search swimmer…">
@@ -248,9 +253,57 @@ function parseSecs(t) {
   return parseFloat(t);
 }
 
+
+// ── GROUP FILTER ─────────────────────────────────────────────────────────────
+let allGroupsData = [];
+let groupFilter = 'all';
+
+async function loadGroups() {
+  try {
+    const snap = await getDocs(collection(db, 'groups'));
+    allGroupsData = snap.docs.map(d => ({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name));
+    renderGroupPills();
+  } catch(e) { console.warn('Groups load failed', e); }
+}
+
+function renderGroupPills() {
+  const wrap = document.getElementById('group-filter-pills');
+  if (!wrap) return;
+  const pills = [
+    `<button class="pill active" data-gid="all">All Groups</button>`,
+    ...allGroupsData.map(g =>
+      `<button class="pill" data-gid="${g.id}" data-color="${g.color||'#2196F3'}"
+        style="">${g.name}</button>`)
+  ].join('');
+  wrap.innerHTML = pills;
+  wrap.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => {
+      wrap.querySelectorAll('.pill').forEach(x => {
+        x.classList.remove('active');
+        x.style.background=''; x.style.borderColor='';
+      });
+      p.classList.add('active');
+      if (p.dataset.color) {
+        p.style.background = p.dataset.color + '33';
+        p.style.borderColor = p.dataset.color;
+      }
+      groupFilter = p.dataset.gid;
+      renderCoverage();
+    });
+  });
+}
+
+function swimmerMatchesGroup(swimmer) {
+  if (groupFilter === 'all') return true;
+  const group = allGroupsData.find(g => g.id === groupFilter);
+  if (!group) return true;
+  return (group.swimmerIds || []).includes(swimmer.id);
+}
+
 async function init() {
   const q = query(collection(db, 'swimmers'), where('active','==',true));
   const snap = await getDocs(q);
+  await loadGroups();
   allSwimmers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
   const wellRounded = allSwimmers.filter(s => isWellRounded(s)).length;
@@ -283,6 +336,7 @@ function lastSwumThisSeason(s, event) {
 function renderCoverage() {
   let list = allSwimmers.filter(s => {
     if (covGender !== 'all' && s.gender !== covGender) return false;
+    if (!swimmerMatchesGroup(s)) return false;
     if (covSearch && !s.name.toLowerCase().includes(covSearch.toLowerCase())) return false;
     if (covRound === 'yes' && !isWellRounded(s)) return false;
     if (covRound === 'no'  &&  isWellRounded(s)) return false;
@@ -332,7 +386,7 @@ function renderCoverage() {
 }
 
 function renderMissing() {
-  const list = allSwimmers.filter(s => missGender === 'all' || s.gender === missGender);
+  const list = allSwimmers.filter(s => (missGender === 'all' || s.gender === missGender) && swimmerMatchesGroup(s));
   const eventSet = new Set();
   allSwimmers.forEach(s => Object.keys(s.times||{}).forEach(ev => eventSet.add(ev)));
   const events = ALL_EVENTS.filter(ev => eventSet.has(ev));
@@ -358,7 +412,7 @@ function renderMissing() {
 }
 
 function renderImprovement() {
-  const list = allSwimmers.filter(s => impGender === 'all' || s.gender === impGender);
+  const list = allSwimmers.filter(s => (impGender === 'all' || s.gender === impGender) && swimmerMatchesGroup(s));
   const rows = [];
 
   list.forEach(s => {
