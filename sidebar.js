@@ -116,3 +116,9 @@ function injectSidebar(activePage) {
   document.body.appendChild(sidebar);
   document.body.appendChild(main);
 }
+
+// Auto-initialize when DOM is ready using data-page attribute
+document.addEventListener('DOMContentLoaded', () => {
+  const page = document.body.getAttribute('data-page');
+  if (page) injectSidebar(page);
+});

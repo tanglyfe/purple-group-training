@@ -46,13 +46,13 @@
   .day-btn.active{background:rgba(33,150,243,0.15);border-color:var(--mid);color:var(--light);}
 
   /* STATS */
-  .stats-bar{max-width:680px;margin:.75rem auto 0;padding:0 1rem;display:flex;gap:1rem;position:relative;z-index:1;flex-wrap:wrap;}
+  .stats-bar{max-width:900px;margin:.75rem auto 0;padding:0 1rem;display:flex;gap:1rem;position:relative;z-index:1;flex-wrap:wrap;}
   .stat-pill{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;}
   .stat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
   .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;line-height:1;}
 
   /* MARK ALL */
-  .mark-all-bar{max-width:680px;margin:.75rem auto 0;padding:0 1rem;display:flex;gap:.5rem;position:relative;z-index:1;}
+  .mark-all-bar{max-width:900px;margin:.75rem auto 0;padding:0 1rem;display:flex;gap:.5rem;position:relative;z-index:1;}
   .mark-all-btn{flex:1;padding:.6rem;border-radius:2px;border:1px solid rgba(255,255,255,0.08);background:transparent;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
   .mark-all-btn.present{color:var(--green2);border-color:rgba(67,160,71,0.3);}
   .mark-all-btn.present:hover{background:rgba(46,125,50,0.15);border-color:var(--green2);}
@@ -90,12 +90,12 @@
   .note-input::placeholder{color:rgba(139,163,192,0.5);}
 
   /* VIEW TABS */
-  .view-tabs{max-width:680px;margin:2rem auto 0;padding:0 1rem;display:flex;gap:1px;position:relative;z-index:1;}
+  .view-tabs{max-width:900px;margin:2rem auto 0;padding:0 1rem;display:flex;gap:1px;position:relative;z-index:1;}
   .view-tab{flex:1;padding:.6rem;text-align:center;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);color:var(--grey);transition:all .15s;}
   .view-tab:first-child{border-radius:2px 0 0 2px;}
   .view-tab:last-child{border-radius:0 2px 2px 0;}
   .view-tab.active{background:rgba(33,150,243,0.1);border-color:rgba(33,150,243,0.3);color:var(--light);}
-  .view-panel{max-width:680px;margin:.75rem auto 0;padding:0 1rem;position:relative;z-index:1;display:none;}
+  .view-panel{max-width:900px;margin:.75rem auto 0;padding:0 1rem;position:relative;z-index:1;display:none;}
   .view-panel.active{display:block;}
 
   /* HISTORY GRID */
@@ -189,7 +189,7 @@
   .mom-bar-label{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.06em;color:var(--grey);text-align:center;}
   .mom-bar-pct{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--light);text-align:center;}
 </style>
-  <script src="sidebar.js"></script>
+  <script src="sidebar.js" defer></script>
 
 <style>
   /* Sidebar layout scroll fix */
@@ -198,7 +198,7 @@
   .shimmer-bg { z-index: -1; }
 </style>
 </head>
-<body>
+<body data-page="attendance">
 
 <!-- MAIN APP -->
 <div id="att-app">
@@ -1259,10 +1259,6 @@ if (document.readyState === 'loading') {
 } else {
   boot();
 }
-</script>
-<script>
-// Inject shared sidebar
-if(typeof injectSidebar!=="undefined")injectSidebar("attendance");
 </script>
 </body>
 </html>

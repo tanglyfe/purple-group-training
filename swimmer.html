@@ -197,7 +197,7 @@
     position: relative; z-index: 1;
   }
 </style>
-  <script src="sidebar.js"></script>
+  <script src="sidebar.js" defer></script>
 
 <style>
   /* Sidebar layout scroll fix */
@@ -206,7 +206,7 @@
   .shimmer-bg { z-index: -1; }
 </style>
 </head>
-<body>
+<body data-page="swimmers">
 <div class="shimmer-bg"></div>
 
 <div class="container">
@@ -380,10 +380,6 @@ function showError(msg) {
 }
 
 load().catch(e => { console.error(e); showError('Failed to load profile.'); });
-</script>
-<script>
-// Inject shared sidebar
-if(typeof injectSidebar!=="undefined")injectSidebar("swimmers");
 </script>
 </body>
 </html>

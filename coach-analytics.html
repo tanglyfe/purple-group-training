@@ -115,7 +115,7 @@
 
   footer{border-top:1px solid rgba(33,150,243,0.1);padding:1.5rem 2rem;text-align:center;color:var(--grey);font-size:.78rem;position:relative;z-index:1;}
 </style>
-  <script src="sidebar.js"></script>
+  <script src="sidebar.js" defer></script>
 
 <style>
   /* Sidebar layout scroll fix */
@@ -124,7 +124,7 @@
   .shimmer-bg { z-index: -1; }
 </style>
 </head>
-<body>
+<body data-page="analytics">
 <div class="shimmer-bg"></div>
 
 <!-- MAIN CONTENT -->
@@ -438,10 +438,6 @@ wireFilter('imp-direction',   'impDir',     renderImprovement);
 
 // AUTO-INIT
 init().catch(console.error);
-</script>
-<script>
-// Inject shared sidebar
-if(typeof injectSidebar!=="undefined")injectSidebar("analytics");
 </script>
 </body>
 </html>

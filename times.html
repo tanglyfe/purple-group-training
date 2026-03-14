@@ -132,7 +132,7 @@
     .swimmer-grid{grid-template-columns:1fr;}
   }
 </style>
-  <script src="sidebar.js"></script>
+  <script src="sidebar.js" defer></script>
 
 <style>
   /* Sidebar layout scroll fix */
@@ -141,7 +141,7 @@
   .shimmer-bg { z-index: -1; }
 </style>
 </head>
-<body>
+<body data-page="times">
 <div class="shimmer-bg"></div>
 
 <div class="container">
@@ -436,10 +436,6 @@ loadSwimmers().catch(e => {
   document.getElementById('rankings-container').innerHTML =
     `<div class="empty-state"><p>⚠️ Failed to load. Please try again.</p></div>`;
 });
-</script>
-<script>
-// Inject shared sidebar
-if(typeof injectSidebar!=="undefined")injectSidebar("times");
 </script>
 </body>
 </html>
