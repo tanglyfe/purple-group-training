@@ -61,22 +61,10 @@ async def scrape_roster(page) -> list[dict]:
             m = re.search(r"/swimmer/(\d+)", href)
             if not m:
                 continue
-            # Try to grab age from row cells (SwimCloud shows age as a number)
-            age = None
-            cells = await row.query_selector_all("td")
-            for cell in cells:
-                text = (await cell.inner_text()).strip()
-                if re.match(r"^\d{1,2}$", text):
-                    val = int(text)
-                    if 6 <= val <= 22:
-                        age = val
-                        break
-
             swimmers.append({
                 "swimcloudId": m.group(1),
                 "name": name,
                 "gender": gender,
-                "age": age,
             })
     print(f"  Found {len(swimmers)} swimmers total")
     return swimmers
@@ -106,9 +94,10 @@ async def scrape_times_history(page, swimmer_id: str) -> dict:
             try:
                 await page.wait_for_selector("table", timeout=5000)
             except:
-                return {}
+                return {}, None
 
             history = {}
+            age_at_swim_samples = []  # list of (meet_date_str, age_int) to back-calc birth year
             rows = await page.query_selector_all("table tbody tr")
 
             for row in rows:
@@ -116,15 +105,32 @@ async def scrape_times_history(page, swimmer_id: str) -> dict:
                 if len(cells) < 2:
                     continue
 
-                event_raw = (await cells[0].inner_text()).strip().replace("\n", " ")
-                time_raw  = (await cells[1].inner_text()).strip()
+                # Grab all cell text to find age-at-swim regardless of column order
+                cell_texts = [(await c.inner_text()).strip() for c in cells]
 
+                event_raw = cell_texts[0].replace("\n", " ")
+                time_raw  = cell_texts[1] if len(cell_texts) > 1 else ""
+
+                # Scan all cells for date and meet — look for date pattern and age
                 date_str = ""
                 meet_str = ""
-                if len(cells) > 2:
-                    date_str = (await cells[2].inner_text()).strip()
-                if len(cells) > 3:
-                    meet_str = (await cells[3].inner_text()).strip()
+                age_at_swim = None
+
+                for i, txt in enumerate(cell_texts[2:], start=2):
+                    if not txt:
+                        continue
+                    # Date: matches patterns like "Jan. 15, 2026" or "2026-01-15"
+                    if re.search(r"\d{4}", txt) and re.search(r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|\.|-)", txt, re.IGNORECASE):
+                        if not date_str:
+                            date_str = txt
+                    # Age at swim: a standalone 1-2 digit number in range 5-22
+                    elif re.match(r"^\d{1,2}$", txt):
+                        val = int(txt)
+                        if 5 <= val <= 22:
+                            age_at_swim = val
+                    # Meet name: longer text that's not a time or date
+                    elif len(txt) > 5 and not re.match(r"^[\d:.]+$", txt) and not meet_str:
+                        meet_str = txt
 
                 if not time_raw or time_raw in ("–", "-", "NT"):
                     continue
@@ -139,6 +145,10 @@ async def scrape_times_history(page, swimmer_id: str) -> dict:
                     continue
 
                 parsed_date = parse_date(date_str)
+
+                # Collect age samples for birth year estimation
+                if age_at_swim and parsed_date:
+                    age_at_swim_samples.append((parsed_date, age_at_swim))
 
                 entry = {
                     "time": time_raw,
@@ -155,7 +165,10 @@ async def scrape_times_history(page, swimmer_id: str) -> dict:
             for event in history:
                 history[event].sort(key=lambda x: x["secs"])
 
-            return history
+            # Estimate birth year from age-at-swim samples
+            birth_year = estimate_birth_year(age_at_swim_samples)
+
+            return history, birth_year
 
         except Exception as e:
             if attempt < MAX_RETRIES - 1:
@@ -163,9 +176,9 @@ async def scrape_times_history(page, swimmer_id: str) -> dict:
                 await page.wait_for_timeout(2000)
             else:
                 print(f"    Failed {swimmer_id}: {e}")
-                return {}
+                return {}, None
 
-    return {}
+    return {}, None
 
 
 def parse_date(raw: str) -> str:
@@ -215,8 +228,52 @@ def is_this_season(date_str: str) -> bool:
         return False
 
 
+
+
+def estimate_birth_year(samples: list[tuple[str, int]]) -> int | None:
+    """
+    Back-calculate birth year from (meet_date, age_at_swim) samples.
+
+    USA Swimming age groups are based on age on the last day of the meet,
+    so a swimmer listed as "12" swam the meet while still 12 years old.
+
+    Strategy: for each sample, the swimmer's birth year is either
+      meet_year - age  or  meet_year - age - 1
+    depending on whether their birthday has passed yet in that year.
+    We collect all candidate birth years and return the most common one.
+    """
+    if not samples:
+        return None
+
+    candidates = []
+    for date_str, age in samples:
+        try:
+            meet_year = int(date_str[:4])
+            # Birth year is meet_year - age (birthday already passed) or
+            # meet_year - age - 1 (birthday hasn't passed yet in meet year)
+            candidates.append(meet_year - age)
+            candidates.append(meet_year - age - 1)
+        except:
+            continue
+
+    if not candidates:
+        return None
+
+    # Most frequent candidate wins
+    from collections import Counter
+    counts = Counter(candidates)
+    best = counts.most_common(1)[0][0]
+    return best
+
+
+def calc_age_from_birth_year(birth_year: int | None) -> int | None:
+    """Calculate current age from birth year."""
+    if not birth_year:
+        return None
+    return datetime.now(timezone.utc).year - birth_year
+
 # ── FIRESTORE WRITE ───────────────────────────────────────────────────────────
-def sync_to_firestore(db, scraped_swimmers: list[dict], history_map: dict):
+def sync_to_firestore(db, scraped_swimmers: list[dict], history_map: dict, birth_year_map: dict = None):
     """
     Firestore structure per swimmer doc:
 
@@ -271,23 +328,27 @@ def sync_to_firestore(db, scraped_swimmers: list[dict], history_map: dict):
             for event, t in best_times.items():
                 if event not in merged or parse_time(t) < parse_time(merged[event]):
                     merged[event] = t
+            birth_year = (birth_year_map or {}).get(sid)
             ref.update({
                 "name":           swimmer["name"],
                 "gender":         swimmer["gender"],
                 "active":         True,
-                "age":            swimmer.get("age"),
+                "birthYear":      birth_year,
+                "age":            calc_age_from_birth_year(birth_year),
                 "times":          merged,
                 "season_history": season_history,
                 "lastUpdated":    datetime.now(timezone.utc),
             })
             updated += 1
         else:
+            birth_year = (birth_year_map or {}).get(sid)
             ref.set({
                 "swimcloudId":    sid,
                 "name":           swimmer["name"],
                 "gender":         swimmer["gender"],
                 "active":         True,
-                "age":            swimmer.get("age"),
+                "birthYear":      birth_year,
+                "age":            calc_age_from_birth_year(birth_year),
                 "times":          best_times,
                 "season_history": season_history,
                 "createdAt":      datetime.now(timezone.utc),
@@ -318,21 +379,25 @@ async def main():
 
         print(f"\nStep 2: Scraping times history for {len(swimmers)} swimmers...")
         history_map = {}
+        birth_year_map = {}
 
         for i, swimmer in enumerate(swimmers, 1):
             sid  = swimmer["swimcloudId"]
             name = swimmer["name"]
             print(f"  [{i}/{len(swimmers)}] {name}")
 
-            history = await scrape_times_history(page, sid)
+            history, birth_year = await scrape_times_history(page, sid)
             history_map[sid] = history
+            birth_year_map[sid] = birth_year
 
             if history:
                 season_count = sum(
                     1 for ev in history
                     if any(is_this_season(e["date"]) for e in history[ev])
                 )
-                print(f"    → {len(history)} events, {season_count} with season data")
+                by = birth_year_map.get(sid)
+                age_str = f", estimated age {calc_age_from_birth_year(by)} (b.{by})" if by else ""
+                print(f"    → {len(history)} events, {season_count} with season data{age_str}")
             else:
                 print(f"    → No times found")
 
@@ -342,7 +407,7 @@ async def main():
         await browser.close()
 
     print("\nStep 3: Syncing to Firestore...")
-    sync_to_firestore(db, swimmers, history_map)
+    sync_to_firestore(db, swimmers, history_map, birth_year_map)
 
     print(f"\n=== Done: {datetime.now(timezone.utc).isoformat()} ===")
 
