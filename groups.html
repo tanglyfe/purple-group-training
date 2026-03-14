@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Groups — SSF Aquatics</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="sidebar.js" defer></script>
 <style>
-  /* Sidebar layout scroll fix */
   .ssf-main { overflow-y: auto !important; }
   body::before { z-index: -1; }
   .shimmer-bg { z-index: -1; }
@@ -23,7 +21,6 @@
   body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.04) 58px,rgba(33,150,243,0.04) 60px);pointer-events:none;z-index:0;}
   .shimmer-bg{position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(21,101,192,0.18) 0%,transparent 70%);pointer-events:none;z-index:0;}
 
-  /* PAGE LAYOUT */
   .page-wrap{max-width:1100px;margin:0 auto;padding:2rem 1.75rem 4rem;position:relative;z-index:1;}
   .page-header{padding-bottom:1.5rem;border-bottom:1px solid var(--border);margin-bottom:2rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
   .page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3rem);letter-spacing:.06em;line-height:1;}
@@ -31,81 +28,77 @@
   .page-sub{color:var(--grey);font-size:.85rem;margin-top:.3rem;}
 
   /* BUTTONS */
-  .btn{display:inline-flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:.55rem 1.1rem;border-radius:6px;border:none;cursor:pointer;transition:all .15s;}
+  .btn{display:inline-flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:.5rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .15s;}
   .btn-primary{background:var(--mid);color:#fff;}
   .btn-primary:hover{background:#1976D2;}
   .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--grey);}
   .btn-ghost:hover{border-color:var(--mid);color:var(--white);}
   .btn-danger{background:transparent;border:1px solid rgba(229,57,53,0.3);color:rgba(229,57,53,0.7);}
   .btn-danger:hover{border-color:var(--red);color:var(--red);}
-  .btn-sm{padding:.3rem .7rem;font-size:.65rem;}
+  .btn-sm{padding:.28rem .65rem;font-size:.62rem;}
 
-  /* GROUPS GRID */
-  .groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;margin-bottom:2rem;}
+  /* TWO-COLUMN LAYOUT */
+  .groups-layout{display:grid;grid-template-columns:320px 1fr;gap:1.5rem;align-items:start;}
+  @media(max-width:900px){.groups-layout{grid-template-columns:1fr;}}
 
-  /* GROUP CARD */
-  .group-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
-  .group-card-header{padding:1rem 1.25rem;display:flex;align-items:center;gap:.75rem;border-bottom:1px solid var(--border);}
-  .group-color-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
-  .group-name{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;flex:1;}
-  .group-count{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--grey);}
-  .group-card-body{padding:.75rem 1.25rem 1rem;}
-  .group-swimmer-chips{display:flex;flex-wrap:wrap;gap:.3rem;max-height:80px;overflow:hidden;margin-bottom:.75rem;}
-  .group-swimmer-chips.expanded{max-height:none;}
-  .chip{font-size:.72rem;padding:.2rem .5rem;border-radius:4px;background:rgba(255,255,255,0.05);color:var(--grey);}
-  .chip-more{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--light);cursor:pointer;}
-  .chip-more:hover{text-decoration:underline;}
-  .group-card-footer{display:flex;gap:.5rem;padding:0 1.25rem 1rem;}
+  /* GROUP LIST (left) */
+  .group-list{display:flex;flex-direction:column;gap:.5rem;}
+  .group-list-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .15s;}
+  .group-list-item:hover{border-color:rgba(33,150,243,0.3);}
+  .group-list-item.active{border-color:var(--mid);background:rgba(33,150,243,0.06);}
+  .group-item-header{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;}
+  .group-color-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+  .group-item-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.04em;flex:1;}
+  .group-item-count{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--grey);}
+  .group-item-actions{display:flex;gap:.35rem;padding:0 1rem .7rem;opacity:0;transition:opacity .15s;}
+  .group-list-item.active .group-item-actions{opacity:1;}
 
-  /* MODAL */
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;}
-  .modal{background:#0D1E38;border:1px solid var(--border);border-radius:14px;width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
-  .modal-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-  .modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.05em;}
-  .modal-close{background:none;border:none;color:var(--grey);font-size:1.2rem;cursor:pointer;padding:.25rem .5rem;border-radius:4px;transition:color .15s;}
-  .modal-close:hover{color:var(--white);}
-  .modal-body{padding:1.25rem 1.5rem;overflow-y:auto;flex:1;}
-  .modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.5rem;flex-shrink:0;}
-
-  /* FORM */
-  .form-row{margin-bottom:1.25rem;}
-  .form-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.4rem;display:block;}
-  .form-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:8px;padding:.65rem 1rem;color:var(--white);font-family:inherit;font-size:.9rem;outline:none;transition:border-color .2s;}
+  /* NEW GROUP FORM */
+  .new-group-card{background:rgba(255,255,255,0.02);border:1px dashed rgba(33,150,243,0.25);border-radius:10px;padding:1rem;}
+  .new-group-fields{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.75rem;}
+  .form-input{background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:6px;padding:.5rem .85rem;color:var(--white);font-family:inherit;font-size:.88rem;outline:none;transition:border-color .2s;}
   .form-input:focus{border-color:var(--mid);}
-
-  /* COLOR PICKER */
-  .color-options{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem;}
-  .color-opt{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s,transform .15s;}
-  .color-opt:hover{transform:scale(1.15);}
+  .form-input.name-input{flex:1;min-width:160px;}
+  .color-options{display:flex;gap:.4rem;flex-wrap:wrap;}
+  .color-opt{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s,transform .15s;flex-shrink:0;}
+  .color-opt:hover{transform:scale(1.2);}
   .color-opt.selected{border-color:#fff;}
 
-  /* SWIMMER ASSIGNMENT */
-  .assign-section{margin-top:1.25rem;}
-  .assign-search{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:8px;padding:.55rem 1rem;color:var(--white);font-family:inherit;font-size:.85rem;outline:none;margin-bottom:.75rem;}
-  .assign-search:focus{border-color:var(--mid);}
-  .assign-search::placeholder{color:var(--grey);}
-  .assign-stats{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--grey);margin-bottom:.5rem;}
-  .assign-stats span{color:var(--light);}
-  .swimmer-list{max-height:320px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;}
-  .swimmer-assign-row{display:flex;align-items:center;gap:.75rem;padding:.55rem .9rem;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background .1s;}
-  .swimmer-assign-row:last-child{border-bottom:none;}
-  .swimmer-assign-row:hover{background:var(--hover);}
-  .swimmer-assign-row.selected{background:rgba(33,150,243,0.08);}
-  .swimmer-checkbox{width:16px;height:16px;border-radius:4px;border:1px solid var(--border);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .15s;}
-  .swimmer-assign-row.selected .swimmer-checkbox{background:var(--mid);border-color:var(--mid);}
-  .swimmer-assign-name{font-size:.85rem;flex:1;}
-  .swimmer-assign-meta{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--grey);}
-  .swimmer-group-tag{font-size:.62rem;padding:.12rem .4rem;border-radius:3px;font-family:'DM Mono',monospace;}
+  /* ASSIGNMENT PANEL (right) */
+  .assignment-panel{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:sticky;top:1rem;}
+  .assignment-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;}
+  .assignment-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;}
+  .assignment-meta{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--grey);}
+  .assignment-search{width:100%;background:rgba(255,255,255,0.04);border:none;border-bottom:1px solid var(--border);padding:.65rem 1.25rem;color:var(--white);font-family:inherit;font-size:.88rem;outline:none;}
+  .assignment-search::placeholder{color:var(--grey);}
+  .assignment-controls{padding:.5rem 1.25rem;border-bottom:1px solid var(--border);display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
+  .select-all-btn{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--light);background:none;border:none;cursor:pointer;padding:0;}
+  .select-all-btn:hover{text-decoration:underline;}
+  .swimmer-roster{max-height:480px;overflow-y:auto;}
+  .swimmer-row{display:flex;align-items:center;gap:.75rem;padding:.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background .1s;user-select:none;}
+  .swimmer-row:last-child{border-bottom:none;}
+  .swimmer-row:hover{background:var(--hover);}
+  .swimmer-row.selected{background:rgba(33,150,243,0.07);}
+  .sw-check{width:18px;height:18px;border-radius:4px;border:1px solid var(--border);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:all .15s;}
+  .swimmer-row.selected .sw-check{background:var(--mid);border-color:var(--mid);}
+  .sw-name{font-size:.86rem;flex:1;}
+  .sw-meta{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--grey);}
+  .sw-group-tag{font-size:.6rem;padding:.1rem .4rem;border-radius:3px;font-family:'DM Mono',monospace;background:rgba(255,255,255,0.06);color:var(--grey);}
+  .assignment-footer{padding:.75rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:.5rem;}
+  .save-status{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--grey);}
+  .save-status.saved{color:var(--green);}
+  .save-status.saving{color:var(--gold);}
 
-  /* EMPTY / LOADING */
-  .empty-state{text-align:center;padding:3rem 2rem;color:var(--grey);}
-  .spinner{width:32px;height:32px;border:2px solid rgba(33,150,243,0.2);border-top-color:var(--mid);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem;}
+  /* UNASSIGNED */
+  .unassigned-section{margin-top:1.5rem;padding:1rem;background:rgba(255,255,255,0.02);border:1px dashed rgba(33,150,243,0.15);border-radius:10px;}
+  .unassigned-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.6rem;}
+  .chip-grid{display:flex;flex-wrap:wrap;gap:.35rem;}
+  .chip{font-size:.72rem;padding:.2rem .5rem;border-radius:4px;background:rgba(255,255,255,0.05);color:var(--grey);}
+
+  .empty-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;color:var(--grey);}
+  .empty-panel p{font-size:.85rem;margin-top:.5rem;}
+  .spinner{width:28px;height:28px;border:2px solid rgba(33,150,243,0.2);border-top-color:var(--mid);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem;}
   @keyframes spin{to{transform:rotate(360deg);}}
-
-  /* UNASSIGNED SECTION */
-  .unassigned-card{background:rgba(255,255,255,0.02);border:1px dashed rgba(33,150,243,0.2);border-radius:12px;padding:1.25rem;margin-top:1.25rem;}
-  .unassigned-title{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.75rem;}
-  .unassigned-chips{display:flex;flex-wrap:wrap;gap:.35rem;}
 </style>
 </head>
 <body data-page="groups">
@@ -115,56 +108,48 @@
   <div class="page-header">
     <div>
       <div class="page-title">Training <span>Groups</span></div>
-      <div class="page-sub">Create groups, assign swimmers, filter across the whole platform</div>
+      <div class="page-sub">Create groups · assign swimmers · filter across the platform</div>
     </div>
-    <button class="btn btn-primary" id="new-group-btn">+ New Group</button>
   </div>
 
-  <div id="groups-container">
-    <div class="empty-state"><div class="spinner"></div><p>Loading…</p></div>
-  </div>
+  <div class="groups-layout">
+    <!-- LEFT: group list + new group form -->
+    <div>
+      <div id="group-list" class="group-list">
+        <div class="empty-panel"><div class="spinner"></div><p>Loading…</p></div>
+      </div>
 
-  <div id="unassigned-section" style="display:none">
-    <div class="unassigned-card">
-      <div class="unassigned-title">Unassigned Swimmers (<span id="unassigned-count">0</span>)</div>
-      <div class="unassigned-chips" id="unassigned-chips"></div>
+      <!-- NEW GROUP FORM -->
+      <div class="new-group-card" style="margin-top:.75rem">
+        <div style="font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.6rem;">New Group</div>
+        <div class="new-group-fields">
+          <input class="form-input name-input" id="new-name" placeholder="Group name…" maxlength="40">
+        </div>
+        <div class="color-options" id="new-color-options" style="margin-bottom:.75rem"></div>
+        <button class="btn btn-primary btn-sm" id="create-btn">+ Create Group</button>
+      </div>
+
+      <!-- UNASSIGNED -->
+      <div class="unassigned-section" id="unassigned-section" style="display:none">
+        <div class="unassigned-title">Unassigned (<span id="unassigned-count">0</span>)</div>
+        <div class="chip-grid" id="unassigned-chips"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: assignment panel -->
+    <div class="assignment-panel" id="assignment-panel">
+      <div class="empty-panel">
+        <p style="font-size:1.5rem">&#128101;</p>
+        <p>Select a group to assign swimmers</p>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal" style="display:none">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modal-title">New Group</div>
-      <button class="modal-close" id="modal-close-btn">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-row">
-        <label class="form-label">Group Name</label>
-        <input class="form-input" id="group-name-input" placeholder="e.g. Purple Group" maxlength="40">
-      </div>
-      <div class="form-row">
-        <label class="form-label">Color</label>
-        <div class="color-options" id="color-options"></div>
-      </div>
-      <div class="assign-section">
-        <label class="form-label">Assign Swimmers</label>
-        <input class="assign-search" id="assign-search" placeholder="Search by name…">
-        <div class="assign-stats" id="assign-stats"></div>
-        <div class="swimmer-list" id="swimmer-list"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" id="modal-cancel-btn">Cancel</button>
-      <button class="btn btn-primary" id="modal-save-btn">Save Group</button>
-    </div>
-  </div>
-</div>
-
+<script src="sidebar.js"></script>
 <script type="module">
-import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs, doc, setDoc, deleteDoc, updateDoc, getDoc }
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, doc, setDoc, deleteDoc, updateDoc }
   from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -180,268 +165,312 @@ const db  = getFirestore(app);
 
 const COLORS = [
   "#7B1FA2","#1565C0","#2E7D32","#C62828","#E65100",
-  "#00838F","#AD1457","#4527A0","#558B2F","#00695C",
-  "#F9A825","#37474F","#6D4C41","#0277BD","#283593"
+  "#00838F","#AD1457","#4527A0","#558B2F","#F9A825",
+  "#37474F","#0277BD","#6D4C41","#00695C","#283593"
 ];
 
-// ── STATE ──
-let allSwimmers  = [];  // from Firestore swimmers collection
-let allGroups    = [];  // from Firestore groups collection
-let editingGroupId = null;
-let selectedIds  = new Set();
-let selectedColor = COLORS[0];
-let searchQuery  = '';
+let allSwimmers = [];
+let allGroups   = [];
+let activeGroupId = null;
+let selectedIds = new Set();
+let newGroupColor = COLORS[0];
+let searchQuery = '';
+let saveTimer = null;
 
 // ── LOAD ──
 async function load() {
   const [swSnap, grSnap] = await Promise.all([
-    getDocs(query(collection(db, 'swimmers'), where('active', '==', true))),
-    getDocs(collection(db, 'groups'))
+    getDocs(query(collection(db,'swimmers'), where('active','==',true))),
+    getDocs(collection(db,'groups'))
   ]);
-  allSwimmers = swSnap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => a.name.localeCompare(b.name));
-  allGroups   = grSnap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => a.name.localeCompare(b.name));
-  renderGroups();
+  allSwimmers = swSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name));
+  allGroups   = grSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name));
+  renderGroupList();
+  renderUnassigned();
 }
 
-// ── RENDER GROUPS ──
-function renderGroups() {
-  const container = document.getElementById('groups-container');
-
+// ── GROUP LIST ──
+function renderGroupList() {
+  const container = document.getElementById('group-list');
   if (!allGroups.length) {
-    container.innerHTML = `<div class="empty-state">
-      <p style="font-size:2rem;margin-bottom:.75rem">🏊</p>
-      <p>No groups yet — create your first one.</p>
-    </div>`;
-    document.getElementById('unassigned-section').style.display = 'none';
+    container.innerHTML = '<div style="color:var(--grey);font-size:.82rem;padding:.5rem 0">No groups yet — create one below.</div>';
     return;
   }
-
-  // Build assigned set
-  const assignedIds = new Set(allGroups.flatMap(g => g.swimmerIds || []));
-  const unassigned  = allSwimmers.filter(s => !assignedIds.has(s.id));
-
-  const cards = allGroups.map(g => {
-    const swimmers = allSwimmers.filter(s => (g.swimmerIds||[]).includes(s.id));
-    const SHOW = 12;
-    const chips = swimmers.slice(0, SHOW).map(s => `<span class="chip">${s.name.split(' ')[0]} ${s.name.split(' ').slice(-1)[0]}</span>`).join('');
-    const moreChip = swimmers.length > SHOW ? `<span class="chip-more" data-gid="${g.id}">+${swimmers.length - SHOW} more</span>` : '';
-
-    return `<div class="group-card">
-      <div class="group-card-header">
+  container.innerHTML = allGroups.map(g => {
+    const cnt = (g.swimmerIds||[]).length;
+    const isActive = g.id === activeGroupId;
+    return `<div class="group-list-item${isActive?' active':''}" data-gid="${g.id}">
+      <div class="group-item-header">
         <div class="group-color-dot" style="background:${g.color||'#1565C0'}"></div>
-        <div class="group-name">${g.name}</div>
-        <div class="group-count">${swimmers.length} swimmers</div>
+        <div class="group-item-name">${g.name}</div>
+        <div class="group-item-count">${cnt} swimmers</div>
       </div>
-      <div class="group-card-body">
-        <div class="group-swimmer-chips" id="chips-${g.id}">${chips}${moreChip}</div>
-      </div>
-      <div class="group-card-footer">
-        <button class="btn btn-ghost btn-sm" data-edit="${g.id}">Edit</button>
+      <div class="group-item-actions">
+        <button class="btn btn-ghost btn-sm" data-rename="${g.id}">Rename</button>
         <button class="btn btn-danger btn-sm" data-delete="${g.id}" data-name="${g.name}">Delete</button>
       </div>
     </div>`;
   }).join('');
 
-  container.innerHTML = `<div class="groups-grid">${cards}</div>`;
-
-  // Wire edit/delete
-  container.querySelectorAll('[data-edit]').forEach(btn => {
-    btn.addEventListener('click', () => openModal(btn.dataset.edit));
+  container.querySelectorAll('.group-list-item').forEach(el => {
+    el.addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      openGroup(el.dataset.gid);
+    });
+  });
+  container.querySelectorAll('[data-rename]').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); renameGroup(btn.dataset.rename); });
   });
   container.querySelectorAll('[data-delete]').forEach(btn => {
-    btn.addEventListener('click', () => confirmDelete(btn.dataset.delete, btn.dataset.name));
+    btn.addEventListener('click', e => { e.stopPropagation(); confirmDelete(btn.dataset.delete, btn.dataset.name); });
   });
-  container.querySelectorAll('.chip-more').forEach(el => {
-    el.addEventListener('click', () => {
-      document.getElementById(`chips-${el.dataset.gid}`).classList.toggle('expanded');
-      el.textContent = el.textContent.startsWith('+') ? 'Show less' : `+${allSwimmers.filter(s => (allGroups.find(g=>g.id===el.dataset.gid)?.swimmerIds||[]).includes(s.id)).length - 12} more`;
-    });
-  });
-
-  // Unassigned
-  if (unassigned.length) {
-    document.getElementById('unassigned-section').style.display = 'block';
-    document.getElementById('unassigned-count').textContent = unassigned.length;
-    document.getElementById('unassigned-chips').innerHTML = unassigned
-      .map(s => `<span class="chip">${s.name}</span>`).join('');
-  } else {
-    document.getElementById('unassigned-section').style.display = 'none';
-  }
 }
 
-// ── MODAL ──
-function openModal(groupId = null) {
-  editingGroupId = groupId;
-  selectedIds = new Set();
-  selectedColor = COLORS[0];
+function renderUnassigned() {
+  const assignedIds = new Set(allGroups.flatMap(g => g.swimmerIds||[]));
+  const unassigned = allSwimmers.filter(s => !assignedIds.has(s.id));
+  const section = document.getElementById('unassigned-section');
+  if (!unassigned.length) { section.style.display='none'; return; }
+  section.style.display = 'block';
+  document.getElementById('unassigned-count').textContent = unassigned.length;
+  document.getElementById('unassigned-chips').innerHTML = unassigned
+    .map(s=>`<span class="chip">${s.name}</span>`).join('');
+}
+
+// ── OPEN GROUP (assignment panel) ──
+function openGroup(groupId) {
+  activeGroupId = groupId;
+  const group = allGroups.find(g => g.id === groupId);
+  selectedIds = new Set(group?.swimmerIds || []);
   searchQuery = '';
-
-  const group = groupId ? allGroups.find(g => g.id === groupId) : null;
-
-  document.getElementById('modal-title').textContent = group ? `Edit: ${group.name}` : 'New Group';
-  document.getElementById('group-name-input').value = group?.name || '';
-
-  if (group) {
-    selectedColor = group.color || COLORS[0];
-    selectedIds = new Set(group.swimmerIds || []);
-  }
-
-  renderColorPicker();
-  renderSwimmerList();
-  document.getElementById('modal').style.display = 'flex';
-  document.getElementById('group-name-input').focus();
+  renderGroupList();
+  renderAssignmentPanel(group);
 }
 
-function closeModal() {
-  document.getElementById('modal').style.display = 'none';
-  editingGroupId = null;
-}
+function renderAssignmentPanel(group) {
+  if (!group) return;
+  const panel = document.getElementById('assignment-panel');
 
-function renderColorPicker() {
-  document.getElementById('color-options').innerHTML = COLORS.map(c =>
-    `<div class="color-opt${c === selectedColor ? ' selected' : ''}"
-      style="background:${c}" data-color="${c}"></div>`
-  ).join('');
-  document.querySelectorAll('.color-opt').forEach(el => {
-    el.addEventListener('click', () => {
-      selectedColor = el.dataset.color;
-      document.querySelectorAll('.color-opt').forEach(x => x.classList.remove('selected'));
-      el.classList.add('selected');
-    });
-  });
-}
-
-function renderSwimmerList() {
-  const assignedElsewhere = new Map(); // swimcloudId -> group name
+  // Build swimmer list
+  const assignedElsewhere = new Map();
   allGroups.forEach(g => {
-    if (g.id === editingGroupId) return;
-    (g.swimmerIds || []).forEach(id => assignedElsewhere.set(id, g.name));
+    if (g.id === group.id) return;
+    (g.swimmerIds||[]).forEach(id => assignedElsewhere.set(id, g.name));
   });
 
-  const filtered = allSwimmers.filter(s =>
-    !searchQuery || s.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const selected = filtered.filter(s => selectedIds.has(s.id));
-  const unselected = filtered.filter(s => !selectedIds.has(s.id));
-  const sorted = [...selected, ...unselected];
-
-  document.getElementById('assign-stats').innerHTML =
-    `<span>${selectedIds.size}</span> selected · ${allSwimmers.length} total swimmers`;
-
-  document.getElementById('swimmer-list').innerHTML = sorted.map(s => {
-    const inOther = assignedElsewhere.get(s.id);
-    const isSel = selectedIds.has(s.id);
-    return `<div class="swimmer-assign-row${isSel ? ' selected' : ''}" data-id="${s.id}">
-      <div class="swimmer-checkbox">${isSel ? '✓' : ''}</div>
-      <div class="swimmer-assign-name">${s.name}</div>
-      <div class="swimmer-assign-meta">${s.gender || ''} · ${s.age ? `Age ${s.age}` : ''}</div>
-      ${inOther ? `<span class="swimmer-group-tag" style="background:rgba(255,255,255,0.07);color:var(--grey)">${inOther}</span>` : ''}
+  panel.innerHTML = `
+    <div class="assignment-header">
+      <div>
+        <div class="assignment-title" style="display:flex;align-items:center;gap:.5rem">
+          <div style="width:10px;height:10px;border-radius:50%;background:${group.color||'#1565C0'};flex-shrink:0"></div>
+          ${group.name}
+        </div>
+        <div class="assignment-meta" id="assignment-meta">${selectedIds.size} selected</div>
+      </div>
+      <button class="btn btn-primary btn-sm" id="save-assignments-btn">Save</button>
+    </div>
+    <input class="assignment-search" id="assignment-search" placeholder="Search swimmers…" value="${searchQuery}">
+    <div class="assignment-controls">
+      <button class="select-all-btn" id="select-all-btn">Select All Visible</button>
+      <span style="color:var(--border);margin:0 .25rem">|</span>
+      <button class="select-all-btn" id="deselect-all-btn">Deselect All</button>
+    </div>
+    <div class="swimmer-roster" id="swimmer-roster"></div>
+    <div class="assignment-footer">
+      <div class="save-status" id="save-status"></div>
+      <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--grey)">Click swimmer to toggle · Save when done</div>
     </div>`;
-  }).join('') || `<div style="padding:1.5rem;text-align:center;color:var(--grey);font-size:.85rem">No swimmers found</div>`;
 
-  document.querySelectorAll('.swimmer-assign-row').forEach(row => {
+  renderSwimmerRoster(assignedElsewhere);
+
+  document.getElementById('assignment-search').addEventListener('input', e => {
+    searchQuery = e.target.value;
+    renderSwimmerRoster(assignedElsewhere);
+  });
+  document.getElementById('save-assignments-btn').addEventListener('click', () => saveAssignments(group));
+  document.getElementById('select-all-btn').addEventListener('click', () => {
+    getFilteredSwimmers().forEach(s => selectedIds.add(s.id));
+    updateMetaCount();
+    renderSwimmerRoster(assignedElsewhere);
+  });
+  document.getElementById('deselect-all-btn').addEventListener('click', () => {
+    selectedIds.clear();
+    updateMetaCount();
+    renderSwimmerRoster(assignedElsewhere);
+  });
+}
+
+function getFilteredSwimmers() {
+  if (!searchQuery) return allSwimmers;
+  return allSwimmers.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+}
+
+function renderSwimmerRoster(assignedElsewhere) {
+  const filtered = getFilteredSwimmers();
+  // Sort: selected first, then alphabetical
+  const sorted = [
+    ...filtered.filter(s => selectedIds.has(s.id)),
+    ...filtered.filter(s => !selectedIds.has(s.id)),
+  ];
+
+  const roster = document.getElementById('swimmer-roster');
+  if (!roster) return;
+  roster.innerHTML = sorted.map(s => {
+    const isSel = selectedIds.has(s.id);
+    const inOther = assignedElsewhere.get(s.id);
+    return `<div class="swimmer-row${isSel?' selected':''}" data-sid="${s.id}">
+      <div class="sw-check">${isSel?'✓':''}</div>
+      <div class="sw-name">${s.name}</div>
+      <div class="sw-meta">${s.gender||''} ${s.age?'· Age '+s.age:''}</div>
+      ${inOther?`<span class="sw-group-tag">${inOther}</span>`:''}
+    </div>`;
+  }).join('') || '<div style="padding:1.5rem;text-align:center;color:var(--grey);font-size:.82rem">No swimmers found</div>';
+
+  roster.querySelectorAll('.swimmer-row').forEach(row => {
     row.addEventListener('click', () => {
-      const id = row.dataset.id;
-      if (selectedIds.has(id)) {
-        selectedIds.delete(id);
+      const sid = row.dataset.sid;
+      if (selectedIds.has(sid)) {
+        selectedIds.delete(sid);
         row.classList.remove('selected');
-        row.querySelector('.swimmer-checkbox').textContent = '';
+        row.querySelector('.sw-check').textContent = '';
       } else {
-        selectedIds.add(id);
+        selectedIds.add(sid);
         row.classList.add('selected');
-        row.querySelector('.swimmer-checkbox').textContent = '✓';
+        row.querySelector('.sw-check').textContent = '✓';
       }
-      document.getElementById('assign-stats').innerHTML =
-        `<span>${selectedIds.size}</span> selected · ${allSwimmers.length} total swimmers`;
+      // Move selected to top after a tiny delay
+      setTimeout(() => renderSwimmerRoster(assignedElsewhere), 0);
+      updateMetaCount();
     });
   });
+}
+
+function updateMetaCount() {
+  const el = document.getElementById('assignment-meta');
+  if (el) el.textContent = `${selectedIds.size} selected`;
 }
 
 // ── SAVE ──
-async function saveGroup() {
-  const name = document.getElementById('group-name-input').value.trim();
-  if (!name) {
-    document.getElementById('group-name-input').focus();
-    return;
-  }
-
-  const btn = document.getElementById('modal-save-btn');
-  btn.textContent = 'Saving…';
-  btn.disabled = true;
+async function saveAssignments(group) {
+  const btn = document.getElementById('save-assignments-btn');
+  const status = document.getElementById('save-status');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+  if (status) { status.textContent = 'Saving…'; status.className='save-status saving'; }
 
   try {
-    const groupId = editingGroupId || `grp_${Date.now()}`;
-    const data = {
-      name,
-      color: selectedColor,
-      swimmerIds: [...selectedIds],
-      updatedAt: new Date(),
-    };
-    if (!editingGroupId) data.createdAt = new Date();
+    const swimmerIds = [...selectedIds];
+    await setDoc(doc(db, 'groups', group.id), { swimmerIds, updatedAt: new Date() }, { merge: true });
 
-    await setDoc(doc(db, 'groups', groupId), data, { merge: true });
+    // Update swimmer docs
+    const prevIds = new Set(group.swimmerIds || []);
+    const newIds = new Set(swimmerIds);
+    const toAdd = [...newIds].filter(id => !prevIds.has(id));
+    const toRemove = [...prevIds].filter(id => !newIds.has(id));
+    await Promise.all([
+      ...toAdd.map(id => updateDoc(doc(db,'swimmers',id), { groupId:group.id, groupName:group.name, groupColor:group.color||null })),
+      ...toRemove.map(id => updateDoc(doc(db,'swimmers',id), { groupId:null, groupName:null, groupColor:null })),
+    ]);
 
-    // Update swimmers' groupId field
-    const batch = [];
-    allSwimmers.forEach(s => {
-      const inGroup = selectedIds.has(s.id);
-      const wasInGroup = editingGroupId && (allGroups.find(g => g.id === editingGroupId)?.swimmerIds || []).includes(s.id);
-      if (inGroup) {
-        batch.push(updateDoc(doc(db, 'swimmers', s.id), { groupId, groupName: name, groupColor: selectedColor }));
-      } else if (wasInGroup) {
-        batch.push(updateDoc(doc(db, 'swimmers', s.id), { groupId: null, groupName: null, groupColor: null }));
-      }
-    });
-    await Promise.all(batch);
-
-    closeModal();
-    await load();
+    // Update local state
+    group.swimmerIds = swimmerIds;
+    renderGroupList();
+    renderUnassigned();
+    if (status) { status.textContent = '✓ Saved'; status.className='save-status saved'; }
+    setTimeout(() => { if(status) status.textContent=''; }, 3000);
   } catch(e) {
     console.error(e);
+    if (status) { status.textContent = '✗ Failed'; status.className='save-status'; }
     alert('Save failed — check console');
   } finally {
-    btn.textContent = 'Save Group';
-    btn.disabled = false;
+    btn.textContent = 'Save'; btn.disabled = false;
   }
+}
+
+// ── CREATE GROUP ──
+async function createGroup() {
+  const name = document.getElementById('new-name').value.trim();
+  if (!name) { document.getElementById('new-name').focus(); return; }
+  const btn = document.getElementById('create-btn');
+  btn.textContent = 'Creating…'; btn.disabled = true;
+  try {
+    const id = 'grp_' + Date.now();
+    const data = { name, color: newGroupColor, swimmerIds: [], createdAt: new Date(), updatedAt: new Date() };
+    await setDoc(doc(db, 'groups', id), data);
+    allGroups.push({ id, ...data });
+    allGroups.sort((a,b) => a.name.localeCompare(b.name));
+    document.getElementById('new-name').value = '';
+    renderGroupList();
+    openGroup(id);
+  } catch(e) { console.error(e); alert('Failed to create group'); }
+  finally { btn.textContent = '+ Create Group'; btn.disabled = false; }
+}
+
+// ── RENAME ──
+async function renameGroup(groupId) {
+  const group = allGroups.find(g => g.id === groupId);
+  const newName = prompt('New name:', group?.name || '');
+  if (!newName || newName === group?.name) return;
+  try {
+    await updateDoc(doc(db,'groups',groupId), { name: newName, updatedAt: new Date() });
+    // Update swimmer docs
+    if (group?.swimmerIds?.length) {
+      await Promise.all(group.swimmerIds.map(sid => updateDoc(doc(db,'swimmers',sid), { groupName: newName })));
+    }
+    group.name = newName;
+    renderGroupList();
+    if (activeGroupId === groupId) openGroup(groupId);
+  } catch(e) { console.error(e); alert('Rename failed'); }
 }
 
 // ── DELETE ──
 async function confirmDelete(groupId, name) {
   if (!confirm(`Delete "${name}"? Swimmers will become unassigned.`)) return;
   try {
-    // Clear groupId on swimmers
     const group = allGroups.find(g => g.id === groupId);
     if (group?.swimmerIds?.length) {
       await Promise.all(group.swimmerIds.map(sid =>
-        updateDoc(doc(db, 'swimmers', sid), { groupId: null, groupName: null, groupColor: null })
+        updateDoc(doc(db,'swimmers',sid), { groupId:null, groupName:null, groupColor:null })
       ));
     }
-    await deleteDoc(doc(db, 'groups', groupId));
-    await load();
-  } catch(e) {
-    console.error(e);
-    alert('Delete failed');
-  }
+    await deleteDoc(doc(db,'groups',groupId));
+    allGroups = allGroups.filter(g => g.id !== groupId);
+    if (activeGroupId === groupId) {
+      activeGroupId = null;
+      document.getElementById('assignment-panel').innerHTML = `<div class="empty-panel"><p style="font-size:1.5rem">&#128101;</p><p>Select a group to assign swimmers</p></div>`;
+    }
+    renderGroupList();
+    renderUnassigned();
+  } catch(e) { console.error(e); alert('Delete failed'); }
 }
 
-// ── EVENTS ──
-document.getElementById('new-group-btn').addEventListener('click', () => openModal());
-document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-document.getElementById('modal-cancel-btn').addEventListener('click', closeModal);
-document.getElementById('modal-save-btn').addEventListener('click', saveGroup);
-document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
-document.getElementById('assign-search').addEventListener('input', e => {
-  searchQuery = e.target.value;
-  renderSwimmerList();
-});
+// ── COLOR PICKER ──
+function buildColorPicker(containerId, selectedColor, onChange) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = COLORS.map(c =>
+    `<div class="color-opt${c===selectedColor?' selected':''}" style="background:${c}" data-color="${c}"></div>`
+  ).join('');
+  el.querySelectorAll('.color-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      el.querySelectorAll('.color-opt').forEach(x=>x.classList.remove('selected'));
+      opt.classList.add('selected');
+      onChange(opt.dataset.color);
+    });
+  });
+}
 
 // ── INIT ──
-load().catch(e => {
-  console.error(e);
-  document.getElementById('groups-container').innerHTML =
-    `<div class="empty-state"><p>Failed to load. Check console.</p></div>`;
-});
+function init() {
+  document.getElementById('create-btn').addEventListener('click', createGroup);
+  document.getElementById('new-name').addEventListener('keydown', e => { if(e.key==='Enter') createGroup(); });
+  buildColorPicker('new-color-options', newGroupColor, c => { newGroupColor = c; });
+  load().catch(e => {
+    console.error(e);
+    const el = document.getElementById('group-list');
+    if (el) el.innerHTML = '<div style="color:var(--grey);font-size:.82rem">Failed to load. Check console.</div>';
+  });
+}
+
+init();
 </script>
 </body>
 </html>
