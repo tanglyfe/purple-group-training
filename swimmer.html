@@ -197,8 +197,7 @@
     position: relative; z-index: 1;
   }
 </style>
-  <script src="sidebar.js" defer></script>
-
+  
 <style>
   /* Sidebar layout scroll fix */
   .ssf-main { overflow-y: auto !important; }
@@ -220,6 +219,7 @@
 
 <footer>SSF Aquatics · South San Francisco · 2026</footer>
 
+<script src="sidebar.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
@@ -283,6 +283,14 @@ function groupByStroke(times) {
 }
 
 // ── Load + render ──
+
+function calcAge(swimmer) {
+  if (swimmer.birthYear) {
+    const now = new Date();
+    return now.getFullYear() - swimmer.birthYear;
+  }
+  return swimmer.age || null;
+}
 async function load() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
