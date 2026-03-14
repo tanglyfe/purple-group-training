@@ -359,6 +359,231 @@ def sync_to_firestore(db, scraped_swimmers: list[dict], history_map: dict, birth
     print(f"\n  ✓ {new_count} new  |  {updated} updated  |  {deactivated} deactivated")
 
 
+# ── MEETS SCRAPE ──────────────────────────────────────────────────────────────
+GOMOTION_CALENDAR_URL = (
+    "https://www.gomotionapp.com/team/ssf/page/swim-team/calendar"
+    "#/team-events/upcoming"
+)
+
+async def scrape_meets(page) -> list[dict]:
+    """
+    Scrape upcoming meets from the GoMotion SPA calendar.
+
+    Returns a list of dicts:
+      { "name": str, "date": str (YYYY-MM-DD), "location": str, "source": "gomotion" }
+    """
+    print(f"  Navigating to GoMotion calendar...")
+    meets = []
+
+    try:
+        await page.goto(GOMOTION_CALENDAR_URL, wait_until="networkidle", timeout=30000)
+        # SPA needs extra time to render event cards after networkidle
+        await page.wait_for_timeout(3000)
+
+        # Try waiting for event items to appear
+        try:
+            await page.wait_for_selector(
+                "[class*='event'], [class*='meet'], [class*='calendar-item'], "
+                "[class*='EventItem'], [class*='event-item']",
+                timeout=8000
+            )
+        except:
+            pass  # continue and attempt extraction anyway
+
+        # Dump the page text so we can parse it
+        content = await page.content()
+
+        # ── Strategy 1: query common card selectors ──
+        card_selectors = [
+            "[class*='EventItem']",
+            "[class*='event-item']",
+            "[class*='event-card']",
+            "[class*='meet-item']",
+            "[class*='calendar-event']",
+            "li[class*='event']",
+            "div[class*='event']",
+        ]
+
+        cards = []
+        for sel in card_selectors:
+            found = await page.query_selector_all(sel)
+            if found:
+                cards = found
+                print(f"  Found {len(found)} event cards via selector: {sel}")
+                break
+
+        for card in cards:
+            text = (await card.inner_text()).strip()
+            if not text:
+                continue
+
+            lines = [l.strip() for l in text.splitlines() if l.strip()]
+
+            name = lines[0] if lines else ""
+            date_str = ""
+            location = ""
+
+            for line in lines[1:]:
+                # Look for a date pattern
+                if not date_str and re.search(r"\d{4}", line):
+                    parsed = parse_date_flexible(line)
+                    if parsed:
+                        date_str = parsed
+                        continue
+                # Location heuristic: longer text not resembling a date/time
+                if not location and len(line) > 5 and not re.match(r"^[\d/\-:,\s]+$", line):
+                    location = line
+
+            if name and date_str:
+                meets.append({
+                    "name": name,
+                    "date": date_str,
+                    "location": location,
+                    "source": "gomotion",
+                })
+
+        # ── Strategy 2: regex parse raw HTML if no structured cards found ──
+        if not meets:
+            print("  No structured cards found — attempting regex extraction...")
+            # Find date patterns and grab surrounding context
+            date_pattern = re.compile(
+                r"(\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
+                r"\.?\s+\d{1,2},?\s+\d{4}|\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{4})"
+            )
+            from html.parser import HTMLParser
+
+            class TextExtractor(HTMLParser):
+                def __init__(self):
+                    super().__init__()
+                    self.texts = []
+                    self._current = []
+                    self._skip = False
+
+                def handle_starttag(self, tag, attrs):
+                    if tag in ("script", "style"):
+                        self._skip = True
+
+                def handle_endtag(self, tag):
+                    if tag in ("script", "style"):
+                        self._skip = False
+                    if tag in ("div", "li", "p", "span", "td"):
+                        t = " ".join(self._current).strip()
+                        if t:
+                            self.texts.append(t)
+                        self._current = []
+
+                def handle_data(self, data):
+                    if not self._skip:
+                        d = data.strip()
+                        if d:
+                            self._current.append(d)
+
+            extractor = TextExtractor()
+            extractor.feed(content)
+
+            for chunk in extractor.texts:
+                m = date_pattern.search(chunk)
+                if m:
+                    parsed = parse_date_flexible(m.group(1))
+                    if parsed:
+                        name_candidate = chunk[:m.start()].strip().rstrip("-–:,")
+                        if name_candidate and len(name_candidate) > 3:
+                            meets.append({
+                                "name": name_candidate[:120],
+                                "date": parsed,
+                                "location": "",
+                                "source": "gomotion",
+                            })
+
+        # Deduplicate by (name, date)
+        seen = set()
+        unique = []
+        for m in meets:
+            key = (m["name"].lower().strip(), m["date"])
+            if key not in seen:
+                seen.add(key)
+                unique.append(m)
+
+        unique.sort(key=lambda x: x["date"])
+        print(f"  Found {len(unique)} upcoming meets")
+        return unique
+
+    except Exception as e:
+        print(f"  GoMotion scrape failed: {e}")
+        return []
+
+
+def parse_date_flexible(raw: str) -> str:
+    """Try many date formats; return YYYY-MM-DD or '' on failure."""
+    raw = raw.strip().rstrip(".,;")
+    formats = [
+        "%b. %d, %Y", "%b %d, %Y", "%B %d, %Y",
+        "%b. %d %Y", "%b %d %Y",
+        "%Y-%m-%d", "%m/%d/%Y", "%m-%d-%Y",
+    ]
+    for fmt in formats:
+        try:
+            return datetime.strptime(raw, fmt).strftime("%Y-%m-%d")
+        except:
+            continue
+    # Try stripping ordinal suffixes: "March 15th, 2026" → "March 15, 2026"
+    cleaned = re.sub(r"(\d+)(st|nd|rd|th)", r"\1", raw)
+    if cleaned != raw:
+        return parse_date_flexible(cleaned)
+    return ""
+
+
+def sync_meets_to_firestore(db, scraped_meets: list[dict]):
+    """
+    Write upcoming meets to Firestore `meets` collection.
+
+    Matching key: (name, date) — skips duplicates already in Firestore.
+    Only inserts meets with date >= today (don't import past meets).
+    Does NOT delete manually-added coach meets.
+    """
+    if not scraped_meets:
+        print("  No meets to sync.")
+        return
+
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    meets_ref = db.collection("meets")
+
+    # Fetch existing gomotion-sourced meets to avoid duplicates
+    existing = {}
+    for doc in meets_ref.where("source", "==", "gomotion").stream():
+        d = doc.to_dict()
+        key = (d.get("name", "").lower().strip(), d.get("date", ""))
+        existing[key] = doc.id
+
+    added = updated = skipped = 0
+    for meet in scraped_meets:
+        if meet["date"] < today:
+            skipped += 1
+            continue
+
+        key = (meet["name"].lower().strip(), meet["date"])
+
+        if key in existing:
+            # Update location if it changed
+            meets_ref.document(existing[key]).update({
+                "location": meet.get("location", ""),
+                "lastUpdated": datetime.now(timezone.utc),
+            })
+            updated += 1
+        else:
+            meets_ref.add({
+                "name":        meet["name"],
+                "date":        meet["date"],
+                "location":    meet.get("location", ""),
+                "source":      "gomotion",
+                "createdAt":   datetime.now(timezone.utc),
+                "lastUpdated": datetime.now(timezone.utc),
+            })
+            added += 1
+
+    print(f"  ✓ {added} new  |  {updated} updated  |  {skipped} past/skipped")
+
+
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 async def main():
     print("=== SSF Aquatics SwimCloud Scraper ===")
@@ -404,10 +629,16 @@ async def main():
             if i < len(swimmers):
                 await page.wait_for_timeout(int(DELAY_SEC * 1000))
 
+        print("\nStep 3: Scraping upcoming meets from GoMotion...")
+        scraped_meets = await scrape_meets(page)
+
         await browser.close()
 
-    print("\nStep 3: Syncing to Firestore...")
+    print("\nStep 4: Syncing swimmers to Firestore...")
     sync_to_firestore(db, swimmers, history_map, birth_year_map)
+
+    print("\nStep 5: Syncing meets to Firestore...")
+    sync_meets_to_firestore(db, scraped_meets)
 
     print(f"\n=== Done: {datetime.now(timezone.utc).isoformat()} ===")
 

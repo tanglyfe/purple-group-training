@@ -9,72 +9,192 @@
   :root {
     --navy:#0B1F3A; --deep:#071429; --mid:#2196F3; --light:#64B5F6;
     --white:#F0F6FF; --grey:#8BA3C0; --gold:#F9A825;
-    --green2:#43A047; --red2:#EF5350;
+    --green2:#43A047; --green3:#A5D6A7; --red2:#EF5350;
+    --free:#2196F3; --back:#43A047; --breast:#FB8C00; --fly:#8E24AA; --im:#E53935;
   }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
-  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;padding-bottom:4rem;}
-  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.03) 58px,rgba(33,150,243,0.03) 60px);pointer-events:none;z-index:0;}
+  *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  body { background:var(--deep); color:var(--white); font-family:'DM Sans',sans-serif; font-weight:300; min-height:100vh; padding-bottom:4rem; }
+  body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.03) 58px,rgba(33,150,243,0.03) 60px); pointer-events:none; z-index:0; }
 
-  .topbar{position:sticky;top:0;z-index:100;background:rgba(7,20,41,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,0.15);padding:.75rem 1rem;}
-  .topbar-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:.75rem;}
-  .back-btn{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:var(--grey);text-decoration:none;text-transform:uppercase;padding:.4rem .6rem;border:1px solid rgba(255,255,255,0.08);border-radius:2px;transition:color .2s,border-color .2s;flex-shrink:0;}
-  .back-btn:hover{color:var(--light);border-color:rgba(33,150,243,0.3);}
-  .topbar-title{flex:1;min-width:0;}
-  .topbar-title h1{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.04em;line-height:1;}
-  .topbar-sub{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;margin-top:.15rem;}
-  .signout-btn{background:none;border:1px solid rgba(255,255,255,0.08);border-radius:2px;color:var(--grey);font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .6rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
-  .signout-btn:hover{border-color:rgba(198,40,40,.4);color:#EF9A9A;}
+  /* ── TOPBAR ── */
+  .topbar { position:sticky; top:0; z-index:100; background:rgba(7,20,41,0.97); backdrop-filter:blur(12px); border-bottom:1px solid rgba(33,150,243,0.15); padding:.75rem 1rem; }
+  .topbar-inner { max-width:960px; margin:0 auto; display:flex; align-items:center; gap:.75rem; }
+  .back-btn { display:flex; align-items:center; gap:.4rem; font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.14em; color:var(--grey); text-decoration:none; text-transform:uppercase; padding:.4rem .6rem; border:1px solid rgba(255,255,255,0.08); border-radius:2px; transition:color .2s,border-color .2s; flex-shrink:0; }
+  .back-btn:hover { color:var(--light); border-color:rgba(33,150,243,0.3); }
+  .topbar-title { flex:1; min-width:0; }
+  .topbar-title h1 { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:.04em; line-height:1; }
+  .topbar-sub { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.12em; color:var(--grey); text-transform:uppercase; margin-top:.15rem; }
+  .signout-btn { background:none; border:1px solid rgba(255,255,255,0.08); border-radius:2px; color:var(--grey); font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; padding:.3rem .6rem; cursor:pointer; transition:all .2s; flex-shrink:0; }
+  .signout-btn:hover { border-color:rgba(198,40,40,.4); color:#EF9A9A; }
 
-  .loading-wrap{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;}
-  .loading-text{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.18em;color:var(--grey);text-transform:uppercase;}
-  .loading-sub{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;color:rgba(139,163,192,0.4);text-transform:uppercase;}
+  /* ── LOADING ── */
+  .loading-wrap { min-height:60vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.75rem; }
+  .loading-dot { width:8px; height:8px; border-radius:50%; background:var(--mid); animation:pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:.25} 50%{opacity:1} }
+  .loading-text { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.18em; color:var(--grey); text-transform:uppercase; }
+  .loading-sub { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.12em; color:rgba(139,163,192,0.4); text-transform:uppercase; }
 
-  .content{max-width:900px;margin:0 auto;padding:1.5rem 1.5rem;position:relative;z-index:1;}
+  /* ── CONTENT ── */
+  .content { max-width:960px; margin:0 auto; padding:1.5rem; position:relative; z-index:1; }
 
-  .welcome{margin-bottom:2rem;}
-  .welcome-name{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.03em;line-height:1;}
-  .welcome-role{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;margin-top:.3rem;}
+  /* ── HERO ── */
+  .dash-hero { display:flex; align-items:center; gap:1.25rem; padding:1.5rem 0 1.25rem; border-bottom:1px solid rgba(33,150,243,0.1); margin-bottom:1.5rem; flex-wrap:wrap; }
+  .hero-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#1565C0,var(--mid)); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:1.6rem; flex-shrink:0; box-shadow:0 0 0 3px rgba(33,150,243,0.15),0 0 24px rgba(33,150,243,0.1); }
+  .hero-avatar.female { background:linear-gradient(135deg,#7B1FA2,#CE93D8); box-shadow:0 0 0 3px rgba(123,31,162,0.15),0 0 24px rgba(123,31,162,0.1); }
+  .hero-avatar.coach-av { background:linear-gradient(135deg,#2E7D32,#66BB6A); box-shadow:0 0 0 3px rgba(46,125,50,0.15),0 0 24px rgba(46,125,50,0.1); }
+  .hero-avatar.parent-av { background:linear-gradient(135deg,#E65100,#FFA726); box-shadow:0 0 0 3px rgba(230,81,0,0.15),0 0 24px rgba(230,81,0,0.1); }
+  .hero-info { flex:1; min-width:0; }
+  .hero-label { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.18em; color:var(--grey); text-transform:uppercase; margin-bottom:.2rem; }
+  .hero-name { font-family:'Bebas Neue',sans-serif; font-size:clamp(1.6rem,4vw,2.4rem); letter-spacing:.03em; line-height:1; }
+  .hero-meta { color:var(--grey); font-size:.8rem; margin-top:.3rem; display:flex; gap:.75rem; flex-wrap:wrap; }
+  .hero-badges { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.6rem; }
 
-  .role-badge{display:inline-flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;padding:.3rem .65rem;border-radius:2px;margin-top:.5rem;}
-  .role-badge.swimmer{background:rgba(33,150,243,0.12);border:1px solid rgba(33,150,243,0.25);color:var(--light);}
-  .role-badge.parent{background:rgba(249,168,37,0.1);border:1px solid rgba(249,168,37,0.25);color:var(--gold);}
-  .role-badge.coach{background:rgba(46,125,50,0.12);border:1px solid rgba(46,125,50,0.25);color:var(--green2);}
+  /* ── TIER PILLS ── */
+  .tier-pill { display:inline-flex; align-items:center; font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; padding:.2rem .7rem; border-radius:2px; }
+  .tier-AAAA { background:rgba(0,229,255,0.12); border:1px solid rgba(0,229,255,0.35); color:#00E5FF; }
+  .tier-AAA  { background:rgba(229,57,53,0.12);  border:1px solid rgba(229,57,53,0.35);  color:#EF5350; }
+  .tier-AA   { background:rgba(249,168,37,0.12); border:1px solid rgba(249,168,37,0.35); color:var(--gold); }
+  .tier-A    { background:rgba(33,150,243,0.12);  border:1px solid rgba(33,150,243,0.3);  color:var(--light); }
+  .tier-BB   { background:rgba(46,125,50,0.12);   border:1px solid rgba(46,125,50,0.3);   color:var(--green3); }
+  .tier-B    { background:rgba(139,163,192,0.1);  border:1px solid rgba(139,163,192,0.2); color:var(--grey); }
 
-  .section-hdr{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.18em;color:var(--grey);text-transform:uppercase;margin-bottom:.75rem;margin-top:1.75rem;}
+  /* ── SECTION HEADER ── */
+  .section-hdr { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.18em; color:var(--grey); text-transform:uppercase; margin-bottom:.65rem; margin-top:1.75rem; display:flex; align-items:center; gap:.75rem; }
+  .section-hdr::after { content:''; flex:1; height:1px; background:rgba(33,150,243,0.1); }
 
-  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
-  .dash-card{background:var(--deep);padding:1.1rem 1rem;text-decoration:none;transition:background .15s;display:block;position:relative;}
-  .dash-card:hover{background:rgba(33,150,243,0.06);}
-  .dash-card::after{content:'→';position:absolute;bottom:.8rem;right:.9rem;font-size:.8rem;color:rgba(139,163,192,0.3);transition:color .15s;}
-  .dash-card:hover::after{color:var(--mid);}
-  .card-icon{font-size:1.5rem;margin-bottom:.5rem;}
-  .card-title{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;color:var(--light);text-transform:uppercase;margin-bottom:.25rem;}
-  .card-desc{font-size:.75rem;color:var(--grey);line-height:1.5;}
+  /* ── STATS STRIP ── */
+  .stats-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:1px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+  .stat-box { background:var(--deep); padding:.85rem 1rem; }
+  .stat-label { font-family:'DM Mono',monospace; font-size:.54rem; letter-spacing:.14em; color:var(--grey); text-transform:uppercase; margin-bottom:.2rem; }
+  .stat-num { font-family:'Bebas Neue',sans-serif; font-size:1.7rem; line-height:1; }
+  .stat-num.blue  { color:var(--mid); }
+  .stat-num.gold  { color:var(--gold); }
+  .stat-num.green { color:var(--green2); }
+  .stat-num.grey  { color:var(--grey); }
+  .stat-sub { font-family:'DM Mono',monospace; font-size:.52rem; color:var(--grey); margin-top:.1rem; }
 
-  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:1.5rem;}
-  .stat-box{background:var(--deep);padding:.9rem 1rem;}
-  .stat-label{font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;margin-bottom:.25rem;}
-  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1;}
-  .stat-sub{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);margin-top:.15rem;}
+  /* ── TIMES LIST ── */
+  .times-list { display:flex; flex-direction:column; gap:2px; }
+  .time-row { display:grid; grid-template-columns:10px 1fr auto auto; align-items:center; gap:.65rem; padding:.6rem .9rem; background:rgba(255,255,255,0.025); border:1px solid rgba(33,150,243,0.07); border-radius:3px; transition:background .12s; }
+  .time-row:hover { background:rgba(33,150,243,0.05); }
+  .stroke-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .stroke-dot.free   { background:var(--free); }
+  .stroke-dot.back   { background:var(--back); }
+  .stroke-dot.breast { background:var(--breast); }
+  .stroke-dot.fly    { background:var(--fly); }
+  .stroke-dot.im     { background:var(--im); }
+  .time-event { font-size:.85rem; color:var(--grey); }
+  .time-val { font-family:'DM Mono',monospace; font-size:.9rem; font-weight:500; }
+  .time-tier { font-family:'DM Mono',monospace; font-size:.55rem; letter-spacing:.1em; text-transform:uppercase; padding:.12rem .45rem; border-radius:2px; flex-shrink:0; }
 
-  .roster-section{border:1px solid rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
-  .roster-row{display:grid;grid-template-columns:1fr auto auto;gap:.75rem;align-items:center;padding:.65rem .9rem;border-bottom:1px solid rgba(255,255,255,0.04);}
-  .roster-row:last-child{border-bottom:none;}
-  .roster-row.header{background:rgba(255,255,255,0.03);font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;}
-  .roster-name{font-size:.88rem;font-weight:500;}
-  .roster-meta{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--grey);text-transform:uppercase;margin-top:.1rem;}
-  .remove-btn{background:none;border:1px solid rgba(198,40,40,0.2);border-radius:2px;color:rgba(239,83,80,0.6);font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .5rem;cursor:pointer;transition:all .15s;}
-  .remove-btn:hover{border-color:var(--red2);color:var(--red2);}
-  .empty-state{padding:2rem;text-align:center;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:rgba(139,163,192,0.35);text-transform:uppercase;}
+  /* ── SEASON SWIMS ── */
+  .season-list { display:flex; flex-direction:column; gap:2px; }
+  .season-item { display:grid; grid-template-columns:60px 1fr auto auto; align-items:center; gap:.7rem; padding:.55rem .9rem; background:rgba(255,255,255,0.02); border-radius:3px; }
+  .season-date { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.08em; color:var(--grey); }
+  .season-event { font-size:.84rem; }
+  .season-time { font-family:'DM Mono',monospace; font-size:.88rem; font-weight:500; }
+  .season-drop { font-family:'DM Mono',monospace; font-size:.6rem; padding:.1rem .4rem; border-radius:2px; }
+  .drop-pos { background:rgba(46,125,50,0.15); color:var(--green2); }
+  .drop-zero { color:rgba(139,163,192,0.35); }
+
+  /* ── CLOSEST TO CUT ── */
+  .improve-list { display:flex; flex-direction:column; gap:4px; }
+  .improve-item { padding:.7rem .9rem; background:rgba(255,255,255,0.025); border:1px solid rgba(33,150,243,0.07); border-radius:3px; }
+  .improve-row1 { display:flex; align-items:center; gap:.6rem; margin-bottom:.3rem; }
+  .improve-event { font-size:.87rem; flex:1; }
+  .improve-time { font-family:'DM Mono',monospace; font-size:.87rem; font-weight:500; }
+  .improve-row2 { font-family:'DM Mono',monospace; font-size:.62rem; color:var(--grey); margin-bottom:.45rem; }
+  .gap-track { height:3px; background:rgba(255,255,255,0.05); border-radius:2px; overflow:hidden; }
+  .gap-fill { height:100%; border-radius:2px; }
+
+  /* ── MEETS ── */
+  .meets-list { display:flex; flex-direction:column; gap:4px; }
+  .meet-item { display:flex; align-items:center; gap:.75rem; padding:.65rem .9rem; background:rgba(255,255,255,0.025); border:1px solid rgba(33,150,243,0.07); border-radius:3px; }
+  .meet-date-block { text-align:center; background:rgba(33,150,243,0.1); border:1px solid rgba(33,150,243,0.2); border-radius:3px; padding:.3rem .55rem; min-width:44px; flex-shrink:0; }
+  .meet-month { font-family:'DM Mono',monospace; font-size:.5rem; letter-spacing:.1em; text-transform:uppercase; color:var(--grey); }
+  .meet-day { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; line-height:1; color:var(--light); }
+  .meet-info { flex:1; min-width:0; }
+  .meet-name { font-size:.87rem; font-weight:500; }
+  .meet-meta { font-family:'DM Mono',monospace; font-size:.58rem; color:var(--grey); margin-top:.1rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .meet-type-tag { font-family:'DM Mono',monospace; font-size:.56rem; letter-spacing:.1em; text-transform:uppercase; padding:.12rem .45rem; border-radius:2px; background:rgba(249,168,37,0.1); border:1px solid rgba(249,168,37,0.25); color:var(--gold); flex-shrink:0; }
+  .del-meet-btn { background:none; border:none; color:rgba(139,163,192,0.3); font-size:.85rem; cursor:pointer; padding:.2rem; transition:color .15s; flex-shrink:0; line-height:1; }
+  .del-meet-btn:hover { color:var(--red2); }
+  .meets-empty { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(139,163,192,0.3); padding:1.5rem; text-align:center; border:1px dashed rgba(33,150,243,0.12); border-radius:3px; }
+  .meets-cal-link { display:inline-flex; align-items:center; gap:.35rem; font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--light); text-decoration:none; margin-top:.6rem; opacity:.65; transition:opacity .15s; }
+  .meets-cal-link:hover { opacity:1; }
+
+  /* ── ADD MEET FORM (coach) ── */
+  .add-meet-form { display:flex; gap:.45rem; flex-wrap:wrap; margin-top:.6rem; align-items:center; }
+  .add-meet-input { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:2px; color:var(--white); font-family:'DM Mono',monospace; font-size:.75rem; padding:.38rem .65rem; outline:none; transition:border-color .2s; }
+  .add-meet-input:focus { border-color:var(--mid); }
+  .add-meet-input.grow { flex:1; min-width:120px; }
+  .add-meet-btn { background:rgba(33,150,243,0.15); border:1px solid rgba(33,150,243,0.3); border-radius:2px; color:var(--light); font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; padding:.38rem .75rem; cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .add-meet-btn:hover { background:rgba(33,150,243,0.25); }
+
+  /* ── COACH LAYOUT ── */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-top:.25rem; }
+  @media(max-width:680px) { .two-col { grid-template-columns:1fr; } }
+  .col-label { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--grey); margin-bottom:.55rem; }
+
+  /* ── COACH SWIMMER TABLE ── */
+  .swimmer-table { border:1px solid rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+  .st-header { display:grid; grid-template-columns:1fr 80px 70px 28px; gap:.5rem; padding:.5rem .9rem; background:rgba(255,255,255,0.03); font-family:'DM Mono',monospace; font-size:.54rem; letter-spacing:.12em; text-transform:uppercase; color:var(--grey); }
+  .st-row { display:grid; grid-template-columns:1fr 80px 70px 28px; gap:.5rem; align-items:center; padding:.6rem .9rem; border-top:1px solid rgba(255,255,255,0.04); transition:background .1s; }
+  .st-row:hover { background:rgba(33,150,243,0.03); }
+  .st-name { font-size:.85rem; font-weight:500; }
+  .st-name a { color:var(--white); text-decoration:none; }
+  .st-name a:hover { color:var(--light); }
+  .st-meta { font-family:'DM Mono',monospace; font-size:.54rem; color:var(--grey); margin-top:.06rem; }
+  .st-cell { font-family:'DM Mono',monospace; font-size:.7rem; color:var(--grey); text-align:right; }
+  .st-link { font-size:.75rem; color:rgba(139,163,192,0.3); text-decoration:none; transition:color .15s; }
+  .st-link:hover { color:var(--light); }
+
+  /* ── WORKOUT CARD ── */
+  .workout-card { display:flex; align-items:center; gap:1rem; padding:.9rem 1.1rem; background:rgba(255,255,255,0.025); border:1px solid rgba(33,150,243,0.12); border-radius:3px; }
+  .workout-icon { font-size:1.7rem; flex-shrink:0; }
+  .workout-info { flex:1; }
+  .workout-title { font-size:.9rem; font-weight:500; margin-bottom:.2rem; }
+  .workout-sub { font-family:'DM Mono',monospace; font-size:.6rem; color:var(--grey); }
+  .workout-link { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--light); text-decoration:none; padding:.35rem .7rem; border:1px solid rgba(33,150,243,0.25); border-radius:2px; transition:all .15s; white-space:nowrap; }
+  .workout-link:hover { background:rgba(33,150,243,0.1); }
+
+  /* ── QUICK ACTION CARDS ── */
+  .card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:1px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+  .dash-card { background:var(--deep); padding:.9rem .85rem; text-decoration:none; transition:background .15s; display:block; position:relative; }
+  .dash-card:hover { background:rgba(33,150,243,0.06); }
+  .dash-card::after { content:'→'; position:absolute; bottom:.65rem; right:.8rem; font-size:.75rem; color:rgba(139,163,192,0.25); transition:color .15s; }
+  .dash-card:hover::after { color:var(--mid); }
+  .card-icon { font-size:1.35rem; margin-bottom:.4rem; }
+  .card-title { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.12em; color:var(--light); text-transform:uppercase; margin-bottom:.2rem; }
+  .card-desc { font-size:.72rem; color:var(--grey); line-height:1.5; }
+
+  /* ── REGISTERED MEMBERS ── */
+  .roster-section { border:1px solid rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+  .roster-row { display:grid; grid-template-columns:1fr auto auto; gap:.75rem; align-items:center; padding:.6rem .9rem; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .roster-row:last-child { border-bottom:none; }
+  .roster-row.header { background:rgba(255,255,255,0.03); font-family:'DM Mono',monospace; font-size:.54rem; letter-spacing:.12em; color:var(--grey); text-transform:uppercase; }
+  .roster-name { font-size:.85rem; font-weight:500; }
+  .roster-meta { font-family:'DM Mono',monospace; font-size:.54rem; color:var(--grey); text-transform:uppercase; margin-top:.06rem; }
+  .remove-btn { background:none; border:1px solid rgba(198,40,40,0.2); border-radius:2px; color:rgba(239,83,80,0.55); font-family:'DM Mono',monospace; font-size:.52rem; letter-spacing:.08em; text-transform:uppercase; padding:.18rem .45rem; cursor:pointer; transition:all .15s; }
+  .remove-btn:hover { border-color:var(--red2); color:var(--red2); }
+  .empty-state { padding:2rem; text-align:center; font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.14em; color:rgba(139,163,192,0.3); text-transform:uppercase; }
+
+  /* ── LINK ACCOUNT ── */
+  .link-card { background:rgba(33,150,243,0.05); border:1px solid rgba(33,150,243,0.2); border-radius:4px; padding:1.25rem; margin-bottom:1.5rem; }
+  .link-card-title { font-family:'DM Mono',monospace; font-size:.63rem; letter-spacing:.15em; text-transform:uppercase; color:var(--light); margin-bottom:.4rem; }
+  .link-card-desc { font-size:.82rem; color:var(--grey); margin-bottom:.85rem; }
+  .link-select { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:2px; color:var(--white); font-family:'DM Sans',sans-serif; font-size:.88rem; padding:.5rem .8rem; outline:none; -webkit-appearance:none; appearance:none; cursor:pointer; transition:border-color .2s; }
+  .link-select:focus { border-color:var(--mid); }
+  .link-select option { background:#0B1F3A; }
+  .link-btn { margin-top:.6rem; background:rgba(33,150,243,0.15); border:1px solid rgba(33,150,243,0.3); border-radius:2px; color:var(--light); font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; padding:.5rem 1rem; cursor:pointer; transition:all .15s; }
+  .link-btn:hover { background:rgba(33,150,243,0.25); }
+
+  /* ── SIDEBAR COMPAT ── */
+  .ssf-main { overflow-y:auto !important; }
+  body::before { z-index:-1; }
 </style>
-  
-<style>
-  /* Sidebar layout scroll fix */
-  .ssf-main { overflow-y: auto !important; }
-  body::before { z-index: -1; }
-  .shimmer-bg { z-index: -1; }
-</style>
+<script src="sidebar.js" defer></script>
 </head>
 <body data-page="dashboard">
 
@@ -90,20 +210,18 @@
 </div>
 
 <div class="loading-wrap" id="loading-wrap">
+  <div class="loading-dot"></div>
   <div class="loading-text">Loading your dashboard…</div>
   <div class="loading-sub" id="loading-sub"></div>
 </div>
 
 <div class="content" id="dash-content" style="display:none;"></div>
 
-<script src="sidebar.js"></script>
 <script type="module">
 import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
-  getAuth, onAuthStateChanged, signOut
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-import {
-  getFirestore, doc, getDoc, getDocs, collection, deleteDoc
+  getFirestore, doc, getDoc, getDocs, setDoc, addDoc, deleteDoc, collection, query, where, limit
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -119,224 +237,642 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-document.getElementById('signout-btn').addEventListener('click', async () => {
-  await signOut(auth);
-  window.location.href = 'login.html';
-});
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function parseTime(t) {
+  t = String(t).trim();
+  if (t.includes(':')) { const p = t.split(':'); return +p[0]*60 + parseFloat(p[1]); }
+  return parseFloat(t);
+}
+function fmtSecs(s) {
+  if (s >= 60) return Math.floor(s/60) + ':' + (s%60).toFixed(2).padStart(5,'0');
+  return s.toFixed(2);
+}
+function fmtDate(d) {
+  if (!d) return '';
+  try { return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}); } catch { return d; }
+}
+function strokeOf(ev) {
+  const e = ev.toUpperCase();
+  if (e.includes('FREE'))   return 'free';
+  if (e.includes('BACK'))   return 'back';
+  if (e.includes('BREAST')) return 'breast';
+  if (e.includes('FLY'))    return 'fly';
+  if (e.includes('IM'))     return 'im';
+  return 'free';
+}
 
-// Retry fetching user doc up to 5× with 600ms gaps
-// Fixes race condition where Firestore write hasn't completed before redirect
+const EVENT_ORDER = ['50 Free','100 Free','200 Free','500 Free','1000 Free','1650 Free',
+  '100 Back','200 Back','100 Breast','200 Breast','100 Fly','200 Fly','200 IM','400 IM'];
+
+const STANDARDS = {
+  "50 Free":   {B:40,  BB:35,  A:30,  AA:27,  AAA:24.5, AAAA:22.9},
+  "100 Free":  {B:90,  BB:78,  A:67,  AA:59,  AAA:53,   AAAA:49.5},
+  "200 Free":  {B:200, BB:175, A:150, AA:132, AAA:118,  AAAA:110},
+  "500 Free":  {B:540, BB:475, A:410, AA:360, AAA:325,  AAAA:303},
+  "1000 Free": {B:1140,BB:1000,A:870, AA:770, AAA:695,  AAAA:650},
+  "1650 Free": {B:1980,BB:1740,A:1500,AA:1320,AAA:1190, AAAA:1110},
+  "100 Back":  {B:100, BB:87,  A:75,  AA:67,  AAA:60,   AAAA:56},
+  "200 Back":  {B:215, BB:190, A:163, AA:145, AAA:130,  AAAA:121},
+  "100 Breast":{B:110, BB:96,  A:83,  AA:74,  AAA:66,   AAAA:62},
+  "200 Breast":{B:240, BB:210, A:181, AA:162, AAA:145,  AAAA:135},
+  "100 Fly":   {B:100, BB:87,  A:75,  AA:67,  AAA:60,   AAAA:56.5},
+  "200 Fly":   {B:220, BB:195, A:168, AA:150, AAA:135,  AAAA:126},
+  "200 IM":    {B:215, BB:190, A:163, AA:146, AAA:132,  AAAA:123},
+  "400 IM":    {B:460, BB:405, A:350, AA:315, AAA:285,  AAAA:266},
+};
+const TIER_ORDER = ['AAAA','AAA','AA','A','BB','B'];
+const TIER_COLORS = {AAAA:'#00E5FF',AAA:'#EF5350',AA:'#F9A825',A:'#64B5F6',BB:'#A5D6A7',B:'#8BA3C0'};
+
+function getEventTier(ev, secs) {
+  const s = STANDARDS[ev]; if (!s) return null;
+  for (const t of TIER_ORDER) { if (s[t] && secs <= s[t]) return t; }
+  return null;
+}
+function getBestTier(times) {
+  let best = null;
+  for (const [ev, t] of Object.entries(times)) {
+    const tier = getEventTier(ev, parseTime(t));
+    if (!tier) continue;
+    const idx = TIER_ORDER.indexOf(tier);
+    if (best === null || idx < TIER_ORDER.indexOf(best)) best = tier;
+  }
+  return best;
+}
+function getBestStroke(times) {
+  const scores = {free:0,back:0,breast:0,fly:0,im:0};
+  const counts  = {free:0,back:0,breast:0,fly:0,im:0};
+  for (const [ev, t] of Object.entries(times)) {
+    const s = strokeOf(ev); counts[s]++;
+    const tier = getEventTier(ev, parseTime(t));
+    if (tier) scores[s] += TIER_ORDER.length - TIER_ORDER.indexOf(tier);
+  }
+  let best = null, bestScore = -1;
+  for (const s of Object.keys(scores)) {
+    if (counts[s] > 0 && scores[s] > bestScore) { bestScore = scores[s]; best = s; }
+  }
+  const labels = {free:'Freestyle',back:'Backstroke',breast:'Breaststroke',fly:'Butterfly',im:'IM'};
+  return best ? labels[best] : null;
+}
+function getClosestToCut(times, n=3) {
+  const results = [];
+  for (const [ev, timeStr] of Object.entries(times)) {
+    const secs = parseTime(timeStr);
+    const stds = STANDARDS[ev]; if (!stds) continue;
+    const curTier = getEventTier(ev, secs);
+    const curIdx  = curTier ? TIER_ORDER.indexOf(curTier) : TIER_ORDER.length;
+    const nextIdx = curIdx - 1; if (nextIdx < 0) continue;
+    const nextTier = TIER_ORDER[nextIdx];
+    const nextSecs = stds[nextTier];
+    const gap = secs - nextSecs;
+    if (gap > 0) results.push({ev, timeStr, secs, curTier, nextTier, nextSecs, gap, gapPct:gap/secs});
+  }
+  return results.sort((a,b) => a.gapPct - b.gapPct).slice(0, n);
+}
+function sortedTimes(times) {
+  return Object.entries(times).sort(([a],[b]) => {
+    const ai = EVENT_ORDER.indexOf(a), bi = EVENT_ORDER.indexOf(b);
+    if (ai===-1&&bi===-1) return a.localeCompare(b);
+    if (ai===-1) return 1; if (bi===-1) return -1; return ai-bi;
+  });
+}
+function getRecentSeasonSwims(seasonHistory, n=6) {
+  const all = [];
+  for (const [ev, entries] of Object.entries(seasonHistory||{})) {
+    const sorted = [...entries].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    sorted.forEach((e,i)=>{ const drop = i>0 ? sorted[i-1].secs - e.secs : 0; all.push({ev,...e,drop}); });
+  }
+  return all.filter(s=>s.date).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,n);
+}
+function countSeasonMeets(seasonHistory) {
+  const s = new Set();
+  for (const entries of Object.values(seasonHistory||{})) entries.forEach(e=>{ if(e.meet) s.add(e.meet+(e.date||'')); });
+  return s.size;
+}
+function currentAge(s) { return s.age || (s.birthYear ? new Date().getFullYear()-s.birthYear : null); }
+function initials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function weekOfYear(d) { const s=new Date(d.getFullYear(),0,1); return Math.ceil(((d-s)/86400000+s.getDay()+1)/7); }
+
+// ── MEETS ─────────────────────────────────────────────────────────────────────
+async function getUpcomingMeets(n=6) {
+  try {
+    const today = new Date().toISOString().slice(0,10);
+    const snap  = await getDocs(collection(db,'meets'));
+    return snap.docs.map(d=>({id:d.id,...d.data()}))
+      .filter(m => m.date >= today)
+      .sort((a,b)=>a.date.localeCompare(b.date))
+      .slice(0,n);
+  } catch { return []; }
+}
+
+function meetsHtml(meets, isCoach=false) {
+  if (!meets.length) {
+    return `<div class="meets-empty">No upcoming meets scheduled</div>
+      <a class="meets-cal-link" href="https://www.gomotionapp.com/team/ssf/page/swim-team/calendar#/team-events/upcoming" target="_blank" rel="noopener">View SSF Calendar ↗</a>`;
+  }
+  const items = meets.map(m => {
+    const dt  = new Date(m.date+'T00:00:00');
+    const mon = dt.toLocaleDateString('en-US',{month:'short'}).toUpperCase();
+    const day = dt.getDate();
+    const del = isCoach ? `<button class="del-meet-btn" data-id="${m.id}" title="Remove">✕</button>` : '';
+    const meta = [m.location, m.type].filter(Boolean).join(' · ');
+    return `<div class="meet-item">
+      <div class="meet-date-block"><div class="meet-month">${mon}</div><div class="meet-day">${day}</div></div>
+      <div class="meet-info">
+        <div class="meet-name">${m.name}</div>
+        ${meta ? `<div class="meet-meta">${meta}</div>` : ''}
+      </div>
+      ${m.type ? `<div class="meet-type-tag">${m.type}</div>` : ''}
+      ${del}
+    </div>`;
+  }).join('');
+  const cal = `<a class="meets-cal-link" href="https://www.gomotionapp.com/team/ssf/page/swim-team/calendar#/team-events/upcoming" target="_blank" rel="noopener">Full calendar ↗</a>`;
+  return items + cal;
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+document.getElementById('signout-btn').addEventListener('click', async () => {
+  await signOut(auth); window.location.href = 'login.html';
+});
 async function getUserDoc(uid) {
-  for (let i = 0; i < 5; i++) {
-    const snap = await getDoc(doc(db, 'users', uid));
+  for (let i=0;i<5;i++) {
+    const snap = await getDoc(doc(db,'users',uid));
     if (snap.exists()) return snap;
     document.getElementById('loading-sub').textContent = 'Setting up your account…';
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise(r=>setTimeout(r,600));
   }
   return null;
 }
-
 onAuthStateChanged(auth, async user => {
-  if (!user) {
-    window.location.href = 'login.html';
-    return;
-  }
-
+  if (!user) { window.location.href = 'login.html'; return; }
   const snap = await getUserDoc(user.uid);
-
-  if (!snap) {
-    // Doc never appeared after retries — registration may have failed
-    await signOut(auth);
-    window.location.href = 'register.html';
-    return;
-  }
-
+  if (!snap) { await signOut(auth); window.location.href = 'register.html'; return; }
   renderDashboard(user, snap.data());
 });
 
+// ── DISPATCHER ────────────────────────────────────────────────────────────────
 async function renderDashboard(user, profile) {
   document.getElementById('loading-wrap').style.display = 'none';
   const content = document.getElementById('dash-content');
   content.style.display = 'block';
-
-  const firstName = (profile.displayName || user.displayName || 'Swimmer').split(' ')[0];
   document.getElementById('topbar-sub').textContent =
-    profile.role.charAt(0).toUpperCase() + profile.role.slice(1) + ' · Purple Group';
+    profile.role.charAt(0).toUpperCase()+profile.role.slice(1)+' · Purple Group';
 
-  const roleEmoji = { swimmer:'🏊', parent:'👨‍👩‍👧', coach:'⭐' };
-  const roleLabel = { swimmer:'Swimmer Account', parent:'Parent Account', coach:'Coach Account' };
+  if      (profile.role==='swimmer') content.innerHTML = await swimmerDash(user, profile);
+  else if (profile.role==='parent')  content.innerHTML = await parentDash(user, profile);
+  else if (profile.role==='coach')   content.innerHTML = await coachDash(user, profile);
 
-  let html = `
-    <div class="welcome">
-      <div class="welcome-name">Hey, ${firstName}</div>
-      <div class="welcome-role">Welcome back to Purple Group</div>
-      <div class="role-badge ${profile.role}">${roleEmoji[profile.role] || '👤'} ${roleLabel[profile.role] || profile.role}</div>
-    </div>`;
+  bindHandlers(user, profile);
+}
 
-  if (profile.role === 'swimmer')     html += renderSwimmerDash();
-  else if (profile.role === 'parent') html += renderParentDash(profile);
-  else if (profile.role === 'coach')  html += await renderCoachDash();
+// ── SWIMMER DASHBOARD ─────────────────────────────────────────────────────────
+async function swimmerDash(user, profile) {
+  const name = profile.displayName || user.displayName || '';
 
-  content.innerHTML = html;
-
-  if (profile.role === 'coach') {
-    content.querySelectorAll('.remove-btn[data-uid]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm(`Remove ${btn.dataset.name} from the team?`)) return;
-        await deleteDoc(doc(db, 'users', btn.dataset.uid));
-        btn.closest('.roster-row').remove();
-      });
-    });
+  // 1. Find swimmer record (cached swimcloudId first, then name match)
+  let sw = null;
+  if (profile.swimcloudId) {
+    const snap = await getDoc(doc(db,'swimmers',profile.swimcloudId));
+    if (snap.exists()) sw = {id:snap.id,...snap.data()};
   }
-}
+  if (!sw && name) {
+    const q = query(collection(db,'swimmers'), where('name','==',name), where('active','==',true), limit(1));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      sw = {id:snap.docs[0].id,...snap.docs[0].data()};
+      try { await setDoc(doc(db,'users',user.uid),{swimcloudId:sw.id},{merge:true}); } catch {}
+    }
+  }
 
-function renderSwimmerDash() {
+  const meets = await getUpcomingMeets(5);
+
+  if (!sw) return linkAccountView(user, profile, meets, name);
+
+  const times    = sw.times || {};
+  const hist     = sw.season_history || {};
+  const age      = currentAge(sw);
+  const bestTier = getBestTier(times);
+  const stroke   = getBestStroke(times);
+  const evCount  = Object.keys(times).length;
+  const seaMeets = countSeasonMeets(hist);
+  const recent   = getRecentSeasonSwims(hist, 6);
+  const improve  = getClosestToCut(times, 3);
+  const ini      = initials(sw.name||name);
+  const avClass  = sw.gender==='F' ? 'female' : '';
+
+  const timesRows = sortedTimes(times).map(([ev,t]) => {
+    const tier = getEventTier(ev, parseTime(t));
+    const tierHtml = tier
+      ? `<span class="time-tier tier-${tier}">${tier}</span>` : '';
+    return `<div class="time-row">
+      <div class="stroke-dot ${strokeOf(ev)}"></div>
+      <div class="time-event">${ev}</div>
+      <div class="time-val">${t}</div>${tierHtml}</div>`;
+  }).join('');
+
+  const recentRows = recent.length ? recent.map(s => {
+    const drop = s.drop > 0.01
+      ? `<span class="season-drop drop-pos">▼ ${s.drop.toFixed(2)}s</span>`
+      : `<span class="season-drop drop-zero">—</span>`;
+    return `<div class="season-item">
+      <div class="season-date">${fmtDate(s.date)}</div>
+      <div class="season-event">${s.ev}</div>
+      <div class="season-time">${s.time}</div>${drop}</div>`;
+  }).join('') : `<div style="padding:.75rem;color:var(--grey);font-size:.82rem">No season swims yet.</div>`;
+
+  const improveRows = improve.length ? improve.map(item => {
+    const col  = TIER_COLORS[item.nextTier] || 'var(--mid)';
+    const fill = Math.max(4, Math.min(94, 100 - item.gapPct * 600));
+    return `<div class="improve-item">
+      <div class="improve-row1">
+        <div class="improve-event">${item.ev}</div>
+        <div class="improve-time">${item.timeStr}</div>
+      </div>
+      <div class="improve-row2">→ drop ${item.gap.toFixed(2)}s to reach <strong style="color:${col}">${item.nextTier}</strong> (need ${fmtSecs(item.nextSecs)})</div>
+      <div class="gap-track"><div class="gap-fill" style="width:${fill}%;background:linear-gradient(90deg,${col}40,${col});border-right:2px solid ${col}"></div></div>
+    </div>`;
+  }).join('') : `<div style="padding:.75rem;color:var(--grey);font-size:.82rem">Already at the top cut — keep going!</div>`;
+
   return `
-    <div class="section-hdr">My Tools</div>
+    <div class="dash-hero">
+      <div class="hero-avatar ${avClass}">${ini}</div>
+      <div class="hero-info">
+        <div class="hero-label">Purple Group Swimmer</div>
+        <div class="hero-name">${sw.name||name}</div>
+        <div class="hero-meta">
+          ${age?`<span>Age ${age}</span>`:''}
+          <span>${sw.gender==='M'?'Male':'Female'}</span>
+        </div>
+        <div class="hero-badges">
+          ${bestTier?`<span class="tier-pill tier-${bestTier}">${bestTier} · Best Cut</span>`:''}
+          ${stroke?`<span class="tier-pill" style="background:rgba(139,163,192,0.08);border:1px solid rgba(139,163,192,0.2);color:var(--grey)">★ ${stroke}</span>`:''}
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-strip">
+      ${age?`<div class="stat-box"><div class="stat-label">Age</div><div class="stat-num blue">${age}</div></div>`:''}
+      <div class="stat-box"><div class="stat-label">Events</div><div class="stat-num blue">${evCount}</div></div>
+      <div class="stat-box"><div class="stat-label">Best Cut</div><div class="stat-num gold">${bestTier||'—'}</div></div>
+      <div class="stat-box"><div class="stat-label">Season Meets</div><div class="stat-num green">${seaMeets}</div></div>
+    </div>
+
+    <div class="section-hdr">Best Times · SCY</div>
+    <div class="times-list">${timesRows||'<div style="padding:.75rem;color:var(--grey);font-size:.82rem">No times recorded yet.</div>'}</div>
+
+    <div class="section-hdr">Season Activity</div>
+    <div class="season-list">${recentRows}</div>
+
+    <div class="section-hdr">Closest to Next Cut</div>
+    <div class="improve-list">${improveRows}</div>
+
+    <div class="section-hdr">Upcoming Meets</div>
+    <div class="meets-list">${meetsHtml(meets)}</div>
+
+    <div class="section-hdr">Quick Links</div>
     <div class="card-grid">
-      <a class="dash-card" href="times.html">
-        <div class="card-icon">🏆</div>
-        <div class="card-title">Times</div>
-        <div class="card-desc">Personal bests · USA Swimming cuts · tier progress</div>
+      <a class="dash-card" href="swimmer.html?id=${sw.id}">
+        <div class="card-icon">🏊</div><div class="card-title">My Profile</div>
+        <div class="card-desc">Full times · SwimCloud</div>
+      </a>
+      <a class="dash-card" href="leaderboard.html">
+        <div class="card-icon">📋</div><div class="card-title">Leaderboard</div>
+        <div class="card-desc">Team rankings by event</div>
       </a>
       <a class="dash-card" href="attendance.html">
-        <div class="card-icon">✅</div>
-        <div class="card-title">Attendance</div>
-        <div class="card-desc">My session history · streaks · monthly view</div>
+        <div class="card-icon">✅</div><div class="card-title">Attendance</div>
+        <div class="card-desc">My session history</div>
       </a>
       <a class="dash-card" href="dryland.html">
-        <div class="card-icon">💪</div>
-        <div class="card-title">Dryland Log</div>
-        <div class="card-desc">Log sets · track weekly progress</div>
-      </a>
-    </div>
-    <div class="section-hdr">Team</div>
-    <div class="card-grid">
-      <a class="dash-card" href="leaderboard.html">
-        <div class="card-icon">📋</div>
-        <div class="card-title">Leaderboard</div>
-        <div class="card-desc">Team rankings · time drops · next cut</div>
-      </a>
-      <a class="dash-card" href="groups.html">
-        <div class="card-icon">👥</div>
-        <div class="card-title">Groups</div>
-        <div class="card-desc">Team training groups · lane assignments</div>
+        <div class="card-icon">💪</div><div class="card-title">Dryland</div>
+        <div class="card-desc">Log sets · weekly progress</div>
       </a>
     </div>`;
 }
 
-function renderParentDash(profile) {
-  const childName = profile.childName || 'your swimmer';
+// Fallback: swimmer account not yet linked to a swimmer record
+async function linkAccountView(user, profile, meets, name) {
+  let options = '';
+  try {
+    const snap = await getDocs(query(collection(db,'swimmers'), where('active','==',true)));
+    const all  = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name));
+    options = all.map(s=>`<option value="${s.id}">${s.name}${currentAge(s)?' (age '+currentAge(s)+')':''}</option>`).join('');
+  } catch {}
   return `
-    <div class="section-hdr">Tracking ${childName}</div>
-    <div class="card-grid">
-      <a class="dash-card" href="times.html">
-        <div class="card-icon">🏆</div>
-        <div class="card-title">Times</div>
-        <div class="card-desc">Personal bests · USA Swimming cuts</div>
-      </a>
-      <a class="dash-card" href="attendance.html">
-        <div class="card-icon">✅</div>
-        <div class="card-title">Attendance</div>
-        <div class="card-desc">Session history · monthly trends</div>
-      </a>
-      <a class="dash-card" href="dryland.html">
-        <div class="card-icon">💪</div>
-        <div class="card-title">Dryland</div>
-        <div class="card-desc">Weekly dryland progress</div>
-      </a>
+    <div class="dash-hero">
+      <div class="hero-avatar">🏊</div>
+      <div class="hero-info">
+        <div class="hero-label">Purple Group Swimmer</div>
+        <div class="hero-name">${name||'Swimmer'}</div>
+        <div class="hero-meta"><span>Account not yet linked to a swim record</span></div>
+      </div>
     </div>
-    <div class="section-hdr">Team</div>
+    <div class="link-card">
+      <div class="link-card-title">Link Your Swimmer Record</div>
+      <div class="link-card-desc">Select your name from the SSF roster so we can display your times, cuts, and season progress.</div>
+      <select class="link-select" id="link-select"><option value="">— Select your name —</option>${options}</select>
+      <br><button class="link-btn" id="link-btn">Link My Account →</button>
+    </div>
+    <div class="section-hdr">Upcoming Meets</div>
+    <div class="meets-list">${meetsHtml(meets)}</div>
+    <div class="section-hdr">Quick Links</div>
     <div class="card-grid">
+      <a class="dash-card" href="times.html"><div class="card-icon">🏆</div><div class="card-title">Times</div><div class="card-desc">Team roster · best times</div></a>
+      <a class="dash-card" href="leaderboard.html"><div class="card-icon">📋</div><div class="card-title">Leaderboard</div><div class="card-desc">Team rankings by event</div></a>
+      <a class="dash-card" href="attendance.html"><div class="card-icon">✅</div><div class="card-title">Attendance</div><div class="card-desc">Practice history</div></a>
+      <a class="dash-card" href="dryland.html"><div class="card-icon">💪</div><div class="card-title">Dryland</div><div class="card-desc">Log sets</div></a>
+    </div>`;
+}
+
+// ── PARENT DASHBOARD ──────────────────────────────────────────────────────────
+async function parentDash(user, profile) {
+  const childName = profile.childName || '';
+  const meets     = await getUpcomingMeets(5);
+
+  let sw = null;
+  if (childName) {
+    const q = query(collection(db,'swimmers'), where('name','==',childName), limit(1));
+    const snap = await getDocs(q);
+    if (!snap.empty) sw = {id:snap.docs[0].id,...snap.docs[0].data()};
+  }
+
+  if (!sw) {
+    return `
+      <div class="dash-hero">
+        <div class="hero-avatar parent-av">👨‍👩‍👧</div>
+        <div class="hero-info">
+          <div class="hero-label">Parent Dashboard</div>
+          <div class="hero-name">Tracking ${childName||'your swimmer'}</div>
+          <div class="hero-meta"><span>Swimmer record not found — check the name matches exactly or contact your coach</span></div>
+        </div>
+      </div>
+      <div class="section-hdr">Upcoming Meets</div>
+      <div class="meets-list">${meetsHtml(meets)}</div>
+      <div class="section-hdr">Quick Links</div>
+      <div class="card-grid">
+        <a class="dash-card" href="times.html"><div class="card-icon">🏆</div><div class="card-title">Team Times</div><div class="card-desc">Browse roster & times</div></a>
+        <a class="dash-card" href="leaderboard.html"><div class="card-icon">📋</div><div class="card-title">Leaderboard</div><div class="card-desc">Team rankings</div></a>
+        <a class="dash-card" href="attendance.html"><div class="card-icon">✅</div><div class="card-title">Attendance</div><div class="card-desc">Practice history</div></a>
+      </div>`;
+  }
+
+  const times    = sw.times || {};
+  const hist     = sw.season_history || {};
+  const age      = currentAge(sw);
+  const bestTier = getBestTier(times);
+  const stroke   = getBestStroke(times);
+  const evCount  = Object.keys(times).length;
+  const seaMeets = countSeasonMeets(hist);
+  const recent   = getRecentSeasonSwims(hist, 5);
+  const ini      = initials(childName);
+  const avClass  = sw.gender==='F' ? 'female' : '';
+
+  const timesRows = sortedTimes(times).slice(0,10).map(([ev,t]) => {
+    const tier = getEventTier(ev, parseTime(t));
+    const tierHtml = tier ? `<span class="time-tier tier-${tier}">${tier}</span>` : '';
+    return `<div class="time-row">
+      <div class="stroke-dot ${strokeOf(ev)}"></div>
+      <div class="time-event">${ev}</div>
+      <div class="time-val">${t}</div>${tierHtml}</div>`;
+  }).join('');
+
+  const recentRows = recent.length ? recent.map(s => {
+    const drop = s.drop > 0.01
+      ? `<span class="season-drop drop-pos">▼ ${s.drop.toFixed(2)}s</span>`
+      : `<span class="season-drop drop-zero">—</span>`;
+    return `<div class="season-item">
+      <div class="season-date">${fmtDate(s.date)}</div>
+      <div class="season-event">${s.ev}</div>
+      <div class="season-time">${s.time}</div>${drop}</div>`;
+  }).join('') : `<div style="padding:.75rem;color:var(--grey);font-size:.82rem">No season swims yet.</div>`;
+
+  return `
+    <div class="dash-hero">
+      <div class="hero-avatar ${avClass}">${ini}</div>
+      <div class="hero-info">
+        <div class="hero-label">Tracking</div>
+        <div class="hero-name">${childName}</div>
+        <div class="hero-meta">
+          ${age?`<span>Age ${age}</span>`:''}
+          <span>${sw.gender==='M'?'Male':'Female'}</span>
+          <span>Purple Group</span>
+        </div>
+        <div class="hero-badges">
+          ${bestTier?`<span class="tier-pill tier-${bestTier}">${bestTier} · Best Cut</span>`:''}
+          ${stroke?`<span class="tier-pill" style="background:rgba(139,163,192,0.08);border:1px solid rgba(139,163,192,0.2);color:var(--grey)">★ ${stroke}</span>`:''}
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-strip">
+      ${age?`<div class="stat-box"><div class="stat-label">Age</div><div class="stat-num blue">${age}</div></div>`:''}
+      <div class="stat-box"><div class="stat-label">Events</div><div class="stat-num blue">${evCount}</div></div>
+      <div class="stat-box"><div class="stat-label">Best Cut</div><div class="stat-num gold">${bestTier||'—'}</div></div>
+      <div class="stat-box"><div class="stat-label">Season Meets</div><div class="stat-num green">${seaMeets}</div></div>
+    </div>
+
+    <div class="section-hdr">Best Times · SCY</div>
+    <div class="times-list">${timesRows||'<div style="padding:.75rem;color:var(--grey);font-size:.82rem">No times recorded yet.</div>'}</div>
+
+    <div class="section-hdr">Season Activity</div>
+    <div class="season-list">${recentRows}</div>
+
+    <div class="section-hdr">Upcoming Meets</div>
+    <div class="meets-list">${meetsHtml(meets)}</div>
+
+    <div class="section-hdr">Quick Links</div>
+    <div class="card-grid">
+      <a class="dash-card" href="swimmer.html?id=${sw.id}">
+        <div class="card-icon">🏊</div><div class="card-title">Full Profile</div>
+        <div class="card-desc">All events · SwimCloud</div>
+      </a>
       <a class="dash-card" href="leaderboard.html">
-        <div class="card-icon">📋</div>
-        <div class="card-title">Leaderboard</div>
+        <div class="card-icon">📋</div><div class="card-title">Leaderboard</div>
         <div class="card-desc">Team rankings by event</div>
       </a>
-      <a class="dash-card" href="groups.html">
-        <div class="card-icon">👥</div>
-        <div class="card-title">Groups</div>
-        <div class="card-desc">Team training groups · lane assignments</div>
+      <a class="dash-card" href="attendance.html">
+        <div class="card-icon">✅</div><div class="card-title">Attendance</div>
+        <div class="card-desc">Practice history</div>
+      </a>
+      <a class="dash-card" href="dryland.html">
+        <div class="card-icon">💪</div><div class="card-title">Dryland</div>
+        <div class="card-desc">Weekly progress</div>
       </a>
     </div>`;
 }
 
-async function renderCoachDash() {
-  const snap = await getDocs(collection(db, 'users'));
-  const users = [];
-  snap.forEach(d => users.push({ uid: d.id, ...d.data() }));
+// ── COACH DASHBOARD ───────────────────────────────────────────────────────────
+async function coachDash(user, profile) {
+  const [swSnap, usersSnap, meets] = await Promise.all([
+    getDocs(query(collection(db,'swimmers'), where('active','==',true))),
+    getDocs(collection(db,'users')),
+    getUpcomingMeets(6),
+  ]);
 
-  const swimmers = users.filter(u => u.role === 'swimmer');
-  const parents  = users.filter(u => u.role === 'parent');
-  const coaches  = users.filter(u => u.role === 'coach');
+  const swimmers   = swSnap.docs.map(d=>({id:d.id,...d.data()}))
+                       .sort((a,b)=>a.name.localeCompare(b.name));
+  const users      = usersSnap.docs.map(d=>({uid:d.id,...d.data()}));
+  const regSwimmer = users.filter(u=>u.role==='swimmer');
+  const parents    = users.filter(u=>u.role==='parent');
+  const coaches    = users.filter(u=>u.role==='coach');
 
-  let html = `
-    <div class="stats-row">
-      <div class="stat-box">
-        <div class="stat-label">Swimmers</div>
-        <div class="stat-num" style="color:var(--mid)">${swimmers.length}</div>
-        <div class="stat-sub">registered</div>
+  const weekNum  = weekOfYear(new Date());
+  const todayStr = new Date().toISOString().slice(0,10);
+  const today    = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  const swimRows = swimmers.slice(0,25).map(s => {
+    const tier    = getBestTier(s.times||{});
+    const evCount = Object.keys(s.times||{}).length;
+    const age     = currentAge(s);
+    const tierHtml = tier
+      ? `<span class="tier-pill tier-${tier}" style="font-size:.5rem;padding:.1rem .4rem">${tier}</span>`
+      : '<span style="color:rgba(139,163,192,0.25);font-size:.7rem">—</span>';
+    return `<div class="st-row">
+      <div>
+        <div class="st-name"><a href="swimmer.html?id=${s.id}">${s.name}</a></div>
+        <div class="st-meta">${s.gender==='F'?'♀':'♂'}${age?' · age '+age:''}</div>
       </div>
-      <div class="stat-box">
-        <div class="stat-label">Parents</div>
-        <div class="stat-num" style="color:var(--gold)">${parents.length}</div>
-        <div class="stat-sub">registered</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Coaches</div>
-        <div class="stat-num" style="color:var(--green2)">${coaches.length}</div>
-        <div class="stat-sub">registered</div>
+      <div style="text-align:center">${tierHtml}</div>
+      <div class="st-cell">${evCount} events</div>
+      <a class="st-link" href="swimmer.html?id=${s.id}">→</a>
+    </div>`;
+  }).join('');
+
+  const all = [...coaches,...regSwimmer,...parents];
+  let memberRows = all.length===0 ? '<div class="empty-state">No registered members yet</div>' :
+    all.map(u => {
+      const rc = u.role==='coach'?'var(--green2)':u.role==='parent'?'var(--gold)':'var(--light)';
+      const meta = u.role==='parent'&&u.childName?`Parent of ${u.childName}`:u.email||'';
+      return `<div class="roster-row">
+        <div><div class="roster-name">${u.displayName||u.email}</div><div class="roster-meta">${meta}</div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:${rc}">${u.role}</div>
+        <button class="remove-btn" data-uid="${u.uid}" data-name="${u.displayName||u.email}">Remove</button>
+      </div>`;
+    }).join('');
+
+  return `
+    <div class="dash-hero">
+      <div class="hero-avatar coach-av">⭐</div>
+      <div class="hero-info">
+        <div class="hero-label">Coach Dashboard</div>
+        <div class="hero-name">${profile.displayName||'Coach'}</div>
+        <div class="hero-meta"><span>Purple Group · SSF Aquatics</span><span>${today}</span></div>
       </div>
     </div>
-    <div class="section-hdr">Coach Tools</div>
-    <div class="card-grid">
-      <a class="dash-card" href="attendance.html">
-        <div class="card-icon">✅</div>
-        <div class="card-title">Attendance</div>
-        <div class="card-desc">Mark sessions · monthly view · alerts</div>
-      </a>
-      <a class="dash-card" href="rankings-coach.html">
-        <div class="card-icon">⭐</div>
-        <div class="card-title">Times Entry</div>
-        <div class="card-desc">Enter meet results · manage PBs</div>
-      </a>
-      <a class="dash-card" href="coach-hub.html">
-        <div class="card-icon">📁</div>
-        <div class="card-title">Coach Hub</div>
-        <div class="card-desc">Downloads · roster intel · dashboard</div>
-      </a>
-      <a class="dash-card" href="leaderboard.html">
-        <div class="card-icon">📋</div>
-        <div class="card-title">Leaderboard</div>
-        <div class="card-desc">Team rankings by event</div>
-      </a>
+
+    <div class="stats-strip">
+      <div class="stat-box"><div class="stat-label">Active Swimmers</div><div class="stat-num blue">${swimmers.length}</div><div class="stat-sub">in roster</div></div>
+      <div class="stat-box"><div class="stat-label">Portal Users</div><div class="stat-num gold">${all.length}</div><div class="stat-sub">registered</div></div>
+      <div class="stat-box"><div class="stat-label">Upcoming Meets</div><div class="stat-num green">${meets.length}</div><div class="stat-sub">scheduled</div></div>
+      <div class="stat-box"><div class="stat-label">Season Week</div><div class="stat-num grey">${weekNum}</div><div class="stat-sub">of year</div></div>
     </div>
+
+    <div class="two-col">
+      <div>
+        <div class="col-label">Upcoming Meets</div>
+        <div class="meets-list" id="meets-list">${meetsHtml(meets, true)}</div>
+        <div class="add-meet-form">
+          <input class="add-meet-input grow" id="meet-name" placeholder="Meet name">
+          <input class="add-meet-input" id="meet-date" type="date" min="${todayStr}" value="${todayStr}">
+          <input class="add-meet-input" id="meet-loc"  placeholder="Location" style="max-width:130px">
+          <input class="add-meet-input" id="meet-type" placeholder="A / B" style="max-width:65px">
+          <button class="add-meet-btn" id="add-meet-btn">+ Add</button>
+        </div>
+      </div>
+      <div>
+        <div class="col-label">Coach Tools</div>
+        <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(110px,1fr))">
+          <a class="dash-card" href="attendance.html"><div class="card-icon">✅</div><div class="card-title">Attendance</div><div class="card-desc">Mark sessions</div></a>
+          <a class="dash-card" href="rankings-coach.html"><div class="card-icon">⭐</div><div class="card-title">Times Entry</div><div class="card-desc">Enter meet results</div></a>
+          <a class="dash-card" href="coach-hub.html"><div class="card-icon">📁</div><div class="card-title">Coach Hub</div><div class="card-desc">Downloads · docs</div></a>
+          <a class="dash-card" href="leaderboard.html"><div class="card-icon">📋</div><div class="card-title">Leaderboard</div><div class="card-desc">Team rankings</div></a>
+          <a class="dash-card" href="coach-analytics.html"><div class="card-icon">📊</div><div class="card-title">Analytics</div><div class="card-desc">Attendance trends</div></a>
+          <a class="dash-card" href="groups.html"><div class="card-icon">👥</div><div class="card-title">Groups</div><div class="card-desc">Lane assignments</div></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-hdr">This Week's Workout</div>
+    <div class="workout-card">
+      <div class="workout-icon">📅</div>
+      <div class="workout-info">
+        <div class="workout-title">Week ${weekNum} · ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+        <div class="workout-sub">Upload this week's practice plan or browse previous workouts in Coach Hub</div>
+      </div>
+      <a class="workout-link" href="coach-hub.html">Open Coach Hub →</a>
+    </div>
+
+    <div class="section-hdr">Active Swimmers</div>
+    <div class="swimmer-table">
+      <div class="st-header"><div>Swimmer</div><div style="text-align:center">Best Cut</div><div style="text-align:right">Events</div><div></div></div>
+      ${swimRows||'<div class="empty-state">No swimmers in database</div>'}
+    </div>
+    ${swimmers.length>25?`<div style="text-align:center;margin-top:.75rem"><a href="times.html" style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--light);opacity:.65;text-decoration:none">View all ${swimmers.length} swimmers →</a></div>`:''}
+
     <div class="section-hdr">Registered Members</div>
     <div class="roster-section">
-      <div class="roster-row header">
-        <div>Member</div><div>Role</div><div>Action</div>
-      </div>`;
+      <div class="roster-row header"><div>Member</div><div>Role</div><div>Action</div></div>
+      ${memberRows}
+    </div>`;
+}
 
-  const all = [...coaches, ...swimmers, ...parents];
-  if (all.length === 0) {
-    html += `<div class="empty-state">No registered members yet</div>`;
-  } else {
-    all.forEach(u => {
-      const roleColor = u.role === 'coach' ? 'var(--green2)' : u.role === 'parent' ? 'var(--gold)' : 'var(--light)';
-      const meta = u.role === 'parent' && u.childName ? `Parent of ${u.childName}` : u.email || '';
-      html += `<div class="roster-row">
-        <div>
-          <div class="roster-name">${u.displayName || u.email}</div>
-          <div class="roster-meta">${meta}</div>
-        </div>
-        <div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:${roleColor}">${u.role}</div>
-        <button class="remove-btn" data-uid="${u.uid}" data-name="${u.displayName || u.email}">Remove</button>
-      </div>`;
+// ── BIND HANDLERS ─────────────────────────────────────────────────────────────
+function bindHandlers(user, profile) {
+  // Swimmer: link account
+  document.getElementById('link-btn')?.addEventListener('click', async () => {
+    const sel = document.getElementById('link-select');
+    if (!sel?.value) { alert('Please select your name from the list.'); return; }
+    const btn = document.getElementById('link-btn');
+    btn.textContent = 'Linking…'; btn.disabled = true;
+    try {
+      await setDoc(doc(db,'users',user.uid),{swimcloudId:sel.value},{merge:true});
+      window.location.reload();
+    } catch(e) { alert('Error: '+e.message); btn.textContent='Link My Account →'; btn.disabled=false; }
+  });
+
+  if (profile.role !== 'coach') return;
+
+  // Coach: add meet
+  document.getElementById('add-meet-btn')?.addEventListener('click', async () => {
+    const name = document.getElementById('meet-name').value.trim();
+    const date = document.getElementById('meet-date').value;
+    const loc  = document.getElementById('meet-loc').value.trim();
+    const type = document.getElementById('meet-type').value.trim();
+    if (!name || !date) { alert('Please enter a meet name and date.'); return; }
+    try {
+      await addDoc(collection(db,'meets'), {
+        name, date, location:loc, type,
+        createdBy:user.uid, createdAt:new Date().toISOString()
+      });
+      const meets = await getUpcomingMeets(6);
+      document.getElementById('meets-list').innerHTML = meetsHtml(meets, true);
+      bindDeleteMeets();
+      document.getElementById('meet-name').value = '';
+      document.getElementById('meet-loc').value  = '';
+      document.getElementById('meet-type').value = '';
+    } catch(e) { alert('Error: '+e.message); }
+  });
+  bindDeleteMeets();
+
+  // Coach: remove member
+  document.querySelectorAll('.remove-btn[data-uid]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm(`Remove ${btn.dataset.name}?`)) return;
+      await deleteDoc(doc(db,'users',btn.dataset.uid));
+      btn.closest('.roster-row').remove();
     });
-  }
+  });
+}
 
-  html += `</div>`;
-  return html;
+function bindDeleteMeets() {
+  document.querySelectorAll('.del-meet-btn[data-id]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Remove this meet?')) return;
+      try {
+        await deleteDoc(doc(db,'meets',btn.dataset.id));
+        btn.closest('.meet-item').remove();
+      } catch(e) { alert('Error: '+e.message); }
+    });
+  });
 }
 </script>
 </body>

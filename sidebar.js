@@ -75,7 +75,7 @@ const NAV_ITEMS = [
   { section: 'Management', items: [
     { key:'coach-hub',   icon:'&#11088;',  label:'Coach Hub',   href:'coach-hub.html' },
     { key:'analytics',   icon:'&#128200;', label:'Analytics',   href:'coach-analytics.html' },
-    { key:'account',     icon:'&#128273;', label:'My Account',  href:'login.html' },
+    { key:'account',     icon:'&#128273;', label:'My Account',  href:'dashboard.html' },
   ]},
 ];
 
