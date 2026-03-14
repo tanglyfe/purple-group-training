@@ -307,6 +307,9 @@ function render(s) {
     ? (s.lastUpdated.toDate ? s.lastUpdated.toDate() : new Date(s.lastUpdated)).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' })
     : 'Unknown';
 
+  // Age chip — use stored age or derive from birthYear
+  const age = s.age || (s.birthYear ? (new Date().getFullYear() - s.birthYear) : null);
+
   // Build stroke groups
   const groups = groupByStroke(times);
   let strokesHtml = '';
@@ -354,6 +357,10 @@ function render(s) {
     </div>
 
     <div class="summary-chips">
+      ${age ? `<div class="chip">
+        <div class="chip-val">${age}</div>
+        <div class="chip-label">Age</div>
+      </div>` : ''}
       <div class="chip">
         <div class="chip-val">${count}</div>
         <div class="chip-label">Events</div>

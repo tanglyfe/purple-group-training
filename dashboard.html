@@ -79,7 +79,13 @@
 </head>
 <body data-page="dashboard">
 
-</div>
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="back-btn" href="index.html">← Home</a>
+    <div class="topbar-title">
+      <h1>Dashboard</h1>
+      <div class="topbar-sub" id="topbar-sub"></div>
+    </div>
     <button class="signout-btn" id="signout-btn">Sign Out</button>
   </div>
 </div>
@@ -211,10 +217,10 @@ function renderSwimmerDash() {
         <div class="card-title">Leaderboard</div>
         <div class="card-desc">Team rankings · time drops · next cut</div>
       </a>
-      <a class="dash-card" href="index.html">
-        <div class="card-icon">📅</div>
-        <div class="card-title">Workouts</div>
-        <div class="card-desc">Weekly schedule · pace tables</div>
+      <a class="dash-card" href="groups.html">
+        <div class="card-icon">👥</div>
+        <div class="card-title">Groups</div>
+        <div class="card-desc">Team training groups · lane assignments</div>
       </a>
     </div>`;
 }
@@ -247,10 +253,10 @@ function renderParentDash(profile) {
         <div class="card-title">Leaderboard</div>
         <div class="card-desc">Team rankings by event</div>
       </a>
-      <a class="dash-card" href="index.html">
-        <div class="card-icon">📅</div>
-        <div class="card-title">Workouts</div>
-        <div class="card-desc">Weekly training schedule</div>
+      <a class="dash-card" href="groups.html">
+        <div class="card-icon">👥</div>
+        <div class="card-title">Groups</div>
+        <div class="card-desc">Team training groups · lane assignments</div>
       </a>
     </div>`;
 }
