@@ -30,6 +30,40 @@
   .page-header h1 span{color:var(--light);}
   .page-header p{color:var(--grey);margin-top:.4rem;font-size:.86rem;}
 
+  /* tier colors */
+  .tier-AAAA{background:rgba(0,229,255,0.12);border:1px solid rgba(0,229,255,0.35);color:#00E5FF;}
+  .tier-AAA {background:rgba(229,57,53,0.12); border:1px solid rgba(229,57,53,0.35); color:#EF5350;}
+  .tier-AA  {background:rgba(249,168,37,0.12);border:1px solid rgba(249,168,37,0.35);color:#F9A825;}
+  .tier-A   {background:rgba(33,150,243,0.12);border:1px solid rgba(33,150,243,0.3); color:#64B5F6;}
+  .tier-BB  {background:rgba(46,125,50,0.12); border:1px solid rgba(46,125,50,0.3);  color:#A5D6A7;}
+  .tier-B   {background:rgba(139,163,192,0.1);border:1px solid rgba(139,163,192,0.2);color:#8BA3C0;}
+  .tier-pill-sm{display:inline-flex;align-items:center;font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;padding:.15rem .45rem;border-radius:2px;}
+
+  /* mot table — wider for 6 cut columns */
+  .mot-table{width:100%;border-collapse:collapse;margin-top:.35rem;}
+  .mot-table th{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);background:rgba(7,20,41,0.9);padding:.5rem .6rem;text-align:right;position:sticky;top:52px;z-index:5;border-bottom:1px solid rgba(33,150,243,0.12);}
+  .mot-table th:first-child{text-align:left;}
+  .mot-table td{padding:.45rem .6rem;border-bottom:1px solid rgba(33,150,243,0.06);font-family:'DM Mono',monospace;font-size:.78rem;text-align:right;vertical-align:middle;}
+  .mot-table td:first-child{text-align:left;}
+  .mot-table tr:hover td{background:rgba(33,150,243,0.03);}
+  .mot-table tr.qualifies td{background:rgba(46,125,50,0.07);}
+  .mot-table tr.qualifies td:first-child{border-left:2px solid rgba(46,125,50,0.6);}
+  .mot-table tr.close td{background:rgba(249,168,37,0.04);}
+  .mot-hdr-aaaa{color:#00E5FF!important;}
+  .mot-hdr-aaa {color:#EF5350!important;}
+  .mot-hdr-aa  {color:#F9A825!important;}
+  .mot-hdr-a   {color:#64B5F6!important;}
+  .mot-hdr-bb  {color:#A5D6A7!important;}
+  .mot-hdr-b   {color:#8BA3C0!important;}
+  .mot-time-aaaa{color:#00E5FF;}
+  .mot-time-aaa {color:#EF5350;}
+  .mot-time-aa  {color:#F9A825;}
+  .mot-time-a   {color:#64B5F6;}
+  .mot-time-bb  {color:#A5D6A7;}
+  .mot-time-b   {color:#8BA3C0;}
+  .mot-your{color:var(--green3);}
+  .mot-qual{color:var(--green2);}
+
   /* swimmer banner */
   .swimmer-banner{margin-top:1.4rem;padding:.85rem 1.1rem;background:rgba(33,150,243,0.07);border:1px solid rgba(33,150,243,0.2);border-radius:3px;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;}
   .sb-label{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);margin-bottom:.15rem;}
@@ -124,18 +158,19 @@
   </div>
 
   <div class="tabs">
-    <button class="tab active" data-tab="8under">8 &amp; Under</button>
+    <button class="tab active" data-tab="mot">USA Motivational</button>
+    <button class="tab" data-tab="8under">8 &amp; Under</button>
     <button class="tab" data-tab="agc">AGC Championship</button>
     <button class="tab" data-tab="fw">Far Western</button>
   </div>
 
-  <div class="controls hidden" id="ageGenderControls">
+  <div class="controls" id="ageGenderControls">
     <div class="ctrl-group">
       <span class="ctrl-label">Gender</span>
       <button class="pill active" data-gender="girls">Girls</button>
       <button class="pill" data-gender="boys">Boys</button>
     </div>
-    <div class="ctrl-group" id="agcAgePills">
+    <div class="ctrl-group hidden" id="agcAgePills">
       <span class="ctrl-label">Age</span>
       <button class="pill active" data-age="10u">10u</button>
       <button class="pill" data-age="11">11</button>
@@ -143,7 +178,7 @@
       <button class="pill" data-age="13">13</button>
       <button class="pill" data-age="14">14</button>
     </div>
-    <div class="ctrl-group hidden" id="fwAgePills">
+    <div class="ctrl-group" id="fwAgePills">
       <span class="ctrl-label">Age</span>
       <button class="pill active" data-age="10u">10u</button>
       <button class="pill" data-age="11-12">11–12</button>
@@ -153,8 +188,14 @@
     </div>
   </div>
 
+  <!-- Motivational Standards Panel -->
+  <div class="tab-panel" id="panel-mot">
+    <div class="sec-hdr" id="motSectionHdr">2024–2028 USA Swimming Motivational Standards · Girls · 10 &amp; Under</div>
+    <div id="table-mot"></div>
+  </div>
+
   <!-- 8 Under Panel -->
-  <div class="tab-panel" id="panel-8under">
+  <div class="tab-panel hidden" id="panel-8under">
     <div class="sec-hdr">Pacific Swimming · 8 &amp; Under · SCY</div>
     <div id="table-8under"></div>
     <div class="legend">
@@ -256,6 +297,282 @@ const FW = {
   }
 };
 
+// ── 2024-2028 USA SWIMMING MOTIVATIONAL STANDARDS (SCY) ───────────────────────
+// Source of truth for B / BB / A / AA / AAA / AAAA tiers
+// Age groups match Far Western: 10u / 11-12 / 13-14 / 15-16 / 17-18
+
+const MOT = {
+  girls:{
+    '10u':{
+      '50 FR':  {B:'39.79',BB:'35.99',A:'32.09',AA:'30.89',AAA:'29.59',AAAA:'28.29'},
+      '100 FR': {B:'1:30.79',BB:'1:21.09',A:'1:11.49',AA:'1:08.29',AAA:'1:04.99',AAAA:'1:01.79'},
+      '200 FR': {B:'3:22.79',BB:'3:00.59',A:'2:38.39',AA:'2:30.99',AAA:'2:23.59',AAAA:'2:16.19'},
+      '500 FR': {B:'8:36.69',BB:'7:45.09',A:'6:53.39',AA:'6:36.19',AAA:'6:18.99',AAAA:'6:01.69'},
+      '50 BK':  {B:'48.59',BB:'43.29',A:'37.99',AA:'36.19',AAA:'34.39',AAAA:'32.59'},
+      '100 BK': {B:'1:45.79',BB:'1:33.99',A:'1:22.29',AA:'1:18.39',AAA:'1:14.49',AAAA:'1:10.59'},
+      '50 BR':  {B:'54.59',BB:'48.69',A:'42.79',AA:'40.89',AAA:'38.89',AAAA:'36.89'},
+      '100 BR': {B:'2:00.29',BB:'1:46.89',A:'1:33.59',AA:'1:29.09',AAA:'1:24.69',AAAA:'1:20.19'},
+      '50 FL':  {B:'48.39',BB:'42.69',A:'36.99',AA:'35.09',AAA:'33.19',AAAA:'31.29'},
+      '100 FL': {B:'1:56.69',BB:'1:41.39',A:'1:26.09',AA:'1:20.99',AAA:'1:15.99',AAAA:'1:10.89'},
+      '100 IM': {B:'1:44.29',BB:'1:33.19',A:'1:22.09',AA:'1:18.39',AAA:'1:14.69',AAAA:'1:10.99'},
+      '200 IM': {B:'3:42.09',BB:'3:18.79',A:'2:55.49',AA:'2:47.69',AAA:'2:39.99',AAAA:'2:32.19'},
+    },
+    '11-12':{
+      '50 FR':  {B:'33.99',BB:'31.69',A:'29.29',AA:'28.09',AAA:'26.99',AAAA:'25.79'},
+      '100 FR': {B:'1:14.69',BB:'1:09.39',A:'1:03.99',AA:'1:01.39',AAA:'58.69',AAAA:'55.99'},
+      '200 FR': {B:'2:42.59',BB:'2:30.89',A:'2:19.29',AA:'2:13.49',AAA:'2:07.69',AAAA:'2:01.89'},
+      '500 FR': {B:'7:16.89',BB:'6:45.69',A:'6:14.49',AA:'5:58.89',AAA:'5:43.29',AAAA:'5:27.69'},
+      '1000 FR':{B:'15:02.69',BB:'13:58.19',A:'12:53.79',AA:'12:21.49',AAA:'11:49.29',AAAA:'11:16.99'},
+      '1650 FR':{B:'25:07.39',BB:'23:19.69',A:'21:32.09',AA:'20:38.19',AAA:'19:44.39',AAAA:'18:50.59'},
+      '50 BK':  {B:'38.79',BB:'35.99',A:'33.19',AA:'31.79',AAA:'30.49',AAAA:'29.09'},
+      '100 BK': {B:'1:26.59',BB:'1:19.79',A:'1:12.99',AA:'1:09.59',AAA:'1:06.19',AAAA:'1:02.69'},
+      '200 BK': {B:'2:59.49',BB:'2:46.69',A:'2:33.89',AA:'2:27.49',AAA:'2:20.99',AAAA:'2:14.59'},
+      '50 BR':  {B:'43.99',BB:'40.89',A:'37.69',AA:'36.19',AAA:'34.59',AAAA:'32.99'},
+      '100 BR': {B:'1:36.49',BB:'1:29.29',A:'1:22.19',AA:'1:18.59',AAA:'1:15.09',AAAA:'1:11.49'},
+      '200 BR': {B:'3:25.69',BB:'3:10.99',A:'2:56.29',AA:'2:48.99',AAA:'2:41.69',AAAA:'2:34.29'},
+      '50 FL':  {B:'36.89',BB:'34.29',A:'31.59',AA:'30.29',AAA:'28.99',AAAA:'27.69'},
+      '100 FL': {B:'1:25.79',BB:'1:18.89',A:'1:12.09',AA:'1:08.59',AAA:'1:05.19',AAAA:'1:01.79'},
+      '200 FL': {B:'3:03.39',BB:'2:50.29',A:'2:37.19',AA:'2:30.59',AAA:'2:24.09',AAAA:'2:17.59'},
+      '100 IM': {B:'1:25.19',BB:'1:19.09',A:'1:13.09',AA:'1:09.99',AAA:'1:06.99',AAAA:'1:03.89'},
+      '200 IM': {B:'3:03.89',BB:'2:50.69',A:'2:37.59',AA:'2:30.99',AAA:'2:24.49',AAAA:'2:17.89'},
+      '400 IM': {B:'6:31.69',BB:'6:03.69',A:'5:35.79',AA:'5:21.79',AAA:'5:07.79',AAAA:'4:53.79'},
+    },
+    '13-14':{
+      '50 FR':  {B:'32.49',BB:'30.19',A:'27.89',AA:'26.69',AAA:'25.59',AAAA:'24.39'},
+      '100 FR': {B:'1:10.99',BB:'1:05.89',A:'1:00.89',AA:'58.29',AAA:'55.79',AAAA:'53.29'},
+      '200 FR': {B:'2:33.59',BB:'2:22.69',A:'2:11.69',AA:'2:06.19',AAA:'2:00.69',AAAA:'1:55.29'},
+      '500 FR': {B:'6:52.19',BB:'6:22.79',A:'5:53.39',AA:'5:38.59',AAA:'5:23.89',AAAA:'5:09.19'},
+      '1000 FR':{B:'14:11.09',BB:'13:10.29',A:'12:09.49',AA:'11:39.09',AAA:'11:08.69',AAAA:'10:38.29'},
+      '1650 FR':{B:'23:42.89',BB:'22:01.19',A:'20:19.59',AA:'19:28.79',AAA:'18:37.99',AAAA:'17:47.19'},
+      '50 BK':  {B:'36.19',BB:'33.69',A:'31.09',AA:'29.79',AAA:'28.49',AAAA:'27.19'},
+      '100 BK': {B:'1:16.89',BB:'1:11.39',A:'1:05.89',AA:'1:03.19',AAA:'1:00.49',AAAA:'57.69'},
+      '200 BK': {B:'2:46.39',BB:'2:34.49',A:'2:22.59',AA:'2:16.69',AAA:'2:10.69',AAAA:'2:04.79'},
+      '50 BR':  {B:'42.09',BB:'39.09',A:'36.09',AA:'34.59',AAA:'33.09',AAAA:'31.59'},
+      '100 BR': {B:'1:28.69',BB:'1:22.29',A:'1:15.99',AA:'1:12.89',AAA:'1:09.69',AAAA:'1:06.49'},
+      '200 BR': {B:'3:10.99',BB:'2:57.39',A:'2:43.79',AA:'2:36.89',AAA:'2:30.09',AAAA:'2:23.29'},
+      '50 FL':  {B:'35.79',BB:'33.29',A:'30.69',AA:'29.39',AAA:'28.19',AAAA:'26.89'},
+      '100 FL': {B:'1:16.79',BB:'1:11.29',A:'1:05.89',AA:'1:03.09',AAA:'1:00.39',AAAA:'57.59'},
+      '200 FL': {B:'2:51.19',BB:'2:38.99',A:'2:26.69',AA:'2:20.59',AAA:'2:14.49',AAAA:'2:08.39'},
+      '200 IM': {B:'2:51.79',BB:'2:39.49',A:'2:27.19',AA:'2:21.09',AAA:'2:14.99',AAAA:'2:08.79'},
+      '400 IM': {B:'6:05.79',BB:'5:39.69',A:'5:13.49',AA:'5:00.49',AAA:'4:47.39',AAAA:'4:34.29'},
+    },
+    '15-16':{
+      '50 FR':  {B:'31.79',BB:'29.49',A:'27.29',AA:'26.09',AAA:'24.99',AAAA:'23.89'},
+      '100 FR': {B:'1:08.79',BB:'1:03.79',A:'58.89',AA:'56.49',AAA:'53.99',AAAA:'51.59'},
+      '200 FR': {B:'2:28.99',BB:'2:18.39',A:'2:07.69',AA:'2:02.39',AAA:'1:57.09',AAAA:'1:51.79'},
+      '500 FR': {B:'6:40.99',BB:'6:12.39',A:'5:43.69',AA:'5:29.39',AAA:'5:15.09',AAAA:'5:00.79'},
+      '1000 FR':{B:'13:52.89',BB:'12:53.49',A:'11:53.99',AA:'11:24.19',AAA:'10:54.49',AAAA:'10:24.69'},
+      '1650 FR':{B:'23:15.89',BB:'21:36.19',A:'19:56.49',AA:'19:06.69',AAA:'18:16.79',AAAA:'17:26.89'},
+      '50 BK':  {B:'35.29',BB:'32.69',A:'30.19',AA:'28.99',AAA:'27.69',AAAA:'26.49'},
+      '100 BK': {B:'1:14.69',BB:'1:09.39',A:'1:04.09',AA:'1:01.39',AAA:'58.69',AAAA:'56.09'},
+      '200 BK': {B:'2:42.19',BB:'2:30.59',A:'2:19.09',AA:'2:13.29',AAA:'2:07.49',AAAA:'2:01.69'},
+      '50 BR':  {B:'41.09',BB:'38.19',A:'35.19',AA:'33.79',AAA:'32.29',AAAA:'30.79'},
+      '100 BR': {B:'1:25.89',BB:'1:19.79',A:'1:13.69',AA:'1:10.59',AAA:'1:07.49',AAAA:'1:04.49'},
+      '200 BR': {B:'3:05.99',BB:'2:52.69',A:'2:39.39',AA:'2:32.79',AAA:'2:26.19',AAAA:'2:19.49'},
+      '50 FL':  {B:'34.69',BB:'32.29',A:'29.79',AA:'28.59',AAA:'27.29',AAAA:'26.09'},
+      '100 FL': {B:'1:14.39',BB:'1:09.09',A:'1:03.79',AA:'1:01.09',AAA:'58.39',AAAA:'55.79'},
+      '200 FL': {B:'2:45.79',BB:'2:33.99',A:'2:22.09',AA:'2:16.19',AAA:'2:10.29',AAAA:'2:04.39'},
+      '200 IM': {B:'2:46.19',BB:'2:34.29',A:'2:22.39',AA:'2:16.49',AAA:'2:10.59',AAAA:'2:04.59'},
+      '400 IM': {B:'5:54.99',BB:'5:29.69',A:'5:04.29',AA:'4:51.59',AAA:'4:38.99',AAAA:'4:26.29'},
+    },
+    '17-18':{
+      '50 FR':  {B:'31.39',BB:'29.09',A:'26.89',AA:'25.79',AAA:'24.69',AAAA:'23.49'},
+      '100 FR': {B:'1:08.09',BB:'1:03.19',A:'58.39',AA:'55.89',AAA:'53.49',AAAA:'51.09'},
+      '200 FR': {B:'2:27.19',BB:'2:16.69',A:'2:06.19',AA:'2:00.89',AAA:'1:55.69',AAAA:'1:50.39'},
+      '500 FR': {B:'6:36.49',BB:'6:08.19',A:'5:39.89',AA:'5:25.69',AAA:'5:11.59',AAAA:'4:57.39'},
+      '1000 FR':{B:'13:46.09',BB:'12:47.09',A:'11:48.09',AA:'11:18.59',AAA:'10:49.09',AAAA:'10:19.59'},
+      '1650 FR':{B:'22:47.19',BB:'21:09.59',A:'19:31.89',AA:'18:43.09',AAA:'17:54.29',AAAA:'17:05.39'},
+      '50 BK':  {B:'34.59',BB:'32.19',A:'29.69',AA:'28.39',AAA:'27.19',AAAA:'25.99'},
+      '100 BK': {B:'1:13.39',BB:'1:08.09',A:'1:02.89',AA:'1:00.29',AAA:'57.69',AAAA:'54.99'},
+      '200 BK': {B:'2:38.79',BB:'2:27.39',A:'2:16.09',AA:'2:10.39',AAA:'2:04.79',AAAA:'1:59.09'},
+      '50 BR':  {B:'40.39',BB:'37.49',A:'34.59',AA:'33.19',AAA:'31.69',AAAA:'30.29'},
+      '100 BR': {B:'1:24.79',BB:'1:18.79',A:'1:12.69',AA:'1:09.69',AAA:'1:06.69',AAAA:'1:03.59'},
+      '200 BR': {B:'3:04.69',BB:'2:51.49',A:'2:38.29',AA:'2:31.69',AAA:'2:25.09',AAAA:'2:18.49'},
+      '50 FL':  {B:'34.49',BB:'31.99',A:'29.59',AA:'28.29',AAA:'27.09',AAAA:'25.89'},
+      '100 FL': {B:'1:13.59',BB:'1:08.29',A:'1:03.09',AA:'1:00.39',AAA:'57.79',AAAA:'55.19'},
+      '200 FL': {B:'2:42.79',BB:'2:31.19',A:'2:19.49',AA:'2:13.69',AAA:'2:07.89',AAAA:'2:02.09'},
+      '200 IM': {B:'2:43.59',BB:'2:31.89',A:'2:20.19',AA:'2:14.39',AAA:'2:08.49',AAAA:'2:02.69'},
+      '400 IM': {B:'5:50.69',BB:'5:25.59',A:'5:00.59',AA:'4:47.99',AAA:'4:35.49',AAAA:'4:22.99'},
+    },
+  },
+  boys:{
+    '10u':{
+      '50 FR':  {B:'38.19',BB:'34.59',A:'31.09',AA:'29.89',AAA:'28.69',AAAA:'27.49'},
+      '100 FR': {B:'1:27.99',BB:'1:18.89',A:'1:09.79',AA:'1:06.79',AAA:'1:03.79',AAAA:'1:00.69'},
+      '200 FR': {B:'3:09.49',BB:'2:50.59',A:'2:31.59',AA:'2:25.29',AAA:'2:18.99',AAAA:'2:12.69'},
+      '500 FR': {B:'8:24.29',BB:'7:33.79',A:'6:43.39',AA:'6:26.59',AAA:'6:09.79',AAAA:'5:52.99'},
+      '50 BK':  {B:'48.29',BB:'42.89',A:'37.59',AA:'35.79',AAA:'33.99',AAAA:'32.19'},
+      '100 BK': {B:'1:40.69',BB:'1:30.09',A:'1:19.59',AA:'1:16.09',AAA:'1:12.49',AAAA:'1:08.99'},
+      '50 BR':  {B:'53.39',BB:'47.69',A:'42.09',AA:'40.19',AAA:'38.29',AAAA:'36.39'},
+      '100 BR': {B:'1:54.09',BB:'1:42.29',A:'1:30.59',AA:'1:26.59',AAA:'1:22.69',AAAA:'1:18.79'},
+      '50 FL':  {B:'46.49',BB:'41.29',A:'35.99',AA:'34.29',AAA:'32.59',AAAA:'30.79'},
+      '100 FL': {B:'1:53.49',BB:'1:38.99',A:'1:24.39',AA:'1:19.49',AAA:'1:14.59',AAAA:'1:09.79'},
+      '100 IM': {B:'1:39.69',BB:'1:29.69',A:'1:19.69',AA:'1:16.39',AAA:'1:13.09',AAAA:'1:09.79'},
+      '200 IM': {B:'3:38.59',BB:'3:15.99',A:'2:53.49',AA:'2:45.89',AAA:'2:38.39',AAAA:'2:30.89'},
+    },
+    '11-12':{
+      '50 FR':  {B:'32.79',BB:'30.49',A:'28.09',AA:'26.99',AAA:'25.79',AAAA:'24.59'},
+      '100 FR': {B:'1:11.49',BB:'1:06.39',A:'1:01.29',AA:'58.69',AAA:'56.19',AAAA:'53.59'},
+      '200 FR': {B:'2:35.99',BB:'2:24.89',A:'2:13.69',AA:'2:08.19',AAA:'2:02.59',AAAA:'1:56.99'},
+      '500 FR': {B:'6:59.89',BB:'6:29.99',A:'5:59.99',AA:'5:44.99',AAA:'5:29.99',AAAA:'5:14.99'},
+      '1000 FR':{B:'14:43.49',BB:'13:40.39',A:'12:37.29',AA:'12:05.79',AAA:'11:34.19',AAAA:'11:02.59'},
+      '1650 FR':{B:'24:27.69',BB:'22:42.89',A:'20:58.09',AA:'20:05.59',AAA:'19:13.19',AAAA:'18:20.79'},
+      '50 BK':  {B:'38.49',BB:'35.59',A:'32.69',AA:'31.19',AAA:'29.69',AAAA:'28.19'},
+      '100 BK': {B:'1:22.19',BB:'1:15.69',A:'1:09.29',AA:'1:05.99',AAA:'1:02.79',AAAA:'59.49'},
+      '200 BK': {B:'2:52.89',BB:'2:40.49',A:'2:28.19',AA:'2:21.99',AAA:'2:15.89',AAAA:'2:09.69'},
+      '50 BR':  {B:'43.49',BB:'40.09',A:'36.69',AA:'34.99',AAA:'33.29',AAAA:'31.49'},
+      '100 BR': {B:'1:32.59',BB:'1:25.49',A:'1:18.39',AA:'1:14.89',AAA:'1:11.39',AAAA:'1:07.79'},
+      '200 BR': {B:'3:16.39',BB:'3:02.39',A:'2:48.39',AA:'2:41.39',AAA:'2:34.39',AAAA:'2:27.29'},
+      '50 FL':  {B:'37.09',BB:'34.19',A:'31.19',AA:'29.69',AAA:'28.19',AAAA:'26.69'},
+      '100 FL': {B:'1:22.89',BB:'1:16.09',A:'1:09.29',AA:'1:05.89',AAA:'1:02.49',AAAA:'59.09'},
+      '200 FL': {B:'2:56.59',BB:'2:43.99',A:'2:31.39',AA:'2:24.99',AAA:'2:18.69',AAAA:'2:12.39'},
+      '100 IM': {B:'1:21.89',BB:'1:15.89',A:'1:09.99',AA:'1:06.99',AAA:'1:03.99',AAAA:'1:01.09'},
+      '200 IM': {B:'2:59.29',BB:'2:45.79',A:'2:32.29',AA:'2:25.59',AAA:'2:18.79',AAAA:'2:12.09'},
+      '400 IM': {B:'6:17.09',BB:'5:50.09',A:'5:23.19',AA:'5:09.79',AAA:'4:56.29',AAAA:'4:42.79'},
+    },
+    '13-14':{
+      '50 FR':  {B:'29.89',BB:'27.69',A:'25.59',AA:'24.59',AAA:'23.49',AAAA:'22.39'},
+      '100 FR': {B:'1:04.99',BB:'1:00.29',A:'55.69',AA:'53.39',AAA:'51.09',AAAA:'48.69'},
+      '200 FR': {B:'2:22.49',BB:'2:12.29',A:'2:02.19',AA:'1:57.09',AAA:'1:51.99',AAAA:'1:46.89'},
+      '500 FR': {B:'6:25.69',BB:'5:58.19',A:'5:30.59',AA:'5:16.89',AAA:'5:03.09',AAAA:'4:49.29'},
+      '1000 FR':{B:'13:17.99',BB:'12:20.99',A:'11:23.99',AA:'10:55.49',AAA:'10:26.99',AAAA:'9:58.49'},
+      '1650 FR':{B:'22:22.89',BB:'20:46.99',A:'19:11.09',AA:'18:23.09',AAA:'17:35.19',AAAA:'16:47.19'},
+      '50 BK':  {B:'33.69',BB:'31.29',A:'28.89',AA:'27.69',AAA:'26.49',AAAA:'25.29'},
+      '100 BK': {B:'1:11.29',BB:'1:06.19',A:'1:01.09',AA:'58.59',AAA:'55.99',AAAA:'53.49'},
+      '200 BK': {B:'2:34.69',BB:'2:23.69',A:'2:12.59',AA:'2:07.09',AAA:'2:01.59',AAAA:'1:55.99'},
+      '50 BR':  {B:'38.59',BB:'35.79',A:'33.09',AA:'31.69',AAA:'30.29',AAAA:'28.89'},
+      '100 BR': {B:'1:20.49',BB:'1:14.79',A:'1:08.99',AA:'1:06.19',AAA:'1:03.29',AAAA:'1:00.39'},
+      '200 BR': {B:'2:54.89',BB:'2:42.39',A:'2:29.89',AA:'2:23.59',AAA:'2:17.39',AAAA:'2:11.19'},
+      '50 FL':  {B:'33.19',BB:'30.79',A:'28.39',AA:'27.19',AAA:'26.09',AAAA:'24.89'},
+      '100 FL': {B:'1:10.49',BB:'1:05.49',A:'1:00.39',AA:'57.89',AAA:'55.39',AAAA:'52.89'},
+      '200 FL': {B:'2:36.79',BB:'2:25.59',A:'2:14.39',AA:'2:08.79',AAA:'2:03.19',AAAA:'1:57.59'},
+      '200 IM': {B:'2:37.99',BB:'2:26.69',A:'2:15.39',AA:'2:09.79',AAA:'2:04.09',AAAA:'1:58.49'},
+      '400 IM': {B:'5:37.69',BB:'5:13.59',A:'4:49.49',AA:'4:37.39',AAA:'4:25.39',AAAA:'4:13.29'},
+    },
+    '15-16':{
+      '50 FR':  {B:'28.29',BB:'26.29',A:'24.19',AA:'23.19',AAA:'22.19',AAAA:'21.19'},
+      '100 FR': {B:'1:01.99',BB:'57.59',A:'53.19',AA:'50.99',AAA:'48.79',AAAA:'46.49'},
+      '200 FR': {B:'2:15.99',BB:'2:06.29',A:'1:56.59',AA:'1:51.79',AAA:'1:46.89',AAAA:'1:41.99'},
+      '500 FR': {B:'6:08.39',BB:'5:42.09',A:'5:15.79',AA:'5:02.69',AAA:'4:49.49',AAAA:'4:36.29'},
+      '1000 FR':{B:'12:51.79',BB:'11:56.69',A:'11:01.59',AA:'10:33.99',AAA:'10:06.39',AAAA:'9:38.89'},
+      '1650 FR':{B:'21:26.59',BB:'19:54.69',A:'18:22.79',AA:'17:36.89',AAA:'16:50.89',AAAA:'16:04.99'},
+      '50 BK':  {B:'31.79',BB:'29.49',A:'27.19',AA:'26.09',AAA:'24.99',AAAA:'23.79'},
+      '100 BK': {B:'1:07.49',BB:'1:02.69',A:'57.89',AA:'55.49',AAA:'53.09',AAAA:'50.69'},
+      '200 BK': {B:'2:27.59',BB:'2:17.09',A:'2:06.59',AA:'2:01.29',AAA:'1:55.99',AAAA:'1:50.69'},
+      '50 BR':  {B:'36.69',BB:'34.09',A:'31.39',AA:'30.09',AAA:'28.79',AAAA:'27.49'},
+      '100 BR': {B:'1:16.89',BB:'1:11.39',A:'1:05.89',AA:'1:03.19',AAA:'1:00.39',AAAA:'57.69'},
+      '200 BR': {B:'2:47.09',BB:'2:35.19',A:'2:23.19',AA:'2:17.29',AAA:'2:11.29',AAAA:'2:05.29'},
+      '50 FL':  {B:'31.59',BB:'29.29',A:'27.09',AA:'25.89',AAA:'24.79',AAAA:'23.69'},
+      '100 FL': {B:'1:07.19',BB:'1:02.39',A:'57.59',AA:'55.19',AAA:'52.79',AAAA:'50.39'},
+      '200 FL': {B:'2:30.19',BB:'2:19.49',A:'2:08.79',AA:'2:03.39',AAA:'1:58.09',AAAA:'1:52.69'},
+      '200 IM': {B:'2:30.89',BB:'2:20.19',A:'2:09.39',AA:'2:03.99',AAA:'1:58.59',AAAA:'1:53.19'},
+      '400 IM': {B:'5:22.19',BB:'4:59.19',A:'4:36.19',AA:'4:24.69',AAA:'4:13.19',AAAA:'4:01.59'},
+    },
+    '17-18':{
+      '50 FR':  {B:'27.59',BB:'25.59',A:'23.59',AA:'22.59',AAA:'21.69',AAAA:'20.69'},
+      '100 FR': {B:'1:00.29',BB:'55.99',A:'51.69',AA:'49.59',AAA:'47.39',AAAA:'45.29'},
+      '200 FR': {B:'2:13.59',BB:'2:03.99',A:'1:54.49',AA:'1:49.69',AAA:'1:44.99',AAAA:'1:40.19'},
+      '500 FR': {B:'6:03.19',BB:'5:37.29',A:'5:11.39',AA:'4:58.39',AAA:'4:45.39',AAAA:'4:32.39'},
+      '1000 FR':{B:'12:40.19',BB:'11:45.89',A:'10:51.59',AA:'10:24.49',AAA:'9:57.29',AAAA:'9:30.19'},
+      '1650 FR':{B:'21:08.99',BB:'19:38.39',A:'18:07.69',AA:'17:22.39',AAA:'16:37.09',AAAA:'15:51.79'},
+      '50 BK':  {B:'30.79',BB:'28.59',A:'26.39',AA:'25.29',AAA:'24.19',AAAA:'23.09'},
+      '100 BK': {B:'1:05.19',BB:'1:00.59',A:'55.89',AA:'53.59',AAA:'51.29',AAAA:'48.89'},
+      '200 BK': {B:'2:23.89',BB:'2:13.59',A:'2:03.29',AA:'1:58.19',AAA:'1:53.09',AAAA:'1:47.89'},
+      '50 BR':  {B:'35.39',BB:'32.89',A:'30.39',AA:'29.09',AAA:'27.89',AAAA:'26.59'},
+      '100 BR': {B:'1:14.69',BB:'1:09.39',A:'1:03.99',AA:'1:01.39',AAA:'58.69',AAAA:'55.99'},
+      '200 BR': {B:'2:42.29',BB:'2:30.69',A:'2:19.09',AA:'2:13.29',AAA:'2:07.49',AAAA:'2:01.69'},
+      '50 FL':  {B:'30.59',BB:'28.39',A:'26.19',AA:'25.09',AAA:'23.99',AAAA:'22.99'},
+      '100 FL': {B:'1:05.39',BB:'1:00.79',A:'56.09',AA:'53.69',AAA:'51.39',AAAA:'49.09'},
+      '200 FL': {B:'2:26.39',BB:'2:15.99',A:'2:05.49',AA:'2:00.29',AAA:'1:55.09',AAAA:'1:49.79'},
+      '200 IM': {B:'2:27.39',BB:'2:16.89',A:'2:06.39',AA:'2:01.09',AAA:'1:55.89',AAAA:'1:50.59'},
+      '400 IM': {B:'5:17.39',BB:'4:54.69',A:'4:31.99',AA:'4:20.69',AAA:'4:09.39',AAAA:'3:57.99'},
+    },
+  }
+};
+
+const MOT_EVENTS_10U = ['50 FR','100 FR','200 FR','500 FR','50 BK','100 BK','50 BR','100 BR','50 FL','100 FL','100 IM','200 IM'];
+const MOT_EVENTS_FULL = ['50 FR','100 FR','200 FR','500 FR','1000 FR','1650 FR','50 BK','100 BK','200 BK','50 BR','100 BR','200 BR','50 FL','100 FL','200 FL','100 IM','200 IM','400 IM'];
+const TIER_ORDER = ['AAAA','AAA','AA','A','BB','B'];
+
+function motEventList(ageGroup) {
+  return ageGroup === '10u' ? MOT_EVENTS_10U : MOT_EVENTS_FULL;
+}
+
+function getMotTier(event, swimmerTime, ageGroup, gender) {
+  const cuts = MOT[gender]?.[ageGroup]?.[event];
+  if (!cuts || !swimmerTime) return null;
+  for (const tier of TIER_ORDER) {
+    if (toSec(swimmerTime) <= toSec(cuts[tier])) return tier;
+  }
+  return null;
+}
+
+// ── RENDER MOTIVATIONAL ───────────────────────────────────────────────────────
+
+function renderMOT() {
+  const data   = MOT[currentGender]?.[currentFwAge] || {};
+  const times  = swimmerData?.times || {};
+  const hasSwimmer = !!swimmerData;
+  const events = motEventList(currentFwAge);
+
+  const gLbl = currentGender === 'girls' ? 'Girls' : 'Boys';
+  const aMap = {'10u':'10 &amp; Under','11-12':'11–12','13-14':'13–14','15-16':'15–16','17-18':'17–18'};
+  document.getElementById('motSectionHdr').innerHTML =
+    `2024–2028 USA Motivational Standards · ${gLbl} · ${aMap[currentFwAge] || currentFwAge}`;
+
+  const yourHdr = hasSwimmer ? '<th style="color:var(--green3)">Your Best</th>' : '';
+
+  const rows = events.map(ev => {
+    const cuts = data[ev];
+    const sc   = sdot(ev);
+    if (!cuts) return '';
+
+    const yt     = times[ev];
+    const tier   = yt ? getMotTier(ev, yt, currentFwAge, currentGender) : null;
+    const isQual = !!tier;
+    const pct    = !isQual && yt ? pctOver(yt, cuts.B) : null;
+    const cls    = isQual ? ' class="qualifies"' : (pct !== null && pct < 8 ? ' class="close"' : '');
+
+    let yourCell = '';
+    if (hasSwimmer) {
+      if (yt) {
+        const tierBadge = tier
+          ? ` <span class="tier-pill-sm tier-${tier}">${tier}</span>`
+          : (pct !== null && pct < 8 ? ` <span class="ctag">+${pct.toFixed(1)}%</span>` : '');
+        yourCell = `<td class="mot-your" style="text-align:right">${yt}${tierBadge}</td>`;
+      } else {
+        yourCell = `<td class="na" style="text-align:right">—</td>`;
+      }
+    }
+
+    return `<tr${cls}>
+      <td><div class="ecell"><div class="sdot ${sc}"></div><span class="ename">${ev}</span></div></td>
+      <td class="mot-time-aaaa">${cuts.AAAA}</td>
+      <td class="mot-time-aaa">${cuts.AAA}</td>
+      <td class="mot-time-aa">${cuts.AA}</td>
+      <td class="mot-time-a">${cuts.A}</td>
+      <td class="mot-time-bb">${cuts.BB}</td>
+      <td class="mot-time-b">${cuts.B}</td>
+      ${yourCell}
+    </tr>`;
+  }).join('');
+
+  document.getElementById('table-mot').innerHTML = `
+    <table class="mot-table">
+      <thead><tr>
+        <th>Event</th>
+        <th class="mot-hdr-aaaa">AAAA</th>
+        <th class="mot-hdr-aaa">AAA</th>
+        <th class="mot-hdr-aa">AA</th>
+        <th class="mot-hdr-a">A</th>
+        <th class="mot-hdr-bb">BB</th>
+        <th class="mot-hdr-b">B</th>
+        ${yourHdr}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
 // ── UTILITIES ─────────────────────────────────────────────────────────────────
 
 function sdot(event) {
@@ -286,7 +603,7 @@ function pctOver(swimmer, cut) {
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 
-let currentTab    = '8under';
+let currentTab    = 'mot';
 let currentGender = 'girls';
 let currentAgcAge = '10u';
 let currentFwAge  = '10u';
@@ -446,7 +763,7 @@ function renderFW() {
     </table>`;
 }
 
-function renderAll() { render8under(); renderAGC(); renderFW(); }
+function renderAll() { renderMOT(); render8under(); renderAGC(); renderFW(); }
 
 // ── AGE HELPERS ───────────────────────────────────────────────────────────────
 
@@ -537,7 +854,7 @@ document.querySelectorAll('.tab').forEach(t => {
     } else {
       ctrl.classList.remove('hidden');
       document.getElementById('agcAgePills').classList.toggle('hidden', currentTab !== 'agc');
-      document.getElementById('fwAgePills').classList.toggle('hidden', currentTab !== 'fw');
+      document.getElementById('fwAgePills').classList.toggle('hidden', currentTab !== 'fw' && currentTab !== 'mot');
     }
   });
 });
@@ -547,7 +864,7 @@ document.querySelectorAll('[data-gender]').forEach(p => {
     currentGender = p.dataset.gender;
     document.querySelectorAll('[data-gender]').forEach(x => x.classList.remove('active'));
     p.classList.add('active');
-    renderAGC(); renderFW();
+    renderMOT(); renderAGC(); renderFW();
   });
 });
 
@@ -565,7 +882,7 @@ document.querySelectorAll('#fwAgePills .pill').forEach(p => {
     currentFwAge = p.dataset.age;
     document.querySelectorAll('#fwAgePills .pill').forEach(x => x.classList.remove('active'));
     p.classList.add('active');
-    renderFW();
+    renderMOT(); renderFW();
   });
 });
 

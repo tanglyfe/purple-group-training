@@ -125,7 +125,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword, sendEmailVerification,
-  GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged
+  GoogleAuthProvider, signInWithPopup, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
@@ -142,36 +142,10 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-// If already signed in, redirect
-// Handle redirect result FIRST before onAuthStateChanged can act
-let redirectHandled = false;
-
-getRedirectResult(auth).then(async result => {
-  redirectHandled = true;
-  if (!result) {
-    // No redirect result — let onAuthStateChanged handle existing sessions
-    onAuthStateChanged(auth, async user => {
-      if (user) await redirectByRole(user);
-    });
-    return;
-  }
-  // Came back from Google redirect
-  const snap = await getDoc(doc(db, 'users', result.user.uid));
-  if (!snap.exists()) {
-    sessionStorage.setItem('google_pending_uid',   result.user.uid);
-    sessionStorage.setItem('google_pending_name',  result.user.displayName || '');
-    sessionStorage.setItem('google_pending_email', result.user.email || '');
-    window.location.href = 'register.html?google=1';
-  } else {
-    await redirectByRole(result.user);
-  }
-}).catch(e => {
-  redirectHandled = true;
-  if (e.code !== 'auth/popup-closed-by-user') showError('Google sign in failed — please try again');
-  // Fall back to normal session handling
-  onAuthStateChanged(auth, async user => {
-    if (user) await redirectByRole(user);
-  });
+// If already signed in, redirect immediately (skip if mid-Google-popup)
+let googleInProgress = false;
+onAuthStateChanged(auth, async user => {
+  if (user && !googleInProgress) await redirectByRole(user);
 });
 
 async function redirectByRole(user) {
@@ -254,11 +228,25 @@ document.getElementById('password').addEventListener('keydown', e => {
 // Google sign in
 document.getElementById('google-btn').addEventListener('click', async () => {
   setLoading(true);
+  googleInProgress = true;
   try {
     const provider = new GoogleAuthProvider();
-    await signInWithRedirect(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    const snap = await getDoc(doc(db, 'users', result.user.uid));
+    if (!snap.exists()) {
+      // New user — send to register to pick role
+      sessionStorage.setItem('google_pending_uid',   result.user.uid);
+      sessionStorage.setItem('google_pending_name',  result.user.displayName || '');
+      sessionStorage.setItem('google_pending_email', result.user.email || '');
+      window.location.href = 'register.html?google=1';
+    } else {
+      await redirectByRole(result.user);
+    }
   } catch(e) {
-    showError('Google sign in failed — please try again');
+    googleInProgress = false;
+    if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
+      showError('Google sign in failed — please try again');
+    }
     setLoading(false);
   }
 });
