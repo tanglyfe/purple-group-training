@@ -76,6 +76,20 @@
   .child-field{display:none;}
   .child-field.show{display:block;}
 
+  /* Email verification banner */
+  .verify-banner{display:none;text-align:center;padding:1.5rem 1rem;}
+  .verify-banner.show{display:block;}
+  .verify-icon{font-size:2.5rem;margin-bottom:.75rem;}
+  .verify-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.04em;margin-bottom:.5rem;}
+  .verify-desc{font-size:.85rem;color:var(--grey);line-height:1.6;margin-bottom:1.25rem;}
+  .verify-email{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--light);background:rgba(33,150,243,0.08);border:1px solid rgba(33,150,243,0.15);border-radius:2px;padding:.35rem .65rem;display:inline-block;margin-bottom:1.25rem;}
+  .btn-resend{background:none;border:1px solid rgba(139,163,192,0.3);border-radius:2px;color:var(--grey);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;padding:.5rem 1rem;cursor:pointer;transition:all .2s;}
+  .btn-resend:hover{border-color:var(--mid);color:var(--light);}
+  .btn-resend:disabled{opacity:.4;cursor:not-allowed;}
+  .verify-signin{margin-top:1rem;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;}
+  .verify-signin a{color:var(--light);text-decoration:none;}
+  .verify-signin a:hover{color:var(--white);}
+
   .section-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;margin-bottom:.75rem;margin-top:.25rem;}
 </style>
 </head>
@@ -167,6 +181,17 @@
 
     <div class="error-msg" id="error-msg"></div>
     <div class="success-msg" id="success-msg"></div>
+
+    <!-- Email verification state -->
+    <div class="verify-banner" id="verify-banner">
+      <div class="verify-icon">📬</div>
+      <div class="verify-title">Check Your Email</div>
+      <div class="verify-desc">We sent a verification link to</div>
+      <div class="verify-email" id="verify-email-display"></div>
+      <div class="verify-desc">Click the link in the email to activate your account, then sign in.</div>
+      <button class="btn-resend" id="resend-btn">Resend verification email</button>
+      <div class="verify-signin">Already verified? <a href="login.html">Sign in</a></div>
+    </div>
   </div>
 
   <div class="footer-links">
@@ -179,7 +204,7 @@
 <script type="module">
 import { initializeApp }        from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
-  getAuth, createUserWithEmailAndPassword, updateProfile,
+  getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification,
   GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
@@ -249,9 +274,12 @@ getRedirectResult(auth).then(async result => {
   }
 }).catch(e => console.error('Redirect result error:', e));
 
-// If already fully registered, redirect
+// If already fully registered AND verified, redirect
 onAuthStateChanged(auth, async user => {
   if (user && !isGooglePending) {
+    // Don't redirect unverified email/password users — they need to verify first
+    const isPasswordUser = user.providerData.some(p => p.providerId === 'password');
+    if (isPasswordUser && !user.emailVerified) return;
     const snap = await getDoc(doc(db, 'users', user.uid));
     if (snap.exists()) window.location.href = 'dashboard.html';
   }
@@ -276,6 +304,46 @@ function setLoading(on) {
     if (el) el.disabled = on;
   });
 }
+
+function showVerifyBanner(email) {
+  // Hide all form content, show only the verify state
+  document.getElementById('email-section').style.display = 'none';
+  document.getElementById('google-complete-section').style.display = 'none';
+  document.querySelector('.role-grid').style.display = 'none';
+  document.querySelector('.section-label').style.display = 'none';
+  document.getElementById('child-field').style.display = 'none';
+  document.getElementById('error-msg').style.display = 'none';
+  document.getElementById('success-msg').style.display = 'none';
+  document.getElementById('verify-email-display').textContent = email;
+  document.getElementById('verify-banner').classList.add('show');
+  document.querySelector('.auth-title').textContent = 'Account Created';
+}
+
+// Resend verification email
+document.getElementById('resend-btn')?.addEventListener('click', async () => {
+  const btn = document.getElementById('resend-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      await sendEmailVerification(user);
+      btn.textContent = 'Email sent!';
+      setTimeout(() => {
+        btn.textContent = 'Resend verification email';
+        btn.disabled = false;
+      }, 5000);
+    } else {
+      btn.textContent = 'Session expired — please register again';
+    }
+  } catch(e) {
+    btn.textContent = 'Too many requests — wait a moment';
+    setTimeout(() => {
+      btn.textContent = 'Resend verification email';
+      btn.disabled = false;
+    }, 10000);
+  }
+});
 
 async function createUserProfile(uid, data) {
   await setDoc(doc(db, 'users', uid), {
@@ -309,8 +377,14 @@ document.getElementById('register-btn')?.addEventListener('click', async () => {
       role: selectedRole,
       ...(selectedRole === 'parent' ? { childName: child } : {})
     });
-    showSuccess('Account created! Redirecting…');
-    setTimeout(() => window.location.href = 'dashboard.html', 1200);
+    // Send verification email
+    try {
+      await sendEmailVerification(cred.user);
+    } catch(verifyErr) {
+      console.warn('sendEmailVerification failed:', verifyErr);
+    }
+    // Show verify-your-email state instead of redirecting
+    showVerifyBanner(email);
   } catch(e) {
     const msgs = {
       'auth/email-already-in-use': 'An account with this email already exists',

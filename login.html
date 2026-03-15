@@ -54,6 +54,15 @@
   .footer-links span{margin:0 .5rem;opacity:.4;}
 
   .loading{opacity:.5;pointer-events:none;}
+
+  /* Verify-email notice */
+  .verify-notice{display:none;margin-top:.75rem;padding:.75rem 1rem;background:rgba(249,168,37,0.08);border:1px solid rgba(249,168,37,0.25);border-radius:2px;}
+  .verify-notice.show{display:block;}
+  .verify-notice-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem;}
+  .verify-notice-body{font-size:.8rem;color:var(--grey);line-height:1.5;margin-bottom:.6rem;}
+  .btn-resend{background:none;border:1px solid rgba(249,168,37,0.3);border-radius:2px;color:var(--gold);font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;padding:.4rem .8rem;cursor:pointer;transition:all .2s;}
+  .btn-resend:hover{background:rgba(249,168,37,0.08);border-color:var(--gold);}
+  .btn-resend:disabled{opacity:.4;cursor:not-allowed;}
 </style>
 </head>
 <body>
@@ -96,6 +105,13 @@
 
     <div class="error-msg" id="error-msg"></div>
     <div class="success-msg" id="success-msg"></div>
+
+    <!-- Email not verified notice -->
+    <div class="verify-notice" id="verify-notice">
+      <div class="verify-notice-title">📬 Email not verified</div>
+      <div class="verify-notice-body">Check your inbox for a verification link before signing in. Didn't get it?</div>
+      <button class="btn-resend" id="resend-btn">Resend verification email</button>
+    </div>
   </div>
 
   <div class="footer-links">
@@ -108,7 +124,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
-  getAuth, signInWithEmailAndPassword,
+  getAuth, signInWithEmailAndPassword, sendEmailVerification,
   GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
@@ -178,14 +194,26 @@ function setLoading(on) {
   document.body.classList.toggle('loading', on);
 }
 
+// Holds last signed-in-but-unverified user for resend
+let unverifiedUser = null;
+
 // Email/password sign in
 document.getElementById('signin-btn').addEventListener('click', async () => {
   const email    = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
   if (!email || !password) { showError('Please enter your email and password'); return; }
+  document.getElementById('verify-notice').classList.remove('show');
   setLoading(true);
   try {
     const cred = await signInWithEmailAndPassword(auth, email, password);
+    // Google sign-in users skip email verification
+    const isPasswordProvider = cred.user.providerData.some(p => p.providerId === 'password');
+    if (isPasswordProvider && !cred.user.emailVerified) {
+      unverifiedUser = cred.user;
+      document.getElementById('verify-notice').classList.add('show');
+      setLoading(false);
+      return;
+    }
     await redirectByRole(cred.user);
   } catch(e) {
     const msgs = {
@@ -197,6 +225,24 @@ document.getElementById('signin-btn').addEventListener('click', async () => {
     };
     showError(msgs[e.code] || 'Sign in failed — please try again');
     setLoading(false);
+  }
+});
+
+// Resend verification
+document.getElementById('resend-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('resend-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    const user = unverifiedUser || auth.currentUser;
+    if (user) {
+      await sendEmailVerification(user);
+      btn.textContent = 'Sent! Check your inbox';
+      setTimeout(() => { btn.textContent = 'Resend verification email'; btn.disabled = false; }, 6000);
+    }
+  } catch(e) {
+    btn.textContent = 'Too many requests — wait a moment';
+    setTimeout(() => { btn.textContent = 'Resend verification email'; btn.disabled = false; }, 10000);
   }
 });
 

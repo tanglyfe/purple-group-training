@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper: is the caller a coach? ──────────────────────────────────────
+    function isCoach() {
+      return request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'coach';
+    }
+
+    function isAuthed() {
+      return request.auth != null;
+    }
+
+    // ── Users ────────────────────────────────────────────────────────────────
+    // Any authenticated user can create/read/update their own profile.
+    // Coaches can read all user profiles (for the members table on the dashboard).
+    match /users/{userId} {
+      allow create: if isAuthed() && request.auth.uid == userId;
+      allow read:   if isAuthed() && (request.auth.uid == userId || isCoach());
+      allow update: if isAuthed() && request.auth.uid == userId;
+      allow delete: if isCoach();
+    }
+
+    // ── Swimmers ─────────────────────────────────────────────────────────────
+    // All authenticated users can read swimmer records.
+    // Only coaches can write (scraper uses Admin SDK so bypasses these rules).
+    match /swimmers/{swimmerId} {
+      allow read:  if isAuthed();
+      allow write: if isCoach();
+    }
+
+    // ── Meets ────────────────────────────────────────────────────────────────
+    // All authenticated users can read upcoming meets.
+    // Only coaches can add / update / delete meets.
+    match /meets/{meetId} {
+      allow read:  if isAuthed();
+      allow write: if isCoach();
+    }
+
+    // ── Groups ───────────────────────────────────────────────────────────────
+    match /groups/{groupId} {
+      allow read:  if isAuthed();
+      allow write: if isCoach();
+    }
+
+    // ── Attendance ───────────────────────────────────────────────────────────
+    match /attendance/{recordId} {
+      allow read:  if isAuthed();
+      allow write: if isCoach();
+    }
+  }
+}

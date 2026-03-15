@@ -34,12 +34,23 @@ SEASON_END   = datetime(2026, 8, 31, tzinfo=timezone.utc)
 
 # ── FIREBASE INIT ─────────────────────────────────────────────────────────────
 def init_firestore():
+    # 1. GitHub Actions / CI: full JSON blob in env var
     sa_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT")
-    if not sa_json:
-        raise RuntimeError("FIREBASE_SERVICE_ACCOUNT env var not set")
-    sa_info = json.loads(sa_json)
-    creds = service_account.Credentials.from_service_account_info(sa_info)
-    return firestore.Client(project="ssfaquatics", credentials=creds)
+    if sa_json:
+        sa_info = json.loads(sa_json)
+        creds = service_account.Credentials.from_service_account_info(sa_info)
+        return firestore.Client(project="ssfaquatics", credentials=creds)
+
+    # 2. Local dev: key file next to this script
+    key_path = os.path.join(os.path.dirname(__file__), "firebase-adminsdk.json")
+    if os.path.exists(key_path):
+        creds = service_account.Credentials.from_service_account_file(key_path)
+        return firestore.Client(project="ssfaquatics", credentials=creds)
+
+    raise RuntimeError(
+        "No Firebase credentials found. Set FIREBASE_SERVICE_ACCOUNT env var "
+        "or place firebase-adminsdk.json next to scrape.py."
+    )
 
 
 # ── ROSTER SCRAPE ─────────────────────────────────────────────────────────────
