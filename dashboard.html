@@ -206,6 +206,30 @@
   /* ── SIDEBAR COMPAT ── */
   .ssf-main { overflow-y:auto !important; }
   body::before { z-index:-1; }
+
+  /* ── DASHBOARD TABS ── */
+  .dash-tab-bar { display:flex; gap:0; border-bottom:1px solid rgba(33,150,243,0.12); margin-bottom:1.5rem; }
+  .dash-tab-btn { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--grey); background:none; border:none; border-bottom:2px solid transparent; padding:.65rem 1.1rem; cursor:pointer; transition:all .15s; margin-bottom:-1px; }
+  .dash-tab-btn:hover { color:var(--white); }
+  .dash-tab-btn.active { color:var(--light); border-bottom-color:var(--mid); }
+  .dash-pane { display:none; }
+  .dash-pane.active { display:block; }
+
+  /* ── PROFILE FORM ── */
+  .profile-wrap { max-width:520px; }
+  .profile-group { margin-bottom:1.1rem; }
+  .profile-lbl { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.14em; color:var(--grey); text-transform:uppercase; margin-bottom:.3rem; }
+  .profile-inp { width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:2px; color:var(--white); font-family:'DM Sans',sans-serif; font-size:.88rem; padding:.45rem .75rem; outline:none; transition:border-color .2s; }
+  .profile-inp:focus { border-color:var(--mid); }
+  .profile-inp[disabled] { opacity:.4; cursor:not-allowed; }
+  .profile-inp.sel { -webkit-appearance:none; appearance:none; cursor:pointer; }
+  .profile-save { background:rgba(33,150,243,0.15); border:1px solid rgba(33,150,243,0.3); border-radius:2px; color:var(--light); font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; padding:.5rem 1.25rem; cursor:pointer; transition:all .15s; }
+  .profile-save:hover { background:rgba(33,150,243,0.25); }
+  .profile-save:disabled { opacity:.4; cursor:not-allowed; }
+  .profile-ok { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.1em; color:var(--green2); margin-left:.65rem; opacity:0; transition:opacity .3s; }
+  .profile-ok.show { opacity:1; }
+  .profile-child-hdr { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; color:var(--light); padding-top:1.25rem; margin-top:1.25rem; border-top:1px solid rgba(33,150,243,0.1); margin-bottom:.75rem; }
+  .profile-banner { background:rgba(249,168,37,0.06); border:1px solid rgba(249,168,37,0.18); border-radius:2px; padding:.55rem .8rem; margin-bottom:1.5rem; font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.1em; color:var(--gold); cursor:pointer; }
 </style>
 <script src="sidebar.js" defer></script>
 </head>
@@ -563,6 +587,62 @@ function currentAge(s) { return s.age || (s.birthYear ? new Date().getFullYear()
 function initials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
 function dicebearUrl(name, size) { return 'https://api.dicebear.com/9.x/adventurer/svg?seed='+encodeURIComponent(name||'swimmer')+'&backgroundColor=0b1f3a&backgroundType=solid'+(size?'&size='+size:''); }
 function weekOfYear(d) { const s=new Date(d.getFullYear(),0,1); return Math.ceil(((d-s)/86400000+s.getDay()+1)/7); }
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── PROFILE HTML BUILDERS ─────────────────────────────────────────────────────
+function swimmerProfileHtml(user, profile, sw) {
+  const byear  = sw?.birthYear || profile.birthYear || '';
+  const gender = sw?.gender || profile.gender || '';
+  const dname  = profile.displayName || sw?.name || '';
+  return `
+    ${!byear ? `<div class="profile-banner" id="prof-warn">⚠ Birth year not set — age and tier calculations won't work until you add it below.</div>` : ''}
+    <div class="profile-wrap">
+      <div class="section-hdr">My Information</div>
+      <div class="profile-group"><div class="profile-lbl">Display Name</div><input class="profile-inp" id="prof-name" value="${escHtml(dname)}"></div>
+      <div class="profile-group"><div class="profile-lbl">Email</div><input class="profile-inp" disabled value="${escHtml(user.email||'')}"></div>
+      <div class="profile-group"><div class="profile-lbl">Birth Year</div><input class="profile-inp" id="prof-byear" type="number" min="2000" max="2020" placeholder="e.g. 2011" value="${escHtml(byear)}"></div>
+      <div class="profile-group"><div class="profile-lbl">Gender</div>
+        <select class="profile-inp sel" id="prof-gender">
+          <option value="">— Select —</option>
+          <option value="F"${gender==='F'?' selected':''}>Female</option>
+          <option value="M"${gender==='M'?' selected':''}>Male</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;margin-top:1.5rem">
+        <button class="profile-save" id="prof-save">Save Profile</button>
+        <span class="profile-ok" id="prof-ok">✓ Saved</span>
+      </div>
+    </div>`;
+}
+
+function parentProfileHtml(user, profile, swimmers, childNames) {
+  const dname = profile.displayName || '';
+  const childForms = childNames.map((name, i) => {
+    const sw     = swimmers[i];
+    const byear  = sw?.birthYear || '';
+    const gender = sw?.gender || 'F';
+    return `<div class="profile-child-hdr">${escHtml(name)}</div>
+      <div class="profile-group"><div class="profile-lbl">Birth Year</div>
+        <input class="profile-inp child-by" data-sid="${escHtml(sw?.id||'')}" data-name="${escHtml(name)}" data-idx="${i}" type="number" min="2000" max="2020" placeholder="e.g. 2011" value="${escHtml(byear)}">
+      </div>
+      <div class="profile-group"><div class="profile-lbl">Gender</div>
+        <select class="profile-inp sel child-gen" data-idx="${i}">
+          <option value="F"${gender==='F'?' selected':''}>Female</option>
+          <option value="M"${gender==='M'?' selected':''}>Male</option>
+        </select>
+      </div>`;
+  }).join('');
+  return `<div class="profile-wrap">
+    <div class="section-hdr">Parent Information</div>
+    <div class="profile-group"><div class="profile-lbl">Display Name</div><input class="profile-inp" id="prof-name" value="${escHtml(dname)}"></div>
+    <div class="profile-group"><div class="profile-lbl">Email</div><input class="profile-inp" disabled value="${escHtml(user.email||'')}"></div>
+    ${childNames.length ? `<div class="section-hdr" style="margin-top:1.5rem">Children</div>${childForms}` : ''}
+    <div style="display:flex;align-items:center;margin-top:1.5rem">
+      <button class="profile-save" id="prof-save">Save Changes</button>
+      <span class="profile-ok" id="prof-ok">✓ Saved</span>
+    </div>
+  </div>`;
+}
 
 // ── MEETS ─────────────────────────────────────────────────────────────────────
 async function getUpcomingMeets(n=6) {
@@ -629,11 +709,71 @@ async function renderDashboard(user, profile) {
   document.getElementById('topbar-sub').textContent =
     profile.role.charAt(0).toUpperCase()+profile.role.slice(1)+' · Purple Group';
 
-  if      (profile.role==='swimmer') content.innerHTML = await swimmerDash(user, profile);
-  else if (profile.role==='parent')  content.innerHTML = await parentDash(user, profile);
-  else if (profile.role==='coach')   content.innerHTML = await coachDash(user, profile);
+  // Coaches: no profile tab needed
+  if (profile.role === 'coach') {
+    content.innerHTML = await coachDash(user, profile);
+    bindHandlers(user, profile);
+    return;
+  }
 
-  bindHandlers(user, profile);
+  // ── SWIMMER / PARENT: tabbed Dashboard + My Profile ───────────────────────
+  let mainHtml = '', profHtml = '';
+  let swRecord = null, swList = null, childNamesForProf = [];
+
+  if (profile.role === 'swimmer') {
+    mainHtml = await swimmerDash(user, profile);
+    // Fetch swimmer record for profile pane (Firestore caches duplicate reads)
+    let sw = null;
+    if (profile.swimcloudId) {
+      try { const s = await getDoc(doc(db,'swimmers',profile.swimcloudId)); if(s.exists()) sw={id:s.id,...s.data()}; } catch {}
+    }
+    if (!sw) {
+      const nm = profile.displayName || user.displayName || '';
+      if (nm) {
+        try {
+          const qs = query(collection(db,'swimmers'),where('name','==',nm),limit(1));
+          const ss = await getDocs(qs);
+          if(!ss.empty) sw={id:ss.docs[0].id,...ss.docs[0].data()};
+        } catch {}
+      }
+    }
+    swRecord = sw;
+    profHtml = swimmerProfileHtml(user, profile, sw);
+
+  } else if (profile.role === 'parent') {
+    mainHtml = await parentDash(user, profile);
+    const cnames = profile.childNames?.length ? profile.childNames : profile.childName ? [profile.childName] : [];
+    const swimmers = await Promise.all(cnames.map(async name => {
+      if(!name) return null;
+      try {
+        const qp = query(collection(db,'swimmers'),where('name','==',name),limit(1));
+        const sp = await getDocs(qp);
+        return sp.empty ? null : {id:sp.docs[0].id,...sp.docs[0].data()};
+      } catch { return null; }
+    }));
+    swList = swimmers;
+    childNamesForProf = cnames;
+    profHtml = parentProfileHtml(user, profile, swimmers, cnames);
+  }
+
+  content.innerHTML = `
+    <div class="dash-tab-bar">
+      <button class="dash-tab-btn active" data-tab="main">Dashboard</button>
+      <button class="dash-tab-btn" data-tab="profile">My Profile</button>
+    </div>
+    <div class="dash-pane active" id="pane-main">${mainHtml}</div>
+    <div class="dash-pane" id="pane-profile">${profHtml}</div>`;
+
+  content.querySelectorAll('.dash-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      content.querySelectorAll('.dash-tab-btn').forEach(b=>b.classList.remove('active'));
+      content.querySelectorAll('.dash-pane').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('pane-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  bindHandlers(user, profile, swRecord, swList, childNamesForProf);
 }
 
 // ── SWIMMER DASHBOARD ─────────────────────────────────────────────────────────
@@ -705,6 +845,7 @@ async function swimmerDash(user, profile) {
   }).join('') : `<div style="padding:.75rem;color:var(--grey);font-size:.82rem">Already at the top cut — keep going!</div>`;
 
   return `
+    ${!age ? `<div class="profile-banner" id="prof-dash-banner">⚠ Birth year missing — <span style="text-decoration:underline">tap here to add it</span> in My Profile.</div>` : ''}
     <div class="dash-hero">
       <div class="hero-avatar"><img src="${dicebearUrl(sw.name||name)}" alt="${sw.name||name}"></div>
       <div class="hero-info">
@@ -1072,7 +1213,7 @@ async function coachDash(user, profile) {
 }
 
 // ── BIND HANDLERS ─────────────────────────────────────────────────────────────
-function bindHandlers(user, profile) {
+function bindHandlers(user, profile, swRecord=null, swList=null, childNames=[]) {
   // Swimmer: link account
   document.getElementById('link-btn')?.addEventListener('click', async () => {
     const sel = document.getElementById('link-select');
@@ -1084,6 +1225,69 @@ function bindHandlers(user, profile) {
       window.location.reload();
     } catch(e) { alert('Error: '+e.message); btn.textContent='Link My Account →'; btn.disabled=false; }
   });
+
+  // Profile banner in dashboard pane → jump to My Profile tab
+  document.getElementById('prof-dash-banner')?.addEventListener('click', () => {
+    document.querySelector('.dash-tab-btn[data-tab="profile"]')?.click();
+  });
+
+  // Profile save (swimmer + parent)
+  const profSaveBtn = document.getElementById('prof-save');
+  if (profSaveBtn) {
+    profSaveBtn.addEventListener('click', async () => {
+      const origTxt = profSaveBtn.textContent;
+      profSaveBtn.disabled = true; profSaveBtn.textContent = 'Saving…';
+      try {
+        const dname   = document.getElementById('prof-name')?.value?.trim() || '';
+        const userUpd = {};
+        if (dname) userUpd.displayName = dname;
+
+        if (profile.role === 'swimmer') {
+          const byear  = document.getElementById('prof-byear')?.value?.trim();
+          const gender = document.getElementById('prof-gender')?.value;
+          if (byear) userUpd.birthYear = parseInt(byear);
+          await setDoc(doc(db,'users',user.uid), userUpd, {merge:true});
+          // mirror to swimmer document
+          if (swRecord?.id) {
+            const swUpd = {};
+            if (byear)  swUpd.birthYear = parseInt(byear);
+            if (gender) swUpd.gender    = gender;
+            if (Object.keys(swUpd).length) await setDoc(doc(db,'swimmers',swRecord.id), swUpd, {merge:true});
+          }
+
+        } else if (profile.role === 'parent') {
+          await setDoc(doc(db,'users',user.uid), userUpd, {merge:true});
+          const byInputs = document.querySelectorAll('.child-by');
+          const gnInputs = document.querySelectorAll('.child-gen');
+          await Promise.all([...byInputs].map(async (inp, i) => {
+            const sid    = inp.dataset.sid;
+            const cname  = inp.dataset.name;
+            const byear  = inp.value?.trim();
+            const gender = gnInputs[i]?.value;
+            if (!byear && !gender) return;
+            const cUpd = {};
+            if (byear)  cUpd.birthYear = parseInt(byear);
+            if (gender) cUpd.gender    = gender;
+            if (sid) {
+              await setDoc(doc(db,'swimmers',sid), cUpd, {merge:true});
+            } else if (cname) {
+              const qc = query(collection(db,'swimmers'),where('name','==',cname),limit(1));
+              const sc = await getDocs(qc);
+              if (!sc.empty) await setDoc(doc(db,'swimmers',sc.docs[0].id), cUpd, {merge:true});
+            }
+          }));
+        }
+
+        profSaveBtn.textContent = origTxt; profSaveBtn.disabled = false;
+        const ok = document.getElementById('prof-ok');
+        if (ok) { ok.classList.add('show'); setTimeout(()=>ok.classList.remove('show'),2500); }
+        document.getElementById('prof-warn')?.remove();
+      } catch(e) {
+        alert('Save failed: '+(e.message||e.code||'unknown'));
+        profSaveBtn.textContent = origTxt; profSaveBtn.disabled = false;
+      }
+    });
+  }
 
   if (profile.role !== 'coach') return;
 
