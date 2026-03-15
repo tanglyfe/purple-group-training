@@ -87,6 +87,16 @@
   .reveal.visible{opacity:1;transform:translateY(0);}
   @media(max-width:700px){.tools-row{grid-template-columns:1fr;}.hub-topbar{padding:.65rem 1.25rem;}.container{padding:0 1.25rem;}}
   @media(min-width:701px) and (max-width:900px){.tools-row{grid-template-columns:1fr 1fr;}}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .auth-spinner{width:24px;height:24px;border:2px solid rgba(249,168,37,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:.5rem auto 0;}
+  /* Invite section */
+  .invite-box{background:rgba(249,168,37,0.04);border:1px solid rgba(249,168,37,0.15);border-radius:2px;padding:1.5rem;max-width:600px;}
+  .invite-desc{font-size:.83rem;color:var(--grey);line-height:1.6;margin-bottom:1.1rem;}
+  .invite-row{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;}
+  .invite-url-input{flex:1;min-width:200px;background:rgba(255,255,255,0.05);border:1px solid rgba(249,168,37,0.25);border-radius:2px;color:var(--light);font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.06em;padding:.55rem .85rem;outline:none;}
+  .invite-copy-btn{background:transparent;border:1px solid rgba(249,168,37,0.3);color:var(--gold);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:.35rem .85rem;border-radius:2px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .invite-copy-btn:hover{background:rgba(249,168,37,0.08);border-color:var(--gold);}
+  .invite-meta{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;margin-top:.6rem;}
 </style>
 </head>
 <body>
@@ -97,14 +107,11 @@
     <div class="gate-icon">⭐</div>
     <div class="gate-eyebrow">SSF Aquatics · Coach</div>
     <div class="gate-title">Coach Hub</div>
-    <div class="gate-sub">Files · Analytics · Downloads<br>Enter coach password to continue</div>
-    <div class="gate-inputs">
-      <input type="password" id="hub-pw" class="gate-input" placeholder="Password" onkeydown="if(event.key==='Enter')unlock()">
-      <button class="gate-btn" onclick="unlock()">Enter</button>
-    </div>
-    <div id="hub-error" class="gate-error">Incorrect password</div>
+    <div class="gate-sub" id="gate-sub">Checking access…</div>
+    <div class="auth-spinner" id="gate-spinner"></div>
+    <div id="hub-error" class="gate-error" style="display:none">Coaches only — redirecting…</div>
   </div>
-  <a href="index.html" class="back-link">← Back to main site</a>
+  <a href="dashboard.html" class="back-link">← Back to dashboard</a>
 </div>
 
 <div id="hub-content">
@@ -118,7 +125,7 @@
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Main Site
       </a>
-      <button class="lock-btn" onclick="lock()">🔒 Lock</button>
+      <button class="lock-btn" id="signout-btn">🔒 Sign Out</button>
     </div>
   </div>
 
@@ -180,6 +187,24 @@
     </div>
   </section>
 
+  <section style="padding:2.5rem 0 0;position:relative;z-index:1;">
+    <div class="container">
+      <p class="section-label gold reveal">Team Access</p>
+      <h2 class="section-title reveal" style="font-size:clamp(1.8rem,3vw,2.6rem);margin-bottom:1.25rem">Coach Invites</h2>
+      <div class="invite-box reveal">
+        <p class="invite-desc">Generate a single-use invite link to onboard a new coach. Each link works exactly once — the new coach will register with the Coach role pre-selected and receive admin access.</p>
+        <button id="gen-invite-btn" class="gate-btn">Generate Invite Link</button>
+        <div id="invite-result" style="display:none;margin-top:.85rem;">
+          <div class="invite-row">
+            <input id="invite-url" type="text" class="invite-url-input" readonly>
+            <button id="copy-invite-btn" class="invite-copy-btn">Copy Link</button>
+          </div>
+          <div class="invite-meta">⚠ Share privately — this link grants coach access</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section style="padding:4rem 0 0;position:relative;z-index:1;">
     <div class="container">
       <p class="section-label gold reveal">Downloads</p>
@@ -235,31 +260,99 @@
   </footer>
 </div>
 
-<script>
-  const PW = 'purple2025';
-  const KEY = 'purple_coach_hub';
-  function unlock() {
-    const val = document.getElementById('hub-pw').value;
-    if (val === PW) { sessionStorage.setItem(KEY,'1'); show(); }
-    else { document.getElementById('hub-error').style.display='block'; document.getElementById('hub-pw').value=''; document.getElementById('hub-pw').focus(); }
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { getFirestore, getDoc, doc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
+  authDomain: "ssfaquatics.firebaseapp.com",
+  projectId: "ssfaquatics",
+  storageBucket: "ssfaquatics.firebasestorage.app",
+  messagingSenderId: "21079628309",
+  appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c"
+};
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+let currentUser = null;
+
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  try {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists() || snap.data().role !== 'coach') {
+      document.getElementById('hub-error').style.display = 'block';
+      document.getElementById('gate-spinner').style.display = 'none';
+      document.getElementById('gate-sub').textContent = 'Coach access required';
+      setTimeout(() => window.location.href = 'dashboard.html', 1500);
+      return;
+    }
+    currentUser = user;
+    show();
+  } catch(e) {
+    console.error(e);
+    document.getElementById('gate-sub').textContent = 'Error — ' + (e.message||'try again');
+    document.getElementById('gate-spinner').style.display = 'none';
   }
-  function lock() {
-    sessionStorage.removeItem(KEY);
-    document.getElementById('hub-content').style.display='none';
-    document.getElementById('hub-gate').style.display='flex';
-    document.getElementById('hub-pw').value='';
+});
+
+function show() {
+  document.getElementById('hub-gate').style.display = 'none';
+  document.getElementById('hub-content').style.display = 'block';
+  setTimeout(() => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e,i) => { if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}});
+    },{threshold:0.1});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  }, 50);
+}
+
+document.getElementById('signout-btn').addEventListener('click', async () => {
+  await signOut(auth);
+  window.location.href = 'login.html';
+});
+
+// ── Invite generation ──
+function makeToken() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no O/0/I/1 — easier to read
+  return Array.from(crypto.getRandomValues(new Uint8Array(16)))
+    .map(b => chars[b % chars.length]).join('');
+}
+
+document.getElementById('gen-invite-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('gen-invite-btn');
+  btn.textContent = 'Generating…'; btn.disabled = true;
+  try {
+    const token = makeToken();
+    await addDoc(collection(db, 'invites'), {
+      token,
+      role: 'coach',
+      createdBy: currentUser.uid,
+      createdAt: serverTimestamp(),
+      used: false,
+      usedBy: null,
+    });
+    const base = location.href.replace('coach-hub.html', 'register.html');
+    const url  = base + '?invite=' + token;
+    document.getElementById('invite-url').value = url;
+    document.getElementById('invite-result').style.display = 'block';
+    btn.textContent = 'Generate New Link'; btn.disabled = false;
+  } catch(e) {
+    console.error(e);
+    btn.textContent = 'Failed — try again'; btn.disabled = false;
   }
-  function show() {
-    document.getElementById('hub-gate').style.display='none';
-    document.getElementById('hub-content').style.display='block';
-    setTimeout(() => {
-      const obs = new IntersectionObserver((entries) => {
-        entries.forEach((e,i) => { if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}});
-      },{threshold:0.1});
-      document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-    },50);
-  }
-  if(sessionStorage.getItem(KEY)==='1') show();
+});
+
+document.getElementById('copy-invite-btn').addEventListener('click', () => {
+  const url = document.getElementById('invite-url').value;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copy-invite-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy Link', 2000);
+  });
+});
 </script>
 </body>
 </html>

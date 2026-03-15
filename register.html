@@ -117,9 +117,15 @@
       <div class="google-banner-text">Signed in with Google — just pick your role to finish setup</div>
     </div>
 
+    <!-- Coach invite banner (shown when ?invite=TOKEN is valid) -->
+    <div id="invite-banner" style="display:none;background:rgba(249,168,37,0.07);border:1px solid rgba(249,168,37,0.25);border-radius:2px;padding:.75rem 1rem;margin-bottom:1.1rem;text-align:center;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.04em;color:var(--gold);">⭐ Coach Invite</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;margin-top:.25rem;">You've been invited as a coach at SSF Aquatics</div>
+    </div>
+
     <!-- Role selection -->
-    <div class="section-label">I am a</div>
-    <div class="role-grid">
+    <div class="section-label" id="role-section-label">I am a</div>
+    <div class="role-grid" id="role-grid">
       <label class="role-card" id="role-swimmer">
         <input type="radio" name="role" value="swimmer">
         <div class="role-icon">🏊</div>
@@ -221,7 +227,7 @@ import {
   GoogleAuthProvider, signInWithPopup, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
-  getFirestore, doc, setDoc, getDoc, serverTimestamp
+  getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, limit, getDocs, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -239,6 +245,43 @@ const db   = getFirestore(app);
 
 // ── Role UI ──
 let selectedRole = null;
+let inviteDocId  = null;   // set when a valid invite token is found
+let inviteToken  = null;
+
+// ── Invite token validation ──
+const urlInvite = new URLSearchParams(window.location.search).get('invite');
+if (urlInvite) {
+  inviteToken = urlInvite;
+  (async () => {
+    try {
+      const q = query(collection(db, 'invites'), where('token','==',urlInvite), limit(1));
+      const snap = await getDocs(q);
+      if (snap.empty || snap.docs[0].data().used) {
+        showError('This invite link is invalid or has already been used');
+        return;
+      }
+      inviteDocId = snap.docs[0].id;
+      // Lock to coach role — hide role grid, show invite banner
+      selectedRole = 'coach';
+      document.getElementById('invite-banner').style.display = 'block';
+      document.getElementById('role-section-label').style.display = 'none';
+      document.getElementById('role-grid').style.display = 'none';
+      document.getElementById('child-field').classList.remove('show');
+    } catch(e) {
+      console.error(e);
+      showError('Could not validate invite — please try again');
+    }
+  })();
+}
+
+async function markInviteUsed(uid) {
+  if (!inviteDocId) return;
+  try {
+    await updateDoc(doc(db, 'invites', inviteDocId), {
+      used: true, usedBy: uid, usedAt: serverTimestamp()
+    });
+  } catch(e) { console.warn('Failed to mark invite used', e); }
+}
 
 // ── Multi-child helpers ──
 function getChildNames() {
@@ -392,8 +435,10 @@ document.getElementById('register-btn')?.addEventListener('click', async () => {
       displayName: `${first} ${last}`,
       email,
       role: selectedRole,
+      ...(selectedRole === 'coach' ? { admin: true } : {}),
       ...(selectedRole === 'parent' ? { childNames, childName: childNames[0] } : {})
     });
+    await markInviteUsed(cred.user.uid);
     // Send verification email
     try {
       await sendEmailVerification(cred.user);
@@ -433,8 +478,10 @@ document.getElementById('google-btn')?.addEventListener('click', async () => {
       displayName: result.user.displayName || '',
       email: result.user.email || '',
       role: selectedRole,
+      ...(selectedRole === 'coach' ? { admin: true } : {}),
       ...(selectedRole === 'parent' ? { childNames, childName: childNames[0] } : {})
     });
+    await markInviteUsed(result.user.uid);
     showSuccess('Account created! Redirecting…');
     setTimeout(() => window.location.href = 'dashboard.html', 1200);
   } catch(e) {
@@ -458,8 +505,10 @@ document.getElementById('complete-google-btn')?.addEventListener('click', async 
       displayName: pendingName,
       email: pendingEmail,
       role: selectedRole,
+      ...(selectedRole === 'coach' ? { admin: true } : {}),
       ...(selectedRole === 'parent' ? { childNames, childName: childNames[0] } : {})
     });
+    await markInviteUsed(pendingUid);
     sessionStorage.removeItem('google_pending_uid');
     sessionStorage.removeItem('google_pending_name');
     sessionStorage.removeItem('google_pending_email');
