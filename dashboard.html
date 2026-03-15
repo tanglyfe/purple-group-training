@@ -38,6 +38,14 @@
   /* ── CONTENT ── */
   .content { max-width:1280px; margin:0 auto; padding:1.5rem; position:relative; z-index:1; }
 
+  /* ── CHILD TABS (parent multi-child) ── */
+  .child-tabs { display:flex; gap:.4rem; flex-wrap:wrap; padding:1.25rem 0 .75rem; }
+  .child-tab { padding:.35rem .9rem; border-radius:20px; border:1px solid rgba(33,150,243,0.2); background:transparent; color:var(--grey); font-family:'DM Sans',sans-serif; font-size:.82rem; cursor:pointer; transition:all .15s; }
+  .child-tab:hover { border-color:var(--mid); color:var(--white); }
+  .child-tab.active { background:var(--mid); border-color:var(--mid); color:#fff; font-weight:500; }
+  .child-panel { display:none; }
+  .child-panel.active { display:block; }
+
   /* ── HERO ── */
   .dash-hero { display:flex; align-items:center; gap:1.25rem; padding:1.5rem 0 1.25rem; border-bottom:1px solid rgba(33,150,243,0.1); margin-bottom:1.5rem; flex-wrap:wrap; }
   .hero-avatar { width:64px; height:64px; border-radius:50%; background:var(--navy); display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0; overflow:hidden; box-shadow:0 0 0 3px rgba(33,150,243,0.15),0 0 24px rgba(33,150,243,0.1); }
@@ -799,35 +807,20 @@ async function linkAccountView(user, profile, meets, name) {
 }
 
 // ── PARENT DASHBOARD ──────────────────────────────────────────────────────────
-async function parentDash(user, profile) {
-  const childName = profile.childName || '';
-  const meets     = await getUpcomingMeets(5);
-
-  let sw = null;
-  if (childName) {
-    const q = query(collection(db,'swimmers'), where('name','==',childName), limit(1));
-    const snap = await getDocs(q);
-    if (!snap.empty) sw = {id:snap.docs[0].id,...snap.docs[0].data()};
-  }
-
+// Render one child's content panel
+function renderChildPanel(sw, childName, meets, idx) {
   if (!sw) {
     return `
       <div class="dash-hero">
         <div class="hero-avatar parent-av">👨‍👩‍👧</div>
         <div class="hero-info">
           <div class="hero-label">Parent Dashboard</div>
-          <div class="hero-name">Tracking ${childName||'your swimmer'}</div>
-          <div class="hero-meta"><span>Swimmer record not found — check the name matches exactly or contact your coach</span></div>
+          <div class="hero-name">Tracking ${childName}</div>
+          <div class="hero-meta"><span>Swimmer record not found — check name matches roster exactly</span></div>
         </div>
       </div>
       <div class="section-hdr">Upcoming Meets</div>
-      <div class="meets-list">${meetsHtml(meets)}</div>
-      <div class="section-hdr">Quick Links</div>
-      <div class="card-grid">
-        <a class="dash-card" href="times.html"><div class="card-icon">🏆</div><div class="card-title">Team Times</div><div class="card-desc">Browse roster & times</div></a>
-        <a class="dash-card" href="leaderboard.html"><div class="card-icon">📋</div><div class="card-title">Leaderboard</div><div class="card-desc">Team rankings</div></a>
-        <a class="dash-card" href="attendance.html"><div class="card-icon">✅</div><div class="card-title">Attendance</div><div class="card-desc">Practice history</div></a>
-      </div>`;
+      <div class="meets-list">${meetsHtml(meets)}</div>`;
   }
 
   const times    = sw.times || {};
@@ -838,8 +831,7 @@ async function parentDash(user, profile) {
   const evCount  = Object.keys(times).length;
   const seaMeets = countSeasonMeets(hist);
   const recent   = getRecentSeasonSwims(hist, 5);
-  const ini      = initials(childName);
-  const avClass  = sw.gender==='F' ? 'female' : '';
+  const improve  = getClosestToCut(times, sw.gender, age, 3);
 
   const timesRows = sortedTimes(times).slice(0,10).map(([ev,t]) => {
     const tier = getEventTier(ev, parseTime(t), sw.gender, age);
@@ -862,14 +854,14 @@ async function parentDash(user, profile) {
 
   return `
     <div class="dash-hero">
-      <div class="hero-avatar"><img src="${dicebearUrl(childName)}" alt="${childName}"></div>
+      <div class="hero-avatar"><img src="${dicebearUrl(sw.name||childName)}" alt="${childName}"></div>
       <div class="hero-info">
         <div class="hero-label">Tracking</div>
         <div class="hero-name">${childName}</div>
         <div class="hero-meta">
           ${age?`<span>Age ${age}</span>`:''}
           <span>${sw.gender==='M'?'Male':'Female'}</span>
-          <span>Purple Group</span>
+          ${sw.groupName?`<span>${sw.groupName}</span>`:''}
         </div>
         <div class="hero-badges">
           ${bestTier?`<span class="tier-pill tier-${bestTier}">${bestTier} · Best Cut</span>`:''}
@@ -877,52 +869,90 @@ async function parentDash(user, profile) {
         </div>
       </div>
     </div>
-
     <div class="stats-strip">
       ${age?`<div class="stat-box"><div class="stat-label">Age</div><div class="stat-num blue">${age}</div></div>`:''}
       <div class="stat-box"><div class="stat-label">Events</div><div class="stat-num blue">${evCount}</div></div>
       <div class="stat-box"><div class="stat-label">Best Cut</div><div class="stat-num gold">${bestTier||'—'}</div></div>
       <div class="stat-box"><div class="stat-label">Season Meets</div><div class="stat-num green">${seaMeets}</div></div>
     </div>
-
     <div class="dash-cols">
       <div class="dash-col">
         <div class="section-hdr">Best Times · SCY</div>
         <div class="times-list">${timesRows||'<div style="padding:.75rem;color:var(--grey);font-size:.82rem">No times recorded yet.</div>'}</div>
       </div>
-
       <div class="dash-col">
         <div class="section-hdr">Season Activity</div>
         <div class="season-list">${recentRows}</div>
-
         <div class="section-hdr">Upcoming Meets</div>
         <div class="meets-list">${meetsHtml(meets)}</div>
-
         <div class="section-hdr">Quick Links</div>
         <div class="card-grid">
-          <a class="dash-card" href="swimmer.html?id=${sw.id}">
-            <div class="card-icon">🏊</div><div class="card-title">Full Profile</div>
-            <div class="card-desc">All events · SwimCloud</div>
-          </a>
-          <a class="dash-card" href="leaderboard.html">
-            <div class="card-icon">📋</div><div class="card-title">Leaderboard</div>
-            <div class="card-desc">Team rankings by event</div>
-          </a>
-          <a class="dash-card" href="attendance.html">
-            <div class="card-icon">✅</div><div class="card-title">Attendance</div>
-            <div class="card-desc">Practice history</div>
-          </a>
-          <a class="dash-card" href="dryland.html">
-            <div class="card-icon">💪</div><div class="card-title">Dryland</div>
-            <div class="card-desc">Weekly progress</div>
-          </a>
-          <a class="dash-card" href="time-standards.html">
-            <div class="card-icon">🎯</div><div class="card-title">Time Standards</div>
-            <div class="card-desc">AGC · Far Western cuts</div>
-          </a>
+          <a class="dash-card" href="swimmer.html?id=${sw.id}"><div class="card-icon">🏊</div><div class="card-title">Full Profile</div><div class="card-desc">All events · SwimCloud</div></a>
+          <a class="dash-card" href="leaderboard.html"><div class="card-icon">📋</div><div class="card-title">Leaderboard</div><div class="card-desc">Team rankings by event</div></a>
+          <a class="dash-card" href="attendance.html"><div class="card-icon">✅</div><div class="card-title">Attendance</div><div class="card-desc">Practice history</div></a>
+          <a class="dash-card" href="time-standards.html"><div class="card-icon">🎯</div><div class="card-title">Standards</div><div class="card-desc">AGC · Far Western cuts</div></a>
         </div>
       </div>
     </div>`;
+}
+
+async function parentDash(user, profile) {
+  // Support both old single childName and new childNames array
+  const childNames = profile.childNames?.length
+    ? profile.childNames
+    : profile.childName ? [profile.childName] : [];
+
+  const meets = await getUpcomingMeets(5);
+
+  if (!childNames.length) {
+    return `
+      <div class="dash-hero">
+        <div class="hero-avatar parent-av">👨‍👩‍👧</div>
+        <div class="hero-info">
+          <div class="hero-label">Parent Dashboard</div>
+          <div class="hero-name">${profile.displayName||'Parent'}</div>
+          <div class="hero-meta"><span>No swimmers linked — contact your coach</span></div>
+        </div>
+      </div>
+      <div class="section-hdr">Upcoming Meets</div>
+      <div class="meets-list">${meetsHtml(meets)}</div>`;
+  }
+
+  // Fetch all children's swimmer records in parallel
+  const swimmers = await Promise.all(childNames.map(async name => {
+    if (!name) return null;
+    const q = query(collection(db,'swimmers'), where('name','==',name), limit(1));
+    const snap = await getDocs(q);
+    return snap.empty ? null : {id:snap.docs[0].id,...snap.docs[0].data()};
+  }));
+
+  // Single child — no tabs needed
+  if (childNames.length === 1) {
+    return renderChildPanel(swimmers[0], childNames[0], meets, 0);
+  }
+
+  // Multiple children — render tabs + panels
+  const tabs = childNames.map((name, i) =>
+    `<button class="child-tab${i===0?' active':''}" data-ci="${i}">${name}</button>`
+  ).join('');
+
+  const panels = childNames.map((name, i) =>
+    `<div class="child-panel${i===0?' active':''}" data-ci="${i}">${renderChildPanel(swimmers[i], name, meets, i)}</div>`
+  ).join('');
+
+  // Wire up tab switching via inline script
+  const tabScript = `<script>
+    document.querySelectorAll('.child-tab').forEach(t=>{
+      t.addEventListener('click',()=>{
+        document.querySelectorAll('.child-tab').forEach(x=>x.classList.remove('active'));
+        document.querySelectorAll('.child-panel').forEach(x=>x.classList.remove('active'));
+        t.classList.add('active');
+        document.querySelector('.child-panel[data-ci="'+t.dataset.ci+'"]').classList.add('active');
+      });
+    });
+  <\/script>`;
+
+  return `<div class="child-tabs">${tabs}</div>${panels}${tabScript}`;
 }
 
 // ── COACH DASHBOARD ───────────────────────────────────────────────────────────
@@ -966,7 +996,8 @@ async function coachDash(user, profile) {
   let memberRows = all.length===0 ? '<div class="empty-state">No registered members yet</div>' :
     all.map(u => {
       const rc = u.role==='coach'?'var(--green2)':u.role==='parent'?'var(--gold)':'var(--light)';
-      const meta = u.role==='parent'&&u.childName?`Parent of ${u.childName}`:u.email||'';
+      const kids = u.childNames?.length ? u.childNames : (u.childName ? [u.childName] : []);
+      const meta = u.role==='parent'&&kids.length ? `Parent of ${kids.join(', ')}` : u.email||'';
       return `<div class="roster-row">
         <div><div class="roster-name">${u.displayName||u.email}</div><div class="roster-meta">${meta}</div></div>
         <div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:${rc}">${u.role}</div>

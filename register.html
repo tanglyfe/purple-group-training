@@ -75,6 +75,13 @@
   /* Parent child name field */
   .child-field{display:none;}
   .child-field.show{display:block;}
+  .child-name-row{display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem;}
+  .child-name-row input{flex:1;}
+  .remove-child-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(198,40,40,0.3);background:transparent;color:rgba(198,40,40,0.6);cursor:pointer;font-size:.9rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;}
+  .remove-child-btn:hover{background:rgba(198,40,40,0.1);border-color:rgba(198,40,40,0.6);color:#EF5350;}
+  .add-child-btn{background:transparent;border:1px dashed rgba(33,150,243,0.3);color:var(--light);font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;padding:.4rem .75rem;border-radius:2px;cursor:pointer;transition:all .15s;width:100%;margin-top:.25rem;}
+  .add-child-btn:hover{border-color:var(--mid);background:rgba(33,150,243,0.06);}
+  .add-child-btn:disabled{opacity:.35;cursor:not-allowed;}
 
   /* Email verification banner */
   .verify-banner{display:none;text-align:center;padding:1.5rem 1rem;}
@@ -127,10 +134,16 @@
       </label>
     </div>
 
-    <!-- Child name (parents only) -->
+    <!-- Child names (parents only) -->
     <div class="field child-field" id="child-field">
-      <label>Swimmer's Full Name</label>
-      <input type="text" id="child-name" placeholder="e.g. Lorenzo Navarro">
+      <label>Swimmer(s) Full Name</label>
+      <div id="child-names-list">
+        <div class="child-name-row">
+          <input type="text" class="child-name-input" placeholder="e.g. Lorenzo Navarro" autocomplete="off">
+          <button type="button" class="remove-child-btn" style="display:none" title="Remove">✕</button>
+        </div>
+      </div>
+      <button type="button" id="add-child-btn" class="add-child-btn">+ Add another swimmer</button>
     </div>
 
     <div id="email-section">
@@ -226,6 +239,35 @@ const db   = getFirestore(app);
 
 // ── Role UI ──
 let selectedRole = null;
+
+// ── Multi-child helpers ──
+function getChildNames() {
+  return [...document.querySelectorAll('.child-name-input')]
+    .map(i => i.value.trim()).filter(Boolean);
+}
+function refreshRemoveButtons() {
+  const rows = document.querySelectorAll('.child-name-row');
+  rows.forEach(row => {
+    const btn = row.querySelector('.remove-child-btn');
+    if (btn) btn.style.display = rows.length > 1 ? 'flex' : 'none';
+  });
+  const addBtn = document.getElementById('add-child-btn');
+  if (addBtn) addBtn.disabled = rows.length >= 5;
+}
+document.getElementById('add-child-btn')?.addEventListener('click', () => {
+  const list = document.getElementById('child-names-list');
+  const row = document.createElement('div');
+  row.className = 'child-name-row';
+  row.innerHTML = `<input type="text" class="child-name-input" placeholder="Swimmer's full name" autocomplete="off"><button type="button" class="remove-child-btn" title="Remove">✕</button>`;
+  row.querySelector('.remove-child-btn').addEventListener('click', () => { row.remove(); refreshRemoveButtons(); });
+  list.appendChild(row);
+  refreshRemoveButtons();
+  row.querySelector('input').focus();
+});
+document.getElementById('child-names-list')?.addEventListener('click', e => {
+  if (e.target.classList.contains('remove-child-btn')) { e.target.closest('.child-name-row').remove(); refreshRemoveButtons(); }
+});
+
 document.querySelectorAll('.role-card').forEach(card => {
   card.addEventListener('click', () => {
     selectedRole = card.querySelector('input').value;
@@ -334,13 +376,13 @@ document.getElementById('register-btn')?.addEventListener('click', async () => {
   const last     = document.getElementById('last-name').value.trim();
   const email    = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
-  const child    = document.getElementById('child-name').value.trim();
+  const childNames = selectedRole === 'parent' ? getChildNames() : [];
 
   if (!selectedRole)          { showError('Please select your role'); return; }
   if (!first || !last)        { showError('Please enter your full name'); return; }
   if (!email)                 { showError('Please enter your email'); return; }
   if (password.length < 6)   { showError('Password must be at least 6 characters'); return; }
-  if (selectedRole === 'parent' && !child) { showError("Please enter your swimmer's name"); return; }
+  if (selectedRole === 'parent' && !childNames.length) { showError("Please enter at least one swimmer's name"); return; }
 
   setLoading(true);
   try {
@@ -350,7 +392,7 @@ document.getElementById('register-btn')?.addEventListener('click', async () => {
       displayName: `${first} ${last}`,
       email,
       role: selectedRole,
-      ...(selectedRole === 'parent' ? { childName: child } : {})
+      ...(selectedRole === 'parent' ? { childNames, childName: childNames[0] } : {})
     });
     // Send verification email
     try {
@@ -374,8 +416,8 @@ document.getElementById('register-btn')?.addEventListener('click', async () => {
 // ── Google register (new user) ──
 document.getElementById('google-btn')?.addEventListener('click', async () => {
   if (!selectedRole) { showError('Please select your role first'); return; }
-  const child = document.getElementById('child-name').value.trim();
-  if (selectedRole === 'parent' && !child) { showError("Please enter your swimmer's name"); return; }
+  const childNames = selectedRole === 'parent' ? getChildNames() : [];
+  if (selectedRole === 'parent' && !childNames.length) { showError("Please enter at least one swimmer's name"); return; }
 
   setLoading(true);
   try {
@@ -391,7 +433,7 @@ document.getElementById('google-btn')?.addEventListener('click', async () => {
       displayName: result.user.displayName || '',
       email: result.user.email || '',
       role: selectedRole,
-      ...(selectedRole === 'parent' ? { childName: child } : {})
+      ...(selectedRole === 'parent' ? { childNames, childName: childNames[0] } : {})
     });
     showSuccess('Account created! Redirecting…');
     setTimeout(() => window.location.href = 'dashboard.html', 1200);
@@ -406,8 +448,8 @@ document.getElementById('google-btn')?.addEventListener('click', async () => {
 // ── Complete Google pending (came from login.html) ──
 document.getElementById('complete-google-btn')?.addEventListener('click', async () => {
   if (!selectedRole) { showError('Please select your role'); return; }
-  const child = document.getElementById('child-name').value.trim();
-  if (selectedRole === 'parent' && !child) { showError("Please enter your swimmer's name"); return; }
+  const childNames = selectedRole === 'parent' ? getChildNames() : [];
+  if (selectedRole === 'parent' && !childNames.length) { showError("Please enter at least one swimmer's name"); return; }
   if (!pendingUid) { showError('Session expired — please sign in again'); return; }
 
   setLoading(true);
@@ -416,7 +458,7 @@ document.getElementById('complete-google-btn')?.addEventListener('click', async 
       displayName: pendingName,
       email: pendingEmail,
       role: selectedRole,
-      ...(selectedRole === 'parent' ? { childName: child } : {})
+      ...(selectedRole === 'parent' ? { childNames, childName: childNames[0] } : {})
     });
     sessionStorage.removeItem('google_pending_uid');
     sessionStorage.removeItem('google_pending_name');
