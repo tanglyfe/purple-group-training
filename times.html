@@ -257,7 +257,6 @@ function parseSecs(t) {
 async function loadSwimmers() {
   const q = query(collection(db, 'swimmers'), where('active', '==', true));
   const snap = await getDocs(q);
-  await loadGroups();
   allSwimmers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
   // Stats
