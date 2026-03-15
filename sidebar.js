@@ -66,6 +66,7 @@ const NAV_ITEMS = [
     { key:'leaderboard', icon:'&#127942;', label:'Leaderboard', href:'leaderboard.html' },
     { key:'attendance',  icon:'&#9989;',   label:'Attendance',  href:'attendance.html' },
     { key:'dryland',     icon:'&#128170;', label:'Dryland',     href:'dryland.html' },
+    { key:'time-standards', icon:'&#127941;', label:'Standards',  href:'time-standards.html' },
   ]},
   { section: 'Roster', items: [
     { key:'swimmers',    icon:'&#127946;', label:'Swimmers',    href:'times.html' },

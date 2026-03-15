@@ -19,7 +19,7 @@
 
   /* ── TOPBAR ── */
   .topbar { position:sticky; top:0; z-index:100; background:rgba(7,20,41,0.97); backdrop-filter:blur(12px); border-bottom:1px solid rgba(33,150,243,0.15); padding:.75rem 1rem; }
-  .topbar-inner { max-width:960px; margin:0 auto; display:flex; align-items:center; gap:.75rem; }
+  .topbar-inner { max-width:1280px; margin:0 auto; display:flex; align-items:center; gap:.75rem; }
   .back-btn { display:flex; align-items:center; gap:.4rem; font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.14em; color:var(--grey); text-decoration:none; text-transform:uppercase; padding:.4rem .6rem; border:1px solid rgba(255,255,255,0.08); border-radius:2px; transition:color .2s,border-color .2s; flex-shrink:0; }
   .back-btn:hover { color:var(--light); border-color:rgba(33,150,243,0.3); }
   .topbar-title { flex:1; min-width:0; }
@@ -36,7 +36,7 @@
   .loading-sub { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.12em; color:rgba(139,163,192,0.4); text-transform:uppercase; }
 
   /* ── CONTENT ── */
-  .content { max-width:960px; margin:0 auto; padding:1.5rem; position:relative; z-index:1; }
+  .content { max-width:1280px; margin:0 auto; padding:1.5rem; position:relative; z-index:1; }
 
   /* ── HERO ── */
   .dash-hero { display:flex; align-items:center; gap:1.25rem; padding:1.5rem 0 1.25rem; border-bottom:1px solid rgba(33,150,243,0.1); margin-bottom:1.5rem; flex-wrap:wrap; }
@@ -131,6 +131,11 @@
   .add-meet-input.grow { flex:1; min-width:120px; }
   .add-meet-btn { background:rgba(33,150,243,0.15); border:1px solid rgba(33,150,243,0.3); border-radius:2px; color:var(--light); font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; padding:.38rem .75rem; cursor:pointer; transition:all .15s; white-space:nowrap; }
   .add-meet-btn:hover { background:rgba(33,150,243,0.25); }
+
+  /* ── SWIMMER / PARENT DESKTOP LAYOUT ── */
+  .dash-cols { display:grid; grid-template-columns:3fr 2fr; gap:1.5rem; align-items:start; }
+  @media(max-width:860px) { .dash-cols { grid-template-columns:1fr; } }
+  .dash-col { min-width:0; }
 
   /* ── COACH LAYOUT ── */
   .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-top:.25rem; }
@@ -516,36 +521,46 @@ async function swimmerDash(user, profile) {
       <div class="stat-box"><div class="stat-label">Season Meets</div><div class="stat-num green">${seaMeets}</div></div>
     </div>
 
-    <div class="section-hdr">Best Times · SCY</div>
-    <div class="times-list">${timesRows||'<div style="padding:.75rem;color:var(--grey);font-size:.82rem">No times recorded yet.</div>'}</div>
+    <div class="dash-cols">
+      <div class="dash-col">
+        <div class="section-hdr">Best Times · SCY</div>
+        <div class="times-list">${timesRows||'<div style="padding:.75rem;color:var(--grey);font-size:.82rem">No times recorded yet.</div>'}</div>
 
-    <div class="section-hdr">Season Activity</div>
-    <div class="season-list">${recentRows}</div>
+        <div class="section-hdr">Closest to Next Cut</div>
+        <div class="improve-list">${improveRows}</div>
+      </div>
 
-    <div class="section-hdr">Closest to Next Cut</div>
-    <div class="improve-list">${improveRows}</div>
+      <div class="dash-col">
+        <div class="section-hdr">Season Activity</div>
+        <div class="season-list">${recentRows}</div>
 
-    <div class="section-hdr">Upcoming Meets</div>
-    <div class="meets-list">${meetsHtml(meets)}</div>
+        <div class="section-hdr">Upcoming Meets</div>
+        <div class="meets-list">${meetsHtml(meets)}</div>
 
-    <div class="section-hdr">Quick Links</div>
-    <div class="card-grid">
-      <a class="dash-card" href="swimmer.html?id=${sw.id}">
-        <div class="card-icon">🏊</div><div class="card-title">My Profile</div>
-        <div class="card-desc">Full times · SwimCloud</div>
-      </a>
-      <a class="dash-card" href="leaderboard.html">
-        <div class="card-icon">📋</div><div class="card-title">Leaderboard</div>
-        <div class="card-desc">Team rankings by event</div>
-      </a>
-      <a class="dash-card" href="attendance.html">
-        <div class="card-icon">✅</div><div class="card-title">Attendance</div>
-        <div class="card-desc">My session history</div>
-      </a>
-      <a class="dash-card" href="dryland.html">
-        <div class="card-icon">💪</div><div class="card-title">Dryland</div>
-        <div class="card-desc">Log sets · weekly progress</div>
-      </a>
+        <div class="section-hdr">Quick Links</div>
+        <div class="card-grid">
+          <a class="dash-card" href="swimmer.html?id=${sw.id}">
+            <div class="card-icon">🏊</div><div class="card-title">My Profile</div>
+            <div class="card-desc">Full times · SwimCloud</div>
+          </a>
+          <a class="dash-card" href="leaderboard.html">
+            <div class="card-icon">📋</div><div class="card-title">Leaderboard</div>
+            <div class="card-desc">Team rankings by event</div>
+          </a>
+          <a class="dash-card" href="attendance.html">
+            <div class="card-icon">✅</div><div class="card-title">Attendance</div>
+            <div class="card-desc">My session history</div>
+          </a>
+          <a class="dash-card" href="dryland.html">
+            <div class="card-icon">💪</div><div class="card-title">Dryland</div>
+            <div class="card-desc">Log sets · weekly progress</div>
+          </a>
+          <a class="dash-card" href="time-standards.html">
+            <div class="card-icon">🎯</div><div class="card-title">Time Standards</div>
+            <div class="card-desc">AGC · Far Western cuts</div>
+          </a>
+        </div>
+      </div>
     </div>`;
 }
 
@@ -580,6 +595,7 @@ async function linkAccountView(user, profile, meets, name) {
       <a class="dash-card" href="leaderboard.html"><div class="card-icon">📋</div><div class="card-title">Leaderboard</div><div class="card-desc">Team rankings by event</div></a>
       <a class="dash-card" href="attendance.html"><div class="card-icon">✅</div><div class="card-title">Attendance</div><div class="card-desc">Practice history</div></a>
       <a class="dash-card" href="dryland.html"><div class="card-icon">💪</div><div class="card-title">Dryland</div><div class="card-desc">Log sets</div></a>
+      <a class="dash-card" href="time-standards.html"><div class="card-icon">🎯</div><div class="card-title">Standards</div><div class="card-desc">AGC · Far Western cuts</div></a>
     </div>`;
 }
 
@@ -670,33 +686,43 @@ async function parentDash(user, profile) {
       <div class="stat-box"><div class="stat-label">Season Meets</div><div class="stat-num green">${seaMeets}</div></div>
     </div>
 
-    <div class="section-hdr">Best Times · SCY</div>
-    <div class="times-list">${timesRows||'<div style="padding:.75rem;color:var(--grey);font-size:.82rem">No times recorded yet.</div>'}</div>
+    <div class="dash-cols">
+      <div class="dash-col">
+        <div class="section-hdr">Best Times · SCY</div>
+        <div class="times-list">${timesRows||'<div style="padding:.75rem;color:var(--grey);font-size:.82rem">No times recorded yet.</div>'}</div>
+      </div>
 
-    <div class="section-hdr">Season Activity</div>
-    <div class="season-list">${recentRows}</div>
+      <div class="dash-col">
+        <div class="section-hdr">Season Activity</div>
+        <div class="season-list">${recentRows}</div>
 
-    <div class="section-hdr">Upcoming Meets</div>
-    <div class="meets-list">${meetsHtml(meets)}</div>
+        <div class="section-hdr">Upcoming Meets</div>
+        <div class="meets-list">${meetsHtml(meets)}</div>
 
-    <div class="section-hdr">Quick Links</div>
-    <div class="card-grid">
-      <a class="dash-card" href="swimmer.html?id=${sw.id}">
-        <div class="card-icon">🏊</div><div class="card-title">Full Profile</div>
-        <div class="card-desc">All events · SwimCloud</div>
-      </a>
-      <a class="dash-card" href="leaderboard.html">
-        <div class="card-icon">📋</div><div class="card-title">Leaderboard</div>
-        <div class="card-desc">Team rankings by event</div>
-      </a>
-      <a class="dash-card" href="attendance.html">
-        <div class="card-icon">✅</div><div class="card-title">Attendance</div>
-        <div class="card-desc">Practice history</div>
-      </a>
-      <a class="dash-card" href="dryland.html">
-        <div class="card-icon">💪</div><div class="card-title">Dryland</div>
-        <div class="card-desc">Weekly progress</div>
-      </a>
+        <div class="section-hdr">Quick Links</div>
+        <div class="card-grid">
+          <a class="dash-card" href="swimmer.html?id=${sw.id}">
+            <div class="card-icon">🏊</div><div class="card-title">Full Profile</div>
+            <div class="card-desc">All events · SwimCloud</div>
+          </a>
+          <a class="dash-card" href="leaderboard.html">
+            <div class="card-icon">📋</div><div class="card-title">Leaderboard</div>
+            <div class="card-desc">Team rankings by event</div>
+          </a>
+          <a class="dash-card" href="attendance.html">
+            <div class="card-icon">✅</div><div class="card-title">Attendance</div>
+            <div class="card-desc">Practice history</div>
+          </a>
+          <a class="dash-card" href="dryland.html">
+            <div class="card-icon">💪</div><div class="card-title">Dryland</div>
+            <div class="card-desc">Weekly progress</div>
+          </a>
+          <a class="dash-card" href="time-standards.html">
+            <div class="card-icon">🎯</div><div class="card-title">Time Standards</div>
+            <div class="card-desc">AGC · Far Western cuts</div>
+          </a>
+        </div>
+      </div>
     </div>`;
 }
 

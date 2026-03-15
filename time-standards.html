@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Standards — SSF Aquatics</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0B1F3A; --deep:#071429; --blue:#1565C0; --mid:#2196F3;
+    --light:#64B5F6; --pale:#BBDEFB; --gold:#F9A825; --white:#F0F6FF;
+    --grey:#8BA3C0; --free:#2196F3; --back:#43A047; --breast:#FB8C00;
+    --fly:#8E24AA; --im:#E53935; --green2:#43A047; --green3:#A5D6A7; --red2:#EF5350;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.04) 58px,rgba(33,150,243,0.04) 60px);pointer-events:none;z-index:0;}
+  .shimmer-bg{position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(21,101,192,0.18) 0%,transparent 70%);pointer-events:none;z-index:0;}
+  .container{max-width:860px;margin:0 auto;padding:0 1.5rem 4rem;position:relative;z-index:1;}
+
+  nav{position:sticky;top:0;z-index:100;background:rgba(7,20,41,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(33,150,243,0.15);padding:.85rem 1.5rem;display:flex;align-items:center;gap:1.5rem;}
+  nav a{color:var(--grey);text-decoration:none;font-size:.83rem;letter-spacing:.04em;transition:color .2s;}
+  nav a:hover{color:var(--white);}
+  nav .brand{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.08em;color:var(--white);margin-right:auto;text-decoration:none;}
+  .nav-links{display:flex;gap:1.25rem;}
+  @media(max-width:560px){.nav-links{display:none;}}
+
+  .page-header{padding:2.75rem 0 0;}
+  .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,3.6rem);letter-spacing:.06em;line-height:1;}
+  .page-header h1 span{color:var(--light);}
+  .page-header p{color:var(--grey);margin-top:.4rem;font-size:.86rem;}
+
+  /* swimmer banner */
+  .swimmer-banner{margin-top:1.4rem;padding:.85rem 1.1rem;background:rgba(33,150,243,0.07);border:1px solid rgba(33,150,243,0.2);border-radius:3px;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;}
+  .sb-label{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);margin-bottom:.15rem;}
+  .sb-name{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.04em;}
+  .sb-pill{display:inline-block;padding:.2rem .6rem;border-radius:2px;background:rgba(33,150,243,0.12);border:1px solid rgba(33,150,243,0.25);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--light);}
+  .sb-right{margin-left:auto;font-family:'DM Mono',monospace;font-size:.62rem;color:var(--grey);}
+
+  /* tabs */
+  .tabs{display:flex;gap:0;margin-top:1.75rem;border-bottom:1px solid rgba(33,150,243,0.15);}
+  .tab{padding:.7rem 1.3rem;font-family:'DM Mono',monospace;font-size:.67rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;color:var(--grey);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;}
+  .tab:hover{color:var(--white);}
+  .tab.active{color:var(--light);border-bottom-color:var(--mid);}
+
+  /* controls */
+  .controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;padding:1.1rem 0 .5rem;}
+  .ctrl-group{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;}
+  .ctrl-label{font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(139,163,192,0.45);margin-right:.2rem;}
+  .pill{padding:.28rem .75rem;border-radius:20px;border:1px solid rgba(33,150,243,0.25);background:transparent;color:var(--grey);font-family:'DM Mono',monospace;font-size:.67rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+  .pill:hover{border-color:var(--mid);color:var(--white);}
+  .pill.active{background:var(--mid);border-color:var(--mid);color:#fff;}
+
+  /* table */
+  .std-table{width:100%;border-collapse:collapse;margin-top:.35rem;}
+  .std-table th{font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);background:rgba(7,20,41,0.9);padding:.55rem .8rem;text-align:left;position:sticky;top:52px;z-index:5;border-bottom:1px solid rgba(33,150,243,0.12);}
+  .std-table td{padding:.5rem .8rem;border-bottom:1px solid rgba(33,150,243,0.06);font-family:'DM Mono',monospace;font-size:.82rem;vertical-align:middle;}
+  .std-table tr:hover td{background:rgba(33,150,243,0.035);}
+  .std-table tr.qualifies td{background:rgba(46,125,50,0.07);}
+  .std-table tr.qualifies td:first-child{border-left:2px solid rgba(46,125,50,0.6);}
+  .std-table tr.close td{background:rgba(249,168,37,0.04);}
+
+  .ecell{display:flex;align-items:center;gap:.55rem;}
+  .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .sdot.free{background:var(--free);}
+  .sdot.back{background:var(--back);}
+  .sdot.breast{background:var(--breast);}
+  .sdot.fly{background:var(--fly);}
+  .sdot.im{background:var(--im);}
+  .ename{color:var(--white);font-size:.84rem;font-family:'DM Sans',sans-serif;font-weight:400;}
+  .cut-a{color:var(--gold);}
+  .cut-b{color:var(--grey);}
+  .your-t{color:var(--green3);}
+  .na{color:rgba(139,163,192,0.2);}
+  .qcheck{color:var(--green2);}
+  .ctag{font-size:.57rem;padding:.1rem .35rem;border-radius:2px;background:rgba(249,168,37,0.1);border:1px solid rgba(249,168,37,0.2);color:var(--gold);margin-left:.25rem;}
+
+  /* section header */
+  .sec-hdr{font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);margin:1.5rem 0 .5rem;display:flex;align-items:center;gap:.65rem;}
+  .sec-hdr::after{content:'';flex:1;height:1px;background:rgba(33,150,243,0.1);}
+
+  /* legend */
+  .legend{display:flex;gap:1rem;padding:.85rem 0 .25rem;flex-wrap:wrap;}
+  .leg-item{display:flex;align-items:center;gap:.35rem;font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey);}
+  .leg-dot{width:7px;height:7px;border-radius:50%;}
+
+  .tab-panel.hidden{display:none;}
+  .hidden{display:none!important;}
+
+  @media(max-width:520px){
+    .std-table th,.std-table td{padding:.42rem .5rem;font-size:.74rem;}
+    .ename{font-size:.77rem;}
+  }
+</style>
+</head>
+<body>
+<div class="shimmer-bg"></div>
+
+<nav>
+  <a href="index.html" class="brand">SSF Aquatics</a>
+  <div class="nav-links">
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="times.html">Times</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Time <span>Standards</span></h1>
+    <p>PAC Swimming qualifying times — Short Course Yards (SCY)</p>
+  </div>
+
+  <div class="swimmer-banner hidden" id="swimmerBanner">
+    <div>
+      <div class="sb-label">Viewing standards for</div>
+      <div class="sb-name" id="sbName">—</div>
+    </div>
+    <div>
+      <div class="sb-label">Age Group</div>
+      <span class="sb-pill" id="sbAgeGroup">—</span>
+    </div>
+    <div class="sb-right" id="sbMeta"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="8under">8 &amp; Under</button>
+    <button class="tab" data-tab="agc">AGC Championship</button>
+    <button class="tab" data-tab="fw">Far Western</button>
+  </div>
+
+  <div class="controls hidden" id="ageGenderControls">
+    <div class="ctrl-group">
+      <span class="ctrl-label">Gender</span>
+      <button class="pill active" data-gender="girls">Girls</button>
+      <button class="pill" data-gender="boys">Boys</button>
+    </div>
+    <div class="ctrl-group" id="agcAgePills">
+      <span class="ctrl-label">Age</span>
+      <button class="pill active" data-age="10u">10u</button>
+      <button class="pill" data-age="11">11</button>
+      <button class="pill" data-age="12">12</button>
+      <button class="pill" data-age="13">13</button>
+      <button class="pill" data-age="14">14</button>
+    </div>
+    <div class="ctrl-group hidden" id="fwAgePills">
+      <span class="ctrl-label">Age</span>
+      <button class="pill active" data-age="10u">10u</button>
+      <button class="pill" data-age="11-12">11–12</button>
+      <button class="pill" data-age="13-14">13–14</button>
+      <button class="pill" data-age="15-16">15–16</button>
+      <button class="pill" data-age="17-18">17–18</button>
+    </div>
+  </div>
+
+  <!-- 8 Under Panel -->
+  <div class="tab-panel" id="panel-8under">
+    <div class="sec-hdr">Pacific Swimming · 8 &amp; Under · SCY</div>
+    <div id="table-8under"></div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--free)"></div>Freestyle</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--back)"></div>Backstroke</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--breast)"></div>Breaststroke</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--fly)"></div>Butterfly</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--im)"></div>IM</div>
+      <div class="leg-item" style="margin-left:auto;color:var(--gold);">▬ A Cut &nbsp;&nbsp;</div>
+      <div class="leg-item" style="color:var(--grey);">▬ B Cut</div>
+    </div>
+  </div>
+
+  <!-- AGC Panel -->
+  <div class="tab-panel hidden" id="panel-agc">
+    <div class="sec-hdr" id="agcSectionHdr">2025–2026 AGC Championship · Girls · 10 &amp; Under</div>
+    <div id="table-agc"></div>
+  </div>
+
+  <!-- Far Western Panel -->
+  <div class="tab-panel hidden" id="panel-fw">
+    <div class="sec-hdr" id="fwSectionHdr">2026 Far Western · Girls · 10 &amp; Under</div>
+    <div id="table-fw"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, getDoc }   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const app = initializeApp({
+  apiKey:'AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs',
+  authDomain:'ssfaquatics.firebaseapp.com',
+  projectId:'ssfaquatics'
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ── STANDARDS DATA ────────────────────────────────────────────────────────────
+
+const EVENTS_8U = ['25 FR','50 FR','100 FR','25 BK','50 BK','25 BR','50 BR','25 FL','50 FL','100 IM'];
+
+// 8 & Under — same cuts for girls and boys (SCY)
+const STD_8U = {
+  '25 FR' : { A:'19.49',   B:'23.49'   },
+  '50 FR' : { A:'43.99',   B:'53.29'   },
+  '100 FR': { A:'1:39.99', B:'2:00.99' },
+  '25 BK' : { A:'23.49',   B:'28.49'   },
+  '50 BK' : { A:'51.99',   B:'1:02.99' },
+  '25 BR' : { A:'25.99',   B:'31.49'   },
+  '50 BR' : { A:'57.99',   B:'1:10.19' },
+  '25 FL' : { A:'22.59',   B:'27.39'   },
+  '50 FL' : { A:'54.99',   B:'1:06.59' },
+  '100 IM': { A:'1:49.29', B:'2:12.29' }
+};
+
+const EVENTS_AGC_FW = [
+  '50 FR','100 FR','200 FR','500 FR','1000 FR','1650 FR',
+  '50 BK','100 BK','200 BK',
+  '50 BR','100 BR','200 BR',
+  '50 FL','100 FL','200 FL',
+  '100 IM','200 IM','400 IM'
+];
+
+// AGC 2025-2026 (SCY)
+const AGC = {
+  girls:{
+    '10u':{'50 FR':'31.39','100 FR':'1:10.49','200 FR':'2:35.59','500 FR':'6:43.99','50 BK':'36.69','100 BK':'1:19.29','50 BR':'41.69','100 BR':'1:31.89','50 FL':'36.19','100 FL':'1:24.09','100 IM':'1:20.09','200 IM':'2:52.39'},
+    '11' :{'50 FR':'30.09','100 FR':'1:05.49','200 FR':'2:22.09','500 FR':'6:24.09','1000 FR':'13:17.69','1650 FR':'22:25.99','50 BK':'33.99','100 BK':'1:14.09','200 BK':'2:38.39','50 BR':'38.49','100 BR':'1:23.99','200 BR':'3:01.39','50 FL':'32.59','100 FL':'1:14.59','200 FL':'2:49.39','100 IM':'1:14.59','200 IM':'2:39.99','400 IM':'5:41.79'},
+    '12' :{'50 FR':'27.89','100 FR':'1:00.49','200 FR':'2:12.09','500 FR':'5:51.39','1000 FR':'12:09.49','1650 FR':'20:27.19','50 BK':'31.99','100 BK':'1:09.39','200 BK':'2:30.89','50 BR':'36.09','100 BR':'1:18.19','200 BR':'2:52.19','50 FL':'30.59','100 FL':'1:08.09','200 FL':'2:34.29','100 IM':'1:09.29','200 IM':'2:28.39','400 IM':'5:19.19'},
+    '13' :{'50 FR':'26.79','100 FR':'57.79','200 FR':'2:05.69','500 FR':'5:43.19','1000 FR':'11:47.59','1650 FR':'19:45.39','50 BK':'29.89','100 BK':'1:05.69','200 BK':'2:21.19','50 BR':'34.69','100 BR':'1:14.49','200 BR':'2:41.79','50 FL':'29.49','100 FL':'1:04.79','200 FL':'2:23.99','200 IM':'2:21.59','400 IM':'5:06.79'},
+    '14' :{'50 FR':'26.09','100 FR':'56.29','200 FR':'2:02.09','500 FR':'5:33.19','1000 FR':'11:30.29','1650 FR':'19:03.09','50 BK':'28.89','100 BK':'1:03.19','200 BK':'2:16.59','50 BR':'33.79','100 BR':'1:12.59','200 BR':'2:37.89','50 FL':'28.89','100 FL':'1:02.79','200 FL':'2:22.09','200 IM':'2:17.39','400 IM':'4:57.19'}
+  },
+  boys:{
+    '10u':{'50 FR':'30.99','100 FR':'1:09.69','200 FR':'2:29.39','500 FR':'6:37.09','50 BK':'36.99','100 BK':'1:18.89','50 BR':'40.99','100 BR':'1:28.99','50 FL':'35.39','100 FL':'1:22.69','100 IM':'1:18.89','200 IM':'2:50.99'},
+    '11' :{'50 FR':'29.79','100 FR':'1:05.19','200 FR':'2:21.39','500 FR':'6:14.69','1000 FR':'13:11.69','1650 FR':'22:14.79','50 BK':'34.69','100 BK':'1:14.29','200 BK':'2:38.69','50 BR':'38.99','100 BR':'1:23.59','200 BR':'2:59.39','50 FL':'33.39','100 FL':'1:14.59','200 FL':'2:49.39','100 IM':'1:14.69','200 IM':'2:40.89','400 IM':'5:42.09'},
+    '12' :{'50 FR':'27.19','100 FR':'59.29','200 FR':'2:09.19','500 FR':'5:47.49','1000 FR':'11:56.79','1650 FR':'20:00.79','50 BK':'31.59','100 BK':'1:07.49','200 BK':'2:27.39','50 BR':'35.19','100 BR':'1:15.89','200 BR':'2:46.39','50 FL':'30.19','100 FL':'1:07.09','200 FL':'2:28.39','100 IM':'1:08.09','200 IM':'2:27.09','400 IM':'5:12.19'},
+    '13' :{'50 FR':'25.29','100 FR':'54.39','200 FR':'1:58.79','500 FR':'5:27.39','1000 FR':'11:19.79','1650 FR':'18:57.49','50 BK':'28.49','100 BK':'1:02.39','200 BK':'2:16.79','50 BR':'32.49','100 BR':'1:10.39','200 BR':'2:35.99','50 FL':'27.89','100 FL':'1:01.09','200 FL':'2:17.79','200 IM':'2:14.19','400 IM':'4:50.59'},
+    '14' :{'50 FR':'23.99','100 FR':'52.39','200 FR':'1:54.69','500 FR':'5:13.89','1000 FR':'10:51.29','1650 FR':'18:09.89','50 BK':'27.09','100 BK':'59.89','200 BK':'2:10.49','50 BR':'30.99','100 BR':'1:06.69','200 BR':'2:26.99','50 FL':'26.69','100 FL':'58.99','200 FL':'2:10.99','200 IM':'2:08.99','400 IM':'4:37.49'}
+  }
+};
+
+// Far Western 2026 (SCY)
+const FW = {
+  girls:{
+    '10u'  :{'50 FR':'30.59','100 FR':'1:08.09','200 FR':'2:29.49','500 FR':'6:25.69','50 BK':'35.49','100 BK':'1:17.09','50 BR':'40.29','100 BR':'1:28.99','50 FL':'33.99','100 FL':'1:20.49','100 IM':'1:17.09','200 IM':'2:47.99'},
+    '11-12':{'50 FR':'26.79','100 FR':'59.09','200 FR':'2:08.49','500 FR':'5:41.89','1000 FR':'11:42.69','1650 FR':'20:14.59','50 BK':'31.09','100 BK':'1:07.49','200 BK':'2:26.79','50 BR':'34.99','100 BR':'1:15.89','200 BR':'2:45.89','50 FL':'29.49','100 FL':'1:05.89','200 FL':'2:28.09','100 IM':'1:07.59','200 IM':'2:25.09','400 IM':'5:10.29'},
+    '13-14':{'50 FR':'25.49','100 FR':'55.39','200 FR':'2:00.19','500 FR':'5:23.09','1000 FR':'11:11.19','1650 FR':'18:43.59','50 BK':'28.49','100 BK':'1:01.79','200 BK':'2:14.29','50 BR':'33.09','100 BR':'1:11.39','200 BR':'2:35.39','50 FL':'28.19','100 FL':'1:01.39','200 FL':'2:18.59','200 IM':'2:15.89','400 IM':'4:50.99'},
+    '15-16':{'50 FR':'25.19','100 FR':'54.99','200 FR':'1:59.09','500 FR':'5:18.79','1000 FR':'10:59.89','1650 FR':'18:37.89','50 BK':'27.69','100 BK':'1:00.89','200 BK':'2:11.99','50 BR':'32.29','100 BR':'1:09.69','200 BR':'2:31.59','50 FL':'27.29','100 FL':'1:00.49','200 FL':'2:15.79','200 IM':'2:13.69','400 IM':'4:45.49'},
+    '17-18':{'50 FR':'25.19','100 FR':'54.99','200 FR':'1:59.09','500 FR':'5:18.79','1000 FR':'10:59.89','1650 FR':'18:37.89','50 BK':'27.69','100 BK':'1:00.89','200 BK':'2:11.99','50 BR':'32.29','100 BR':'1:09.69','200 BR':'2:31.59','50 FL':'27.29','100 FL':'1:00.49','200 FL':'2:15.79','200 IM':'2:13.69','400 IM':'4:45.49'}
+  },
+  boys:{
+    '10u'  :{'50 FR':'30.19','100 FR':'1:07.59','200 FR':'2:26.99','500 FR':'6:26.79','50 BK':'35.79','100 BK':'1:17.09','50 BR':'39.99','100 BR':'1:26.99','50 FL':'33.99','100 FL':'1:20.49','100 IM':'1:16.89','200 IM':'2:47.99'},
+    '11-12':{'50 FR':'26.19','100 FR':'57.29','200 FR':'2:06.69','500 FR':'5:36.69','1000 FR':'11:39.09','1650 FR':'19:30.69','50 BK':'30.59','100 BK':'1:05.89','200 BK':'2:20.79','50 BR':'34.09','100 BR':'1:14.29','200 BR':'2:39.89','50 FL':'28.89','100 FL':'1:04.99','200 FL':'2:25.09','100 IM':'1:06.09','200 IM':'2:24.09','400 IM':'5:03.39'},
+    '13-14':{'50 FR':'23.59','100 FR':'51.49','200 FR':'1:52.69','500 FR':'5:04.99','1000 FR':'10:39.49','1650 FR':'17:47.29','50 BK':'26.49','100 BK':'58.69','200 BK':'2:07.29','50 BR':'30.29','100 BR':'1:05.49','200 BR':'2:25.09','50 FL':'26.09','100 FL':'57.79','200 FL':'2:07.99','200 IM':'2:07.49','400 IM':'4:33.89'},
+    '15-16':{'50 FR':'22.79','100 FR':'50.09','200 FR':'1:48.89','500 FR':'4:55.99','1000 FR':'10:17.39','1650 FR':'17:09.19','50 BK':'24.99','100 BK':'55.19','200 BK':'2:00.59','50 BR':'28.79','100 BR':'1:03.89','200 BR':'2:18.19','50 FL':'24.79','100 FL':'54.99','200 FL':'2:03.29','200 IM':'2:03.09','400 IM':'4:25.59'},
+    '17-18':{'50 FR':'22.79','100 FR':'50.09','200 FR':'1:48.89','500 FR':'4:55.99','1000 FR':'10:17.39','1650 FR':'17:09.19','50 BK':'24.99','100 BK':'55.19','200 BK':'2:00.59','50 BR':'28.79','100 BR':'1:03.89','200 BR':'2:18.19','50 FL':'24.79','100 FL':'54.99','200 FL':'2:03.29','200 IM':'2:03.09','400 IM':'4:25.59'}
+  }
+};
+
+// ── UTILITIES ─────────────────────────────────────────────────────────────────
+
+function sdot(event) {
+  if (event.includes('FR')) return 'free';
+  if (event.includes('BK')) return 'back';
+  if (event.includes('BR')) return 'breast';
+  if (event.includes('FL')) return 'fly';
+  if (event.includes('IM')) return 'im';
+  return '';
+}
+
+function toSec(t) {
+  if (!t || t === '—' || t === '-') return Infinity;
+  const p = t.toString().split(':');
+  return p.length === 2 ? parseFloat(p[0]) * 60 + parseFloat(p[1]) : parseFloat(p[0]);
+}
+
+function qualifies(swimmer, cut) {
+  if (!swimmer || !cut) return false;
+  return toSec(swimmer) <= toSec(cut);
+}
+
+function pctOver(swimmer, cut) {
+  const s = toSec(swimmer), c = toSec(cut);
+  if (!isFinite(s) || !isFinite(c)) return null;
+  return ((s - c) / c * 100);
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+
+let currentTab    = '8under';
+let currentGender = 'girls';
+let currentAgcAge = '10u';
+let currentFwAge  = '10u';
+let swimmerData   = null;
+let swimmerAge    = null;
+
+// ── RENDER 8 UNDER ────────────────────────────────────────────────────────────
+
+function render8under() {
+  const times = swimmerData?.times || {};
+  const hasSwimmer = !!swimmerData;
+  const yourHdr = hasSwimmer ? '<th>Your Best</th>' : '';
+
+  const rows = EVENTS_8U.map(ev => {
+    const cut = STD_8U[ev];
+    const sc  = sdot(ev);
+    const yt  = times[ev];
+    const qA  = qualifies(yt, cut.A);
+    const qB  = !qA && qualifies(yt, cut.B);
+    const cls = qA || qB ? ' class="qualifies"' : '';
+
+    let yourCell = '';
+    if (hasSwimmer) {
+      if (yt) {
+        yourCell = `<td class="your-t">${yt}${qA||qB ? ' <span class="qcheck">✓</span>' : ''}</td>`;
+      } else {
+        yourCell = `<td class="na">—</td>`;
+      }
+    }
+    return `<tr${cls}>
+      <td><div class="ecell"><div class="sdot ${sc}"></div><span class="ename">${ev}</span></div></td>
+      <td class="cut-a">${cut.A}</td>
+      <td class="cut-b">${cut.B}</td>
+      ${yourCell}
+    </tr>`;
+  }).join('');
+
+  document.getElementById('table-8under').innerHTML = `
+    <table class="std-table">
+      <thead><tr>
+        <th>Event</th>
+        <th style="color:var(--gold)">A Cut</th>
+        <th style="color:var(--grey)">B Cut</th>
+        ${yourHdr}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── RENDER AGC ────────────────────────────────────────────────────────────────
+
+function renderAGC() {
+  const data = AGC[currentGender]?.[currentAgcAge] || {};
+  const times = swimmerData?.times || {};
+  const hasSwimmer = !!swimmerData;
+  const yourHdr = hasSwimmer ? '<th>Your Best</th>' : '';
+
+  const gLbl = currentGender === 'girls' ? 'Girls' : 'Boys';
+  const aLbl = currentAgcAge === '10u' ? '10 &amp; Under' : currentAgcAge;
+  document.getElementById('agcSectionHdr').innerHTML = `2025–2026 AGC Championship · ${gLbl} · ${aLbl}`;
+
+  const rows = EVENTS_AGC_FW.map(ev => {
+    const cut = data[ev];
+    const sc  = sdot(ev);
+    if (!cut) {
+      return `<tr>
+        <td><div class="ecell"><div class="sdot ${sc}"></div><span class="ename">${ev}</span></div></td>
+        <td class="na" colspan="${hasSwimmer ? 2 : 1}">—</td>
+      </tr>`;
+    }
+    const yt   = times[ev];
+    const qual = qualifies(yt, cut);
+    const pct  = !qual && yt ? pctOver(yt, cut) : null;
+    const cls  = qual ? ' class="qualifies"' : (pct !== null && pct < 5 ? ' class="close"' : '');
+
+    let yourCell = '';
+    if (hasSwimmer) {
+      if (yt) {
+        const badge = qual
+          ? ' <span class="qcheck">✓</span>'
+          : (pct !== null && pct < 5 ? ` <span class="ctag">+${pct.toFixed(1)}%</span>` : '');
+        yourCell = `<td class="your-t">${yt}${badge}</td>`;
+      } else {
+        yourCell = `<td class="na">—</td>`;
+      }
+    }
+    return `<tr${cls}>
+      <td><div class="ecell"><div class="sdot ${sc}"></div><span class="ename">${ev}</span></div></td>
+      <td class="cut-a">${cut}</td>
+      ${yourCell}
+    </tr>`;
+  }).join('');
+
+  document.getElementById('table-agc').innerHTML = `
+    <table class="std-table">
+      <thead><tr>
+        <th>Event</th>
+        <th>Standard (SCY)</th>
+        ${yourHdr}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── RENDER FAR WESTERN ────────────────────────────────────────────────────────
+
+function renderFW() {
+  const data = FW[currentGender]?.[currentFwAge] || {};
+  const times = swimmerData?.times || {};
+  const hasSwimmer = !!swimmerData;
+  const yourHdr = hasSwimmer ? '<th>Your Best</th>' : '';
+
+  const gLbl = currentGender === 'girls' ? 'Girls' : 'Boys';
+  const aMap = {'10u':'10 &amp; Under','11-12':'11–12','13-14':'13–14','15-16':'15–16','17-18':'17–18'};
+  document.getElementById('fwSectionHdr').innerHTML = `2026 Far Western · ${gLbl} · ${aMap[currentFwAge] || currentFwAge}`;
+
+  const rows = EVENTS_AGC_FW.map(ev => {
+    const cut = data[ev];
+    const sc  = sdot(ev);
+    if (!cut) {
+      return `<tr>
+        <td><div class="ecell"><div class="sdot ${sc}"></div><span class="ename">${ev}</span></div></td>
+        <td class="na" colspan="${hasSwimmer ? 2 : 1}">—</td>
+      </tr>`;
+    }
+    const yt   = times[ev];
+    const qual = qualifies(yt, cut);
+    const pct  = !qual && yt ? pctOver(yt, cut) : null;
+    const cls  = qual ? ' class="qualifies"' : (pct !== null && pct < 5 ? ' class="close"' : '');
+
+    let yourCell = '';
+    if (hasSwimmer) {
+      if (yt) {
+        const badge = qual
+          ? ' <span class="qcheck">✓</span>'
+          : (pct !== null && pct < 5 ? ` <span class="ctag">+${pct.toFixed(1)}%</span>` : '');
+        yourCell = `<td class="your-t">${yt}${badge}</td>`;
+      } else {
+        yourCell = `<td class="na">—</td>`;
+      }
+    }
+    return `<tr${cls}>
+      <td><div class="ecell"><div class="sdot ${sc}"></div><span class="ename">${ev}</span></div></td>
+      <td class="cut-a">${cut}</td>
+      ${yourCell}
+    </tr>`;
+  }).join('');
+
+  document.getElementById('table-fw').innerHTML = `
+    <table class="std-table">
+      <thead><tr>
+        <th>Event</th>
+        <th>Standard (SCY)</th>
+        ${yourHdr}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderAll() { render8under(); renderAGC(); renderFW(); }
+
+// ── AGE HELPERS ───────────────────────────────────────────────────────────────
+
+function calcAge(birthdate) {
+  if (!birthdate) return null;
+  const today = new Date(), birth = new Date(birthdate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
+}
+
+function agcGroup(age) {
+  if (!age || age <= 10) return '10u';
+  if (age <= 14) return String(age);
+  return '14';
+}
+
+function fwGroup(age) {
+  if (!age || age <= 10) return '10u';
+  if (age <= 12) return '11-12';
+  if (age <= 14) return '13-14';
+  if (age <= 16) return '15-16';
+  return '17-18';
+}
+
+function setActivePill(containerId, val) {
+  document.querySelectorAll(`#${containerId} .pill`).forEach(p => {
+    p.classList.toggle('active', p.dataset.age === val);
+  });
+}
+
+// ── FIREBASE ──────────────────────────────────────────────────────────────────
+
+async function loadSwimmer(uid) {
+  try {
+    const uSnap = await getDoc(doc(db, 'users', uid));
+    if (!uSnap.exists() || uSnap.data().role !== 'swimmer') { renderAll(); return; }
+    const swimmerId = uSnap.data().swimmerId;
+    if (!swimmerId) { renderAll(); return; }
+
+    const sSnap = await getDoc(doc(db, 'swimmers', swimmerId));
+    if (!sSnap.exists()) { renderAll(); return; }
+
+    swimmerData = sSnap.data();
+    swimmerAge  = calcAge(swimmerData.birthdate);
+
+    const agcAge = agcGroup(swimmerAge);
+    const fwAge  = fwGroup(swimmerAge);
+
+    // auto-select gender
+    currentGender = (swimmerData.gender || '').toLowerCase() === 'female' ? 'girls' : 'boys';
+    document.querySelectorAll('[data-gender]').forEach(p =>
+      p.classList.toggle('active', p.dataset.gender === currentGender));
+
+    // auto-select age groups
+    currentAgcAge = agcAge;
+    currentFwAge  = fwAge;
+    setActivePill('agcAgePills', agcAge);
+    setActivePill('fwAgePills',  fwAge);
+
+    // banner
+    const banner = document.getElementById('swimmerBanner');
+    banner.classList.remove('hidden');
+    document.getElementById('sbName').textContent = swimmerData.name || '—';
+    document.getElementById('sbAgeGroup').innerHTML = `AGC: ${agcAge === '10u' ? '10u' : agcAge} &nbsp;·&nbsp; FW: ${fwAge}`;
+    document.getElementById('sbMeta').textContent = swimmerAge ? `Age ${swimmerAge}` : '';
+
+    renderAll();
+  } catch(e) {
+    console.error('loadSwimmer error:', e);
+    renderAll();
+  }
+}
+
+// ── UI EVENTS ─────────────────────────────────────────────────────────────────
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    currentTab = t.dataset.tab;
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+    document.getElementById(`panel-${currentTab}`).classList.remove('hidden');
+    const ctrl = document.getElementById('ageGenderControls');
+    if (currentTab === '8under') {
+      ctrl.classList.add('hidden');
+    } else {
+      ctrl.classList.remove('hidden');
+      document.getElementById('agcAgePills').classList.toggle('hidden', currentTab !== 'agc');
+      document.getElementById('fwAgePills').classList.toggle('hidden', currentTab !== 'fw');
+    }
+  });
+});
+
+document.querySelectorAll('[data-gender]').forEach(p => {
+  p.addEventListener('click', () => {
+    currentGender = p.dataset.gender;
+    document.querySelectorAll('[data-gender]').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    renderAGC(); renderFW();
+  });
+});
+
+document.querySelectorAll('#agcAgePills .pill').forEach(p => {
+  p.addEventListener('click', () => {
+    currentAgcAge = p.dataset.age;
+    document.querySelectorAll('#agcAgePills .pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    renderAGC();
+  });
+});
+
+document.querySelectorAll('#fwAgePills .pill').forEach(p => {
+  p.addEventListener('click', () => {
+    currentFwAge = p.dataset.age;
+    document.querySelectorAll('#fwAgePills .pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    renderFW();
+  });
+});
+
+onAuthStateChanged(auth, user => {
+  if (user) loadSwimmer(user.uid);
+  else renderAll();
+});
+</script>
+</body>
+</html>
