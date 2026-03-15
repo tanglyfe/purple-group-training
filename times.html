@@ -133,8 +133,13 @@
   }
 
   /* GROUP FILTER */
-  .group-filter-bar{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;}
-  .group-filter-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-right:.1rem;}
+  .group-filter-bar{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;padding:.5rem 0 .25rem;}
+  .group-filter-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-right:.25rem;flex-shrink:0;}
+  .group-pill{padding:.28rem .75rem;border-radius:20px;border:1px solid rgba(33,150,243,0.2);background:transparent;color:var(--grey);font-family:'DM Mono',monospace;font-size:.68rem;cursor:pointer;transition:all .2s;letter-spacing:.06em;}
+  .group-pill:hover{border-color:var(--mid);color:var(--white);}
+  .group-pill.active{background:rgba(33,150,243,0.15);border-color:var(--mid);color:var(--white);}
+  .group-pill[data-group-color]{border-color:var(--gc,rgba(33,150,243,0.2));}
+  .group-pill[data-group-color].active{background:rgba(var(--gc-rgb,33,150,243),0.15);border-color:var(--gc,var(--mid));color:var(--white);}
 </style>
   
 <style>
@@ -175,6 +180,9 @@
         <option value="events">Sort: Most Events</option>
       </select>
     </div>
+    <div class="group-filter-bar" id="group-filter-bar" style="display:none">
+      <span class="group-filter-label">Group</span>
+    </div>
     <div class="stats-row" id="roster-stats" style="display:none">
       <div class="stat-chip"><strong id="stat-total">0</strong> swimmers</div>
       <div class="stat-chip"><strong id="stat-male">0</strong> boys</div>
@@ -207,7 +215,7 @@
 <script src="sidebar.js"></script>
 <script type="module">
 import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA-hATur1TXeZePf4W4lqDTsxNRIg0NKfs",
@@ -223,8 +231,9 @@ function dicebearUrl(name, size) { return 'https://api.dicebear.com/9.x/adventur
 
 // ── State ──
 let allSwimmers = [];
-let rosterGender = 'all', rosterSort = 'name';
-let rankingsGender = 'all', selectedEvent = null;
+let allGroups   = [];
+let rosterGender = 'all', rosterSort = 'name', rosterGroup = null;
+let rankingsGender = 'all', rankingsGroup = null, selectedEvent = null;
 
 // ── Helpers ──
 function strokeOf(ev) {
@@ -256,9 +265,14 @@ function parseSecs(t) {
 
 // ── Load data ──
 async function loadSwimmers() {
-  const q = query(collection(db, 'swimmers'), where('active', '==', true));
-  const snap = await getDocs(q);
-  allSwimmers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const [swSnap, grpSnap] = await Promise.all([
+    getDocs(query(collection(db, 'swimmers'), where('active', '==', true))),
+    getDocs(collection(db, 'groups')),
+  ]);
+
+  allSwimmers = swSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  allGroups   = grpSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+                  .sort((a,b) => a.name.localeCompare(b.name));
 
   // Stats
   const males   = allSwimmers.filter(s => s.gender === 'M').length;
@@ -276,17 +290,51 @@ async function loadSwimmers() {
   document.getElementById('stat-updated').textContent = latest ? latest.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
   document.getElementById('roster-stats').style.display = 'flex';
 
+  buildGroupFilter();
   buildEventButtons();
   renderRoster();
   renderRankings();
 }
 
+// ── GROUP FILTER BAR ──
+function buildGroupFilter() {
+  const bar = document.getElementById('group-filter-bar');
+  if (!allGroups.length) return;
+  bar.style.display = 'flex';
+
+  const allBtn = `<button class="group-pill active" data-gid="">All Groups</button>`;
+  const groupBtns = allGroups.map(g => {
+    const color = g.color || '';
+    const style = color ? `style="--gc:${color};border-color:${color}40"` : '';
+    return `<button class="group-pill" data-gid="${g.id}" ${style}>${g.name}</button>`;
+  }).join('');
+
+  bar.innerHTML = `<span class="group-filter-label">Group</span>${allBtn}${groupBtns}`;
+
+  bar.querySelectorAll('.group-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bar.querySelectorAll('.group-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      rosterGroup = btn.dataset.gid || null;
+      renderRoster();
+    });
+  });
+}
+
 // ── ROSTER RENDER ──
 function renderRoster() {
   const search = document.getElementById('roster-search').value.toLowerCase();
+  // Build set of swimmer IDs in the selected group
+  let groupIds = null;
+  if (rosterGroup) {
+    const grp = allGroups.find(g => g.id === rosterGroup);
+    groupIds = new Set(grp ? (grp.swimmerIds || []) : []);
+  }
+
   let list = allSwimmers.filter(s => {
     if (rosterGender !== 'all' && s.gender !== rosterGender) return false;
     if (search && !s.name.toLowerCase().includes(search)) return false;
+    if (groupIds && !groupIds.has(s.id)) return false;
     return true;
   });
   if (rosterSort === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
@@ -311,7 +359,7 @@ function renderRoster() {
     return `<a class="swimmer-card" href="swimmer.html?id=${s.id}">
       <div class="card-header">
         <div class="avatar"><img src="${dicebearUrl(s.name,40)}" alt="${s.name}"></div>
-        <div><div class="card-name">${s.name}</div><div class="card-meta">${events.length} event${events.length!==1?'s':''}</div></div>
+        <div><div class="card-name">${s.name}</div><div class="card-meta">${events.length} event${events.length!==1?'s':''}${s.groupName?' · '+s.groupName:''}</div></div>
         <span class="gender-badge ${s.gender}">${s.gender==='M'?'BOY':'GIRL'}</span>
       </div>
       <div class="card-times"><div class="times-grid">${tags}${noTimes}</div>${more}</div>

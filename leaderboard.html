@@ -109,6 +109,19 @@
   /* GROUP FILTER */
   .group-filter-bar{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;}
   .group-filter-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-right:.1rem;}
+
+  /* AGE GROUP BAR */
+  .agegroup-bar{padding:.55rem 1.75rem;border-bottom:1px solid var(--border);display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;flex-shrink:0;background:rgba(7,20,41,0.3);}
+  .agegroup-bar-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-right:.25rem;white-space:nowrap;}
+  .ag-btn{padding:.28rem .65rem;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--grey);font-family:'DM Mono',monospace;font-size:.68rem;cursor:pointer;transition:all .15s;letter-spacing:.05em;}
+  .ag-btn:hover{color:var(--white);border-color:rgba(255,255,255,0.2);}
+  .ag-btn.sel{background:rgba(249,168,37,0.15);border-color:var(--gold);color:var(--gold);}
+
+  /* AVATAR in table/podium */
+  .lb-avatar{width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--navy);}
+  .lb-avatar img{width:100%;height:100%;display:block;}
+  .podium-avatar{width:42px;height:42px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--navy);}
+  .podium-avatar img{width:100%;height:100%;display:block;}
 </style>
 </head>
 <body>
@@ -160,6 +173,16 @@
     <div id="event-btns" style="display:flex;gap:.4rem;flex-wrap:wrap;"></div>
   </div>
 
+  <div class="agegroup-bar">
+    <span class="agegroup-bar-label">Age Group</span>
+    <button class="ag-btn sel" data-ag="all">All Ages</button>
+    <button class="ag-btn" data-ag="10u">10 &amp; Under</button>
+    <button class="ag-btn" data-ag="11-12">11–12</button>
+    <button class="ag-btn" data-ag="13-14">13–14</button>
+    <button class="ag-btn" data-ag="15-16">15–16</button>
+    <button class="ag-btn" data-ag="17-18">17–18</button>
+  </div>
+
   <div class="stats-strip" id="stats-strip" style="display:none">
     <span class="stat-val" id="stat-count">0</span><span class="stat-label">swimmers</span>
     <span id="stat-ev" style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--grey);margin-left:.5rem">—</span>
@@ -185,6 +208,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
+function dicebearUrl(name,size){return'https://api.dicebear.com/9.x/adventurer/svg?seed='+encodeURIComponent(name||'swimmer')+'&backgroundColor=0b1f3a&backgroundType=solid'+(size?'&size='+size:'');}
 
 const STANDARDS = {
   "50 Free":{B:40,BB:35,A:30,AA:27,AAA:24.5,AAAA:22.9},
@@ -220,7 +244,7 @@ const SC={free:"var(--free)",back:"var(--back)",breast:"var(--breast)",fly:"var(
 const EV_ORDER=["50 Free","100 Free","200 Free","500 Free","1000 Free","1650 Free","50 Back","100 Back","200 Back","50 Breast","100 Breast","200 Breast","50 Fly","100 Fly","200 Fly","100 IM","200 IM","400 IM"];
 function ps(t){t=t.trim();if(t.includes(":")){const[m,s]=t.split(":");return parseInt(m)*60+parseFloat(s);}return parseFloat(t);}
 
-let all=[],gf="all",sel=null;
+let all=[],gf="all",sel=null,ageGroupFilter="all";
 
 
 // ── GROUP FILTER ─────────────────────────────────────────────────────────────
@@ -271,15 +295,24 @@ function swimmerMatchesGroup(swimmer) {
 
 
 function calcAge(swimmer) {
-  if (swimmer.birthYear) {
-    const now = new Date();
-    return now.getFullYear() - swimmer.birthYear;
-  }
-  return swimmer.age || null;
+  if (swimmer.birthYear) return new Date().getFullYear() - parseInt(swimmer.birthYear);
+  if (swimmer.age) return parseInt(swimmer.age);
+  return null;
+}
+function ageGroupOf(age) {
+  if (!age) return null;
+  if (age <= 10) return '10u';
+  if (age <= 12) return '11-12';
+  if (age <= 14) return '13-14';
+  if (age <= 16) return '15-16';
+  return '17-18';
 }
 async function load(){
-  const snap=await getDocs(query(collection(db,"swimmers"),where("active","==",true)));
-  all=snap.docs.map(d=>({id:d.id,...d.data()}));
+  const [swSnap] = await Promise.all([
+    getDocs(query(collection(db,"swimmers"),where("active","==",true))),
+    loadGroups(),
+  ]);
+  all=swSnap.docs.map(d=>({id:d.id,...d.data()}));
   buildBtns();render();
 }
 
@@ -299,8 +332,14 @@ function render(){
   if(!sel)return;
   const color=SC[strokeOf(sel)];
   const rows=all
-    .filter(s=>(gf==="all"||s.gender===gf)&&swimmerMatchesGroup(s)&&(s.times||{})[sel])
-    .map(s=>({...s,secs:ps(s.times[sel]),display:s.times[sel],tier:getTier(sel,ps(s.times[sel]))}))
+    .filter(s=>{
+      if(gf!=="all"&&s.gender!==gf)return false;
+      if(!swimmerMatchesGroup(s))return false;
+      if(!(s.times||{})[sel])return false;
+      if(ageGroupFilter!=="all"){const ag=ageGroupOf(calcAge(s));if(ag!==ageGroupFilter)return false;}
+      return true;
+    })
+    .map(s=>({...s,age:calcAge(s),secs:ps(s.times[sel]),display:s.times[sel],tier:getTier(sel,ps(s.times[sel]))}))
     .sort((a,b)=>a.secs-b.secs);
 
   document.getElementById("stat-count").textContent=rows.length;
@@ -321,10 +360,12 @@ function render(){
     <a class="podium-card${rn[i]===1?" first":""}" href="swimmer.html?id=${r.id}">
       <div class="podium-medal">${me[i]}</div>
       <div class="podium-rank-num ${pc[i]}">${rn[i]}</div>
+      <div class="podium-avatar"><img src="${dicebearUrl(r.name,48)}" alt="${r.name}"></div>
       <div class="podium-info">
         <div class="podium-name">${r.name}</div>
         <div class="podium-meta">
           <span class="gender-tag ${r.gender}">${r.gender}</span>
+          ${r.age?`<span style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey)">Age ${r.age}</span>`:""}
           ${r.tier?`<span class="tier-badge" style="background:${r.tier.bg};color:${r.tier.color}">${r.tier.key}</span>`:""}
         </div>
       </div>
@@ -343,9 +384,9 @@ function render(){
       const pct=Math.round((fastest/r.secs)*100);
       return`<tr>
         <td class="td-rank" style="color:${rc}">${i+1}</td>
-        <td class="td-name"><a href="swimmer.html?id=${r.id}">${r.name}</a></td>
+        <td class="td-name" style="display:flex;align-items:center;gap:.55rem"><div class="lb-avatar"><img src="${dicebearUrl(r.name,36)}" alt="${r.name}"></div><a href="swimmer.html?id=${r.id}">${r.name}</a></td>
         <td class="td-c"><span class="gender-tag ${r.gender}">${r.gender==="M"?"Boy":"Girl"}</span></td>
-        <td class="td-age">${calcAge(r)||"&#8212;"}</td>
+        <td class="td-age">${r.age||"&#8212;"}</td>
         <td class="td-time" style="color:${color}">${r.display}</td>
         <td class="td-c">${r.tier?`<span class="tier-badge" style="background:${r.tier.bg};color:${r.tier.color}">${r.tier.key}</span>`:`<span style="color:rgba(139,163,192,0.3);font-size:.75rem">&#8212;</span>`}</td>
         <td class="td-bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color};opacity:.55"></div></div></td>
@@ -361,6 +402,15 @@ document.querySelectorAll("#gender-pills .pill").forEach(p=>{
   p.addEventListener("click",()=>{
     document.querySelectorAll("#gender-pills .pill").forEach(x=>x.classList.remove("active"));
     p.classList.add("active");gf=p.dataset.gender;render();
+  });
+});
+
+document.querySelectorAll(".agegroup-bar .ag-btn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".agegroup-bar .ag-btn").forEach(x=>x.classList.remove("sel"));
+    b.classList.add("sel");
+    ageGroupFilter=b.dataset.ag;
+    render();
   });
 });
 
