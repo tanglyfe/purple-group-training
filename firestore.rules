@@ -2,52 +2,45 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Helper: is the caller a coach? ──────────────────────────────────────
     function isCoach() {
       return request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'coach';
     }
 
-    function isAuthed() {
-      return request.auth != null;
-    }
-
-    // ── Users ────────────────────────────────────────────────────────────────
-    // Any authenticated user can create/read/update their own profile.
-    // Coaches can read all user profiles (for the members table on the dashboard).
-    match /users/{userId} {
-      allow create: if isAuthed() && request.auth.uid == userId;
-      allow read:   if isAuthed() && (request.auth.uid == userId || isCoach());
-      allow update: if isAuthed() && request.auth.uid == userId;
-      allow delete: if isCoach();
-    }
-
     // ── Swimmers ─────────────────────────────────────────────────────────────
-    // All authenticated users can read swimmer records.
-    // Only coaches can write (scraper uses Admin SDK so bypasses these rules).
-    match /swimmers/{swimmerId} {
-      allow read:  if isAuthed();
-      allow write: if isCoach();
-    }
-
-    // ── Meets ────────────────────────────────────────────────────────────────
-    // All authenticated users can read upcoming meets.
-    // Only coaches can add / update / delete meets.
-    match /meets/{meetId} {
-      allow read:  if isAuthed();
-      allow write: if isCoach();
-    }
-
-    // ── Groups ───────────────────────────────────────────────────────────────
-    match /groups/{groupId} {
-      allow read:  if isAuthed();
+    // Public read — leaderboard, swimmer profiles, and dashboard all need this
+    // without requiring login. Scraper writes via Admin SDK (bypasses rules).
+    match /swimmers/{id} {
+      allow read: if true;
       allow write: if isCoach();
     }
 
     // ── Attendance ───────────────────────────────────────────────────────────
-    match /attendance/{recordId} {
-      allow read:  if isAuthed();
+    // Kept as public read/write to preserve existing behavior.
+    match /attendance/{date} {
+      allow read, write: if true;
+    }
+
+    // ── Groups ───────────────────────────────────────────────────────────────
+    // Public read (groups page is accessible without login).
+    match /groups/{id} {
+      allow read: if true;
       allow write: if isCoach();
+    }
+
+    // ── Meets ────────────────────────────────────────────────────────────────
+    // New collection — authenticated read, coach write.
+    match /meets/{meetId} {
+      allow read:  if request.auth != null;
+      allow write: if isCoach();
+    }
+
+    // ── Users ────────────────────────────────────────────────────────────────
+    // Users can read/write their own profile doc.
+    // Coaches can additionally read any user doc (members table on dashboard).
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read:        if isCoach();
     }
   }
 }
