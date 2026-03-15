@@ -40,8 +40,8 @@
 
   /* ── HERO ── */
   .dash-hero { display:flex; align-items:center; gap:1.25rem; padding:1.5rem 0 1.25rem; border-bottom:1px solid rgba(33,150,243,0.1); margin-bottom:1.5rem; flex-wrap:wrap; }
-  .hero-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#1565C0,var(--mid)); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:1.6rem; flex-shrink:0; box-shadow:0 0 0 3px rgba(33,150,243,0.15),0 0 24px rgba(33,150,243,0.1); }
-  .hero-avatar.female { background:linear-gradient(135deg,#7B1FA2,#CE93D8); box-shadow:0 0 0 3px rgba(123,31,162,0.15),0 0 24px rgba(123,31,162,0.1); }
+  .hero-avatar { width:64px; height:64px; border-radius:50%; background:var(--navy); display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0; overflow:hidden; box-shadow:0 0 0 3px rgba(33,150,243,0.15),0 0 24px rgba(33,150,243,0.1); }
+  .hero-avatar img { width:100%; height:100%; display:block; }
   .hero-avatar.coach-av { background:linear-gradient(135deg,#2E7D32,#66BB6A); box-shadow:0 0 0 3px rgba(46,125,50,0.15),0 0 24px rgba(46,125,50,0.1); }
   .hero-avatar.parent-av { background:linear-gradient(135deg,#E65100,#FFA726); box-shadow:0 0 0 3px rgba(230,81,0,0.15),0 0 24px rgba(230,81,0,0.1); }
   .hero-info { flex:1; min-width:0; }
@@ -553,6 +553,7 @@ function countSeasonMeets(seasonHistory) {
 }
 function currentAge(s) { return s.age || (s.birthYear ? new Date().getFullYear()-s.birthYear : null); }
 function initials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function dicebearUrl(name, size) { return 'https://api.dicebear.com/9.x/adventurer/svg?seed='+encodeURIComponent(name||'swimmer')+'&backgroundColor=0b1f3a&backgroundType=solid'+(size?'&size='+size:''); }
 function weekOfYear(d) { const s=new Date(d.getFullYear(),0,1); return Math.ceil(((d-s)/86400000+s.getDay()+1)/7); }
 
 // ── MEETS ─────────────────────────────────────────────────────────────────────
@@ -697,7 +698,7 @@ async function swimmerDash(user, profile) {
 
   return `
     <div class="dash-hero">
-      <div class="hero-avatar ${avClass}">${ini}</div>
+      <div class="hero-avatar"><img src="${dicebearUrl(sw.name||name)}" alt="${sw.name||name}"></div>
       <div class="hero-info">
         <div class="hero-label">Purple Group Swimmer</div>
         <div class="hero-name">${sw.name||name}</div>
@@ -861,7 +862,7 @@ async function parentDash(user, profile) {
 
   return `
     <div class="dash-hero">
-      <div class="hero-avatar ${avClass}">${ini}</div>
+      <div class="hero-avatar"><img src="${dicebearUrl(childName)}" alt="${childName}"></div>
       <div class="hero-info">
         <div class="hero-label">Tracking</div>
         <div class="hero-name">${childName}</div>

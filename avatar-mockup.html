@@ -3,351 +3,159 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Avatar Style Mockup — SSF Aquatics</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Avatar Style Mockup — Purple Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --deep:#071429; --navy:#0B1F3A; --mid:#2196F3; --light:#64B5F6;
-    --gold:#F9A825; --white:#F0F6FF; --grey:#8BA3C0; --green2:#43A047;
+    --navy:#0B1F3A; --deep:#071429; --mid:#2196F3; --light:#64B5F6;
+    --white:#F0F6FF; --grey:#8BA3C0; --gold:#F9A825;
+    --green2:#43A047; --red2:#EF5350;
   }
-  *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--deep); color:var(--white); font-family:'DM Sans',sans-serif; font-weight:300; min-height:100vh; padding-bottom:4rem; }
-  body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.03) 58px,rgba(33,150,243,0.03) 60px); pointer-events:none; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--deep);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;padding:2rem;}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(180deg,transparent 0px,transparent 58px,rgba(33,150,243,0.03) 58px,rgba(33,150,243,0.03) 60px);pointer-events:none;z-index:0;}
 
-  .topbar { background:rgba(7,20,41,0.97); border-bottom:1px solid rgba(33,150,243,0.15); padding:.9rem 2rem; display:flex; align-items:center; gap:1rem; position:sticky; top:0; z-index:10; }
-  .topbar h1 { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:.06em; }
-  .topbar h1 span { color:var(--light); }
-  .topbar-sub { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.14em; color:var(--grey); text-transform:uppercase; margin-left:.5rem; margin-top:.1rem; }
+  h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:.04em;margin-bottom:.4rem;position:relative;z-index:1;}
+  .subtitle{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;margin-bottom:2rem;position:relative;z-index:1;}
 
-  .page { max-width:1300px; margin:0 auto; padding:2rem 1.5rem; position:relative; z-index:1; }
+  .note{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;color:var(--gold);padding:.5rem .75rem;background:rgba(249,168,37,0.06);border:1px solid rgba(249,168,37,0.2);border-radius:2px;margin-bottom:2.5rem;position:relative;z-index:1;}
 
-  /* intro */
-  .intro { margin-bottom:2.5rem; }
-  .intro p { color:var(--grey); font-size:.88rem; max-width:620px; line-height:1.6; }
-  .intro strong { color:var(--white); font-weight:500; }
+  .style-section{margin-bottom:3.5rem;position:relative;z-index:1;}
+  .style-label{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--light);margin-bottom:.25rem;}
+  .style-slug{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.15em;color:var(--grey);text-transform:uppercase;margin-bottom:1.25rem;}
 
-  /* style section */
-  .style-section { margin-bottom:3rem; }
-  .style-label { display:flex; align-items:center; gap:.75rem; margin-bottom:1rem; }
-  .style-name { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:.05em; color:var(--light); }
-  .style-tag { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; padding:.2rem .6rem; border-radius:2px; border:1px solid rgba(33,150,243,0.25); color:var(--grey); }
-  .style-desc { font-family:'DM Mono',monospace; font-size:.62rem; color:var(--grey); margin-top:.1rem; letter-spacing:.04em; }
-  .style-label::after { content:''; flex:1; height:1px; background:rgba(33,150,243,0.1); }
+  .avatar-grid{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+  .avatar-chip{display:flex;flex-direction:column;align-items:center;gap:.4rem;}
+  .avatar-img{width:56px;height:56px;border-radius:50%;border:2px solid rgba(33,150,243,0.2);background:var(--navy);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .avatar-img img{width:100%;height:100%;display:block;}
+  .avatar-name{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;max-width:60px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-  /* avatar row */
-  .avatar-row { display:flex; gap:1rem; flex-wrap:wrap; }
-  .avatar-card { display:flex; flex-direction:column; align-items:center; gap:.55rem; padding:.9rem .75rem .75rem; background:rgba(255,255,255,0.025); border:1px solid rgba(33,150,243,0.08); border-radius:4px; width:115px; transition:all .15s; cursor:pointer; }
-  .avatar-card:hover { background:rgba(33,150,243,0.07); border-color:rgba(33,150,243,0.25); transform:translateY(-2px); }
-  .avatar-card.selected { background:rgba(33,150,243,0.1); border-color:rgba(33,150,243,0.45); }
-  .avatar-img { width:72px; height:72px; border-radius:50%; background:rgba(11,31,58,0.8); border:2px solid rgba(33,150,243,0.15); overflow:hidden; display:flex; align-items:center; justify-content:center; }
-  .avatar-img img { width:80px; height:80px; display:block; }
-  .avatar-name { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--grey); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; text-align:center; }
-  .avatar-group { font-family:'DM Mono',monospace; font-size:.52rem; color:rgba(100,181,246,0.5); text-align:center; }
+  .preview-label{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;margin-bottom:.6rem;}
 
-  /* in-context preview */
-  .context-section { margin-bottom:3rem; }
-  .context-label { display:flex; align-items:center; gap:.75rem; margin-bottom:1.25rem; }
-  .context-title { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:.05em; color:var(--gold); }
-  .context-label::after { content:''; flex:1; height:1px; background:rgba(33,150,243,0.1); }
+  .leaderboard-preview{background:linear-gradient(135deg,rgba(33,150,243,0.06),rgba(33,150,243,0.01));border:1px solid rgba(33,150,243,0.15);border-radius:2px;padding:.5rem .75rem;max-width:520px;}
+  .lb-row{display:flex;align-items:center;gap:.75rem;padding:.45rem .5rem;border-radius:2px;}
+  .lb-rank{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--grey);width:20px;text-align:center;flex-shrink:0;}
+  .lb-rank.gold{color:var(--gold);}
+  .lb-rank.silver{color:#B0BEC5;}
+  .lb-rank.bronze{color:#FF8A65;}
+  .lb-avatar{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(33,150,243,0.2);background:var(--navy);overflow:hidden;flex-shrink:0;}
+  .lb-avatar img{width:100%;height:100%;display:block;}
+  .lb-info{flex:1;min-width:0;}
+  .lb-name{font-size:.9rem;font-weight:500;line-height:1;}
+  .lb-meta{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;margin-top:.15rem;}
+  .lb-time{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--mid);font-weight:500;}
+  .lb-tier{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.1em;padding:.15rem .4rem;border-radius:2px;background:rgba(0,229,255,0.1);color:#00E5FF;flex-shrink:0;}
 
-  /* leaderboard preview */
-  .lb-preview { background:rgba(11,31,58,0.5); border:1px solid rgba(33,150,243,0.1); border-radius:4px; overflow:hidden; max-width:600px; }
-  .lb-hdr { background:rgba(11,31,58,0.8); padding:.6rem 1rem; font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; color:var(--grey); border-bottom:1px solid rgba(33,150,243,0.1); display:grid; grid-template-columns:40px 42px 1fr auto; gap:.75rem; align-items:center; }
-  .lb-row { display:grid; grid-template-columns:40px 42px 1fr auto; gap:.75rem; align-items:center; padding:.6rem 1rem; border-bottom:1px solid rgba(33,150,243,0.05); transition:background .1s; }
-  .lb-row:hover { background:rgba(33,150,243,0.04); }
-  .lb-row:last-child { border-bottom:none; }
-  .lb-rank { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; color:var(--grey); text-align:center; }
-  .lb-rank.r1 { color:var(--gold); }
-  .lb-rank.r2 { color:#B0BEC5; }
-  .lb-rank.r3 { color:#FF8A65; }
-  .lb-avatar { width:36px; height:36px; border-radius:50%; background:rgba(11,31,58,0.8); border:1.5px solid rgba(33,150,243,0.2); overflow:hidden; display:flex; align-items:center; justify-content:center; }
-  .lb-avatar img { width:40px; height:40px; display:block; }
-  .lb-info { min-width:0; }
-  .lb-sname { font-size:.85rem; font-weight:400; }
-  .lb-smeta { font-family:'DM Mono',monospace; font-size:.56rem; color:var(--grey); margin-top:.1rem; }
-  .lb-time { font-family:'DM Mono',monospace; font-size:.88rem; font-weight:500; color:var(--light); }
+  .hero-preview{background:linear-gradient(135deg,rgba(33,150,243,0.08),rgba(33,150,243,0.02));border:1px solid rgba(33,150,243,0.15);border-radius:2px;padding:1.5rem;max-width:360px;position:relative;overflow:hidden;margin-top:1.5rem;}
+  .hero-preview::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--mid),rgba(33,150,243,0.1));}
+  .hero-top{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;}
+  .hero-avatar{width:64px;height:64px;border-radius:50%;border:2px solid rgba(33,150,243,0.3);background:var(--navy);overflow:hidden;flex-shrink:0;}
+  .hero-avatar img{width:100%;height:100%;display:block;}
+  .hero-name{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;line-height:1;}
+  .hero-sub{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;margin-top:.2rem;}
+  .hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
+  .hero-stat{text-align:center;}
+  .hero-stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.03em;color:var(--mid);}
+  .hero-stat-lbl{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.12em;color:var(--grey);text-transform:uppercase;margin-top:.1rem;}
 
-  /* dashboard preview */
-  .dash-preview { background:rgba(11,31,58,0.5); border:1px solid rgba(33,150,243,0.1); border-radius:4px; padding:1.1rem 1.25rem; max-width:400px; }
-  .dash-hero-p { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid rgba(33,150,243,0.08); }
-  .dash-av { width:60px; height:60px; border-radius:50%; border:2px solid rgba(33,150,243,0.3); background:rgba(11,31,58,0.8); overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 0 0 3px rgba(33,150,243,0.1),0 0 20px rgba(33,150,243,0.08); }
-  .dash-av img { width:66px; height:66px; }
-  .dash-label { font-family:'DM Mono',monospace; font-size:.54rem; letter-spacing:.16em; text-transform:uppercase; color:var(--grey); margin-bottom:.15rem; }
-  .dash-name { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:.04em; line-height:1; }
-  .dash-meta { color:var(--grey); font-size:.75rem; margin-top:.25rem; }
-  .dash-rank-row { display:flex; gap:.5rem; align-items:center; margin-top:.45rem; }
-  .rank-badge { display:inline-flex; align-items:center; gap:.3rem; font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; padding:.18rem .55rem; border-radius:2px; }
-  .rank-wave { background:rgba(33,150,243,0.12); border:1px solid rgba(33,150,243,0.3); color:var(--light); }
-  .rank-surfer { background:rgba(249,168,37,0.12); border:1px solid rgba(249,168,37,0.3); color:var(--gold); }
-  .rank-elite { background:rgba(100,181,246,0.1); border:1px solid rgba(0,229,255,0.3); color:#00E5FF; }
-
-  /* style picker grid */
-  .style-picker { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; margin-bottom:2.5rem; }
-  .style-opt { padding:.9rem 1rem; background:rgba(255,255,255,0.025); border:1px solid rgba(33,150,243,0.1); border-radius:4px; cursor:pointer; transition:all .15s; }
-  .style-opt:hover { border-color:rgba(33,150,243,0.3); background:rgba(33,150,243,0.05); }
-  .style-opt.active { border-color:var(--mid); background:rgba(33,150,243,0.08); }
-  .style-opt-top { display:flex; align-items:center; gap:.65rem; margin-bottom:.5rem; }
-  .style-opt-faces { display:flex; gap:.3rem; }
-  .sof { width:32px; height:32px; border-radius:50%; background:rgba(11,31,58,0.8); overflow:hidden; border:1px solid rgba(255,255,255,0.06); }
-  .sof img { width:35px; height:35px; margin:-1.5px; }
-  .style-opt-name { font-family:'DM Mono',monospace; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--white); }
-  .style-opt-feel { font-family:'DM Mono',monospace; font-size:.58rem; color:var(--grey); margin-top:.1rem; }
-
-  /* section divider */
-  .divider { height:1px; background:rgba(33,150,243,0.08); margin:2.5rem 0; }
-
-  /* note */
-  .note { display:flex; gap:.75rem; padding:.85rem 1rem; background:rgba(249,168,37,0.05); border:1px solid rgba(249,168,37,0.15); border-radius:3px; margin-bottom:2rem; }
-  .note-icon { font-size:1rem; flex-shrink:0; margin-top:.05rem; }
-  .note-text { font-family:'DM Mono',monospace; font-size:.64rem; color:var(--grey); line-height:1.6; letter-spacing:.04em; }
-  .note-text strong { color:var(--gold); }
+  hr{border:none;border-top:1px solid rgba(33,150,243,0.1);margin:3rem 0;}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <h1>Avatar <span>Style Options</span></h1>
-  <span class="topbar-sub">DiceBear — Visual Reference for SSF Aquatics</span>
-</div>
+<h1>Avatar Style Mockup</h1>
+<div class="subtitle">Purple Group · SSF Swim Team · Pick a DiceBear style</div>
+<div class="note">💡 Avatars load from api.dicebear.com — requires an internet connection.</div>
 
-<div class="page">
-  <div class="intro">
-    <p>Six DiceBear styles shown with the same set of sample swimmer names. All are <strong>free, open-source SVGs</strong> generated instantly from any seed string (we'd use the swimmer's name or ID). Scroll through each, then see how they look in context on the leaderboard and dashboard below.</p>
-  </div>
-
-  <div class="note">
-    <div class="note-icon">💡</div>
-    <div class="note-text"><strong>How it works:</strong> Each avatar is just a URL — <code>https://api.dicebear.com/9.x/{style}/svg?seed=EmmaLee</code>. Same seed always generates the same avatar. Totally consistent per swimmer, zero storage needed. Later when you have Figma assets ready, we swap the URL source.</div>
-  </div>
-
-  <!-- Style 1: adventurer -->
-  <div class="style-section">
-    <div class="style-label">
-      <div>
-        <div class="style-name">Adventurer</div>
-        <div class="style-desc">Illustrated · Expressive · Kid-friendly · Soft colors</div>
-      </div>
-      <span class="style-tag">Recommended ★</span>
-    </div>
-    <div class="avatar-row" id="row-adventurer"></div>
-  </div>
-
-  <!-- Style 2: adventurer-neutral -->
-  <div class="style-section">
-    <div class="style-label">
-      <div>
-        <div class="style-name">Adventurer Neutral</div>
-        <div class="style-desc">Same as above · Gender-neutral · Works for any swimmer</div>
-      </div>
-      <span class="style-tag">Clean</span>
-    </div>
-    <div class="avatar-row" id="row-adventurer-neutral"></div>
-  </div>
-
-  <!-- Style 3: pixel-art -->
-  <div class="style-section">
-    <div class="style-label">
-      <div>
-        <div class="style-name">Pixel Art</div>
-        <div class="style-desc">Retro gaming · 8-bit · Very fun for kids · Reward/unlock aesthetic</div>
-      </div>
-      <span class="style-tag">Fun</span>
-    </div>
-    <div class="avatar-row" id="row-pixel-art"></div>
-  </div>
-
-  <!-- Style 4: lorelei -->
-  <div class="style-section">
-    <div class="style-label">
-      <div>
-        <div class="style-name">Lorelei</div>
-        <div class="style-desc">Simple illustrated portrait · Minimal · Clean on dark backgrounds</div>
-      </div>
-      <span class="style-tag">Minimal</span>
-    </div>
-    <div class="avatar-row" id="row-lorelei"></div>
-  </div>
-
-  <!-- Style 5: micah -->
-  <div class="style-section">
-    <div class="style-label">
-      <div>
-        <div class="style-name">Micah</div>
-        <div class="style-desc">Geometric shapes · Modern · Bold colors · Distinct at small sizes</div>
-      </div>
-      <span class="style-tag">Bold</span>
-    </div>
-    <div class="avatar-row" id="row-micah"></div>
-  </div>
-
-  <!-- Style 6: bottts-neutral -->
-  <div class="style-section">
-    <div class="style-label">
-      <div>
-        <div class="style-name">Bottts Neutral</div>
-        <div class="style-desc">Robot / sci-fi · Super fun for kids · Unique mechanical faces</div>
-      </div>
-      <span class="style-tag">Playful</span>
-    </div>
-    <div class="avatar-row" id="row-bottts-neutral"></div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- IN CONTEXT: Leaderboard -->
-  <div class="context-section">
-    <div class="context-label">
-      <div class="context-title">In Context — Leaderboard</div>
-    </div>
-    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.65rem;">Adventurer Style</div>
-        <div class="lb-preview" id="lb-adventurer"></div>
-      </div>
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.65rem;">Pixel Art Style</div>
-        <div class="lb-preview" id="lb-pixel"></div>
-      </div>
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.65rem;">Micah Style</div>
-        <div class="lb-preview" id="lb-micah"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- IN CONTEXT: Dashboard Hero -->
-  <div class="context-section">
-    <div class="context-label">
-      <div class="context-title">In Context — Dashboard Hero Card</div>
-    </div>
-    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.65rem;">Adventurer Style</div>
-        <div class="dash-preview" id="dash-adventurer"></div>
-      </div>
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.65rem;">Pixel Art Style</div>
-        <div class="dash-preview" id="dash-pixel"></div>
-      </div>
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.65rem;">Bottts Style</div>
-        <div class="dash-preview" id="dash-bottts"></div>
-      </div>
-    </div>
-  </div>
-
-</div>
+<div id="root"></div>
 
 <script>
-const SWIMMERS = [
-  { name:'Emma Lee',   group:'Purple', time:'28.41' },
-  { name:'Jake Torres',group:'Purple', time:'27.83' },
-  { name:'Mia Chen',   group:'Purple', time:'29.12' },
-  { name:'Luca Park',  group:'Purple', time:'26.94' },
-  { name:'Sofia Kim',  group:'Purple', time:'30.05' },
-  { name:'Owen Walsh', group:'Purple', time:'28.77' },
-  { name:'Zoe Grant',  group:'Purple', time:'27.55' },
-  { name:'Nate Liu',   group:'Purple', time:'29.44' },
+const SEEDS = [
+  'Emma Chen', 'Liam Torres', 'Sofia Nguyen', 'Noah Kim',
+  'Ava Patel', 'Mason Lee', 'Isabella Park', 'Ethan Zhao'
 ];
 
 const STYLES = [
-  'adventurer',
-  'adventurer-neutral',
-  'pixel-art',
-  'lorelei',
-  'micah',
-  'bottts-neutral',
+  { id: 'adventurer',         label: 'Adventurer',          desc: 'Illustrated friendly faces — great for kids' },
+  { id: 'adventurer-neutral', label: 'Adventurer Neutral',  desc: 'Gender-neutral version of Adventurer' },
+  { id: 'pixel-art',          label: 'Pixel Art',           desc: 'Retro pixel look — fun & sporty' },
+  { id: 'lorelei',            label: 'Lorelei',             desc: 'Clean line-art, minimal & modern' },
+  { id: 'micah',              label: 'Micah',               desc: 'Bold geometric faces, high contrast' },
+  { id: 'bottts-neutral',     label: 'Bottts Neutral',      desc: 'Robot-style, gender-neutral, techy' },
+  { id: 'fun-emoji',          label: 'Fun Emoji',           desc: 'Playful emoji-style faces' },
+  { id: 'thumbs',             label: 'Thumbs',              desc: 'Cute round illustrated faces' },
 ];
 
-const BASE = 'https://api.dicebear.com/9.x';
+const LB_DATA = [
+  { name: 'Emma Chen',    meta: 'Age 14 · Free',  time: '55.42',   tier: 'AAAA', rank: 1 },
+  { name: 'Sofia Nguyen', meta: 'Age 15 · Back',  time: '1:04.18', tier: 'AAA',  rank: 2 },
+  { name: 'Ava Patel',    meta: 'Age 13 · Fly',   time: '1:07.33', tier: 'AA',   rank: 3 },
+];
 
-function avatarUrl(style, seed, size=80) {
-  return `${BASE}/${style}/svg?seed=${encodeURIComponent(seed)}&size=${size}&backgroundColor=0b1f3a&backgroundType=solid`;
+function url(style, seed, size) {
+  return 'https://api.dicebear.com/9.x/' + style + '/svg?seed=' + encodeURIComponent(seed) + '&backgroundColor=0b1f3a&backgroundType=solid&size=' + (size||80);
 }
 
-// Render avatar rows
-STYLES.forEach(style => {
-  const rowId = 'row-' + style;
-  const container = document.getElementById(rowId);
-  if (!container) return;
-  SWIMMERS.forEach(sw => {
-    const card = document.createElement('div');
-    card.className = 'avatar-card';
-    card.innerHTML = `
-      <div class="avatar-img">
-        <img src="${avatarUrl(style, sw.name)}" alt="${sw.name}" loading="lazy" onerror="this.parentElement.style.background='rgba(33,150,243,0.1)'">
-      </div>
-      <div class="avatar-name">${sw.name.split(' ')[0]}</div>
-      <div class="avatar-group">${sw.group}</div>
-    `;
-    container.appendChild(card);
+function img(style, seed, size) {
+  return '<img src="' + url(style, seed, size) + '" alt="' + seed + '" loading="lazy" onerror="this.parentElement.style.opacity=\'0.25\'">';
+}
+
+const root = document.getElementById('root');
+
+STYLES.forEach(function(style, i) {
+  let html = '<div class="style-section">';
+  html += '<div class="style-label">' + style.label + '</div>';
+  html += '<div class="style-slug">' + style.id + ' &nbsp;·&nbsp; ' + style.desc + '</div>';
+
+  // Avatar grid
+  html += '<div class="avatar-grid">';
+  SEEDS.forEach(function(seed) {
+    html += '<div class="avatar-chip">';
+    html += '<div class="avatar-img">' + img(style.id, seed, 80) + '</div>';
+    html += '<div class="avatar-name">' + seed.split(' ')[0] + '</div>';
+    html += '</div>';
   });
+  html += '</div>';
+
+  // Leaderboard preview
+  html += '<div class="preview-label">Leaderboard row preview</div>';
+  html += '<div class="leaderboard-preview">';
+  LB_DATA.forEach(function(row) {
+    var rc = row.rank === 1 ? 'gold' : row.rank === 2 ? 'silver' : 'bronze';
+    html += '<div class="lb-row">';
+    html += '<div class="lb-rank ' + rc + '">' + row.rank + '</div>';
+    html += '<div class="lb-avatar">' + img(style.id, row.name, 40) + '</div>';
+    html += '<div class="lb-info"><div class="lb-name">' + row.name + '</div><div class="lb-meta">' + row.meta + '</div></div>';
+    html += '<div class="lb-time">' + row.time + '</div>';
+    html += '<div class="lb-tier">' + row.tier + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // Hero card preview
+  html += '<div class="preview-label" style="margin-top:1.5rem">Dashboard hero card preview</div>';
+  html += '<div class="hero-preview">';
+  html += '<div class="hero-top">';
+  html += '<div class="hero-avatar">' + img(style.id, 'Emma Chen', 80) + '</div>';
+  html += '<div><div class="hero-name">Emma Chen</div><div class="hero-sub">Age 14 · Freestyle</div></div>';
+  html += '</div>';
+  html += '<div class="hero-stats">';
+  html += '<div class="hero-stat"><div class="hero-stat-val" style="color:#00E5FF">AAAA</div><div class="hero-stat-lbl">Best Tier</div></div>';
+  html += '<div class="hero-stat"><div class="hero-stat-val">12</div><div class="hero-stat-lbl">Events</div></div>';
+  html += '<div class="hero-stat"><div class="hero-stat-val" style="color:#43A047">3</div><div class="hero-stat-lbl">Near Cuts</div></div>';
+  html += '</div>';
+  html += '</div>';
+
+  html += '</div>'; // style-section
+
+  root.innerHTML += html;
+
+  if (i < STYLES.length - 1) {
+    root.innerHTML += '<hr>';
+  }
 });
-
-// Leaderboard previews
-function buildLeaderboard(containerId, style) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  const sorted = [...SWIMMERS].sort((a,b) => parseFloat(a.time)-parseFloat(b.time));
-  container.innerHTML = `
-    <div class="lb-hdr">
-      <span>#</span><span>Swimmer</span><span></span><span>50 FR</span>
-    </div>
-    ${sorted.slice(0,5).map((sw,i) => `
-    <div class="lb-row">
-      <div class="lb-rank${i===0?' r1':i===1?' r2':i===2?' r3':''}">${i+1}</div>
-      <div class="lb-avatar">
-        <img src="${avatarUrl(style, sw.name, 40)}" alt="${sw.name}" loading="lazy">
-      </div>
-      <div class="lb-info">
-        <div class="lb-sname">${sw.name}</div>
-        <div class="lb-smeta">Purple Group</div>
-      </div>
-      <div class="lb-time">${sw.time}</div>
-    </div>`).join('')}
-  `;
-}
-
-buildLeaderboard('lb-adventurer', 'adventurer');
-buildLeaderboard('lb-pixel', 'pixel-art');
-buildLeaderboard('lb-micah', 'micah');
-
-// Dashboard hero previews
-function buildDashHero(containerId, style) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  const sw = SWIMMERS[0]; // Emma
-  const ranks = [
-    {label:'Wave', cls:'rank-wave'},
-    {label:'Surfer', cls:'rank-surfer'},
-    {label:'Purple Elite', cls:'rank-elite'},
-  ];
-  const rank = ranks[0];
-  container.innerHTML = `
-    <div class="dash-hero-p">
-      <div class="dash-av">
-        <img src="${avatarUrl(style, sw.name, 66)}" alt="${sw.name}" loading="lazy">
-      </div>
-      <div>
-        <div class="dash-label">Purple Group Swimmer</div>
-        <div class="dash-name">${sw.name}</div>
-        <div class="dash-meta">Age 12 · SSF Aquatics</div>
-        <div class="dash-rank-row">
-          <span class="rank-badge ${rank.cls}">⚡ ${rank.label}</span>
-        </div>
-      </div>
-    </div>
-    <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--grey);line-height:1.7;">
-      <div style="display:flex;justify-content:space-between;"><span>Best 50 FR</span><span style="color:var(--white)">28.41</span></div>
-      <div style="display:flex;justify-content:space-between;"><span>Season Practices</span><span style="color:var(--green2)">24</span></div>
-      <div style="display:flex;justify-content:space-between;"><span>🪙 Wave Coins</span><span style="color:var(--gold)">142</span></div>
-    </div>
-  `;
-}
-
-buildDashHero('dash-adventurer', 'adventurer');
-buildDashHero('dash-pixel', 'pixel-art');
-buildDashHero('dash-bottts', 'bottts-neutral');
 </script>
+
 </body>
 </html>

@@ -72,8 +72,8 @@
   .swimmer-card{background:rgba(255,255,255,0.03);border:1px solid rgba(33,150,243,0.12);border-radius:12px;overflow:hidden;transition:border-color .2s,transform .2s;cursor:pointer;text-decoration:none;color:inherit;display:block;}
   .swimmer-card:hover{border-color:rgba(33,150,243,0.4);transform:translateY(-2px);}
   .card-header{padding:1rem 1.2rem .7rem;display:flex;align-items:center;gap:.7rem;border-bottom:1px solid rgba(33,150,243,0.08);}
-  .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--mid));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;flex-shrink:0;}
-  .avatar.female{background:linear-gradient(135deg,#7B1FA2,#CE93D8);}
+  .avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+  .avatar img{width:100%;height:100%;display:block;}
   .card-name{font-weight:500;font-size:.92rem;}
   .card-meta{font-size:.72rem;color:var(--grey);margin-top:.1rem;}
   .gender-badge{margin-left:auto;font-size:.68rem;padding:.18rem .48rem;border-radius:4px;font-weight:500;letter-spacing:.05em;}
@@ -219,6 +219,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
+function dicebearUrl(name, size) { return 'https://api.dicebear.com/9.x/adventurer/svg?seed='+encodeURIComponent(name||'swimmer')+'&backgroundColor=0b1f3a&backgroundType=solid'+(size?'&size='+size:''); }
 
 // ── State ──
 let allSwimmers = [];
@@ -309,7 +310,7 @@ function renderRoster() {
     const more = extra > 0 ? `<a class="view-all" href="swimmer.html?id=${s.id}">+${extra} more →</a>` : '';
     return `<a class="swimmer-card" href="swimmer.html?id=${s.id}">
       <div class="card-header">
-        <div class="avatar${s.gender==='F'?' female':''}">${initials}</div>
+        <div class="avatar"><img src="${dicebearUrl(s.name,40)}" alt="${s.name}"></div>
         <div><div class="card-name">${s.name}</div><div class="card-meta">${events.length} event${events.length!==1?'s':''}</div></div>
         <span class="gender-badge ${s.gender}">${s.gender==='M'?'BOY':'GIRL'}</span>
       </div>

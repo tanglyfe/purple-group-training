@@ -149,7 +149,7 @@
 <script src="sidebar.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs, doc, setDoc, deleteDoc, updateDoc }
+import { getFirestore, collection, query, where, getDocs, doc, setDoc, deleteDoc, updateDoc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -367,8 +367,8 @@ async function saveAssignments(group) {
     const toAdd = [...newIds].filter(id => !prevIds.has(id));
     const toRemove = [...prevIds].filter(id => !newIds.has(id));
     await Promise.all([
-      ...toAdd.map(id => updateDoc(doc(db,'swimmers',id), { groupId:group.id, groupName:group.name, groupColor:group.color||null })),
-      ...toRemove.map(id => updateDoc(doc(db,'swimmers',id), { groupId:null, groupName:null, groupColor:null })),
+      ...toAdd.map(id => setDoc(doc(db,'swimmers',id), { groupId:group.id, groupName:group.name, groupColor:group.color||null }, { merge:true })),
+      ...toRemove.map(id => setDoc(doc(db,'swimmers',id), { groupId:null, groupName:null, groupColor:null }, { merge:true })),
     ]);
 
     // Update local state
@@ -378,9 +378,9 @@ async function saveAssignments(group) {
     if (status) { status.textContent = '✓ Saved'; status.className='save-status saved'; }
     setTimeout(() => { if(status) status.textContent=''; }, 3000);
   } catch(e) {
-    console.error(e);
+    console.error('saveAssignments error:', e);
     if (status) { status.textContent = '✗ Failed'; status.className='save-status'; }
-    alert('Save failed — check console');
+    alert('Save failed: ' + (e.message || e.code || 'unknown error'));
   } finally {
     btn.textContent = 'Save'; btn.disabled = false;
   }
