@@ -149,6 +149,7 @@
 <script src="sidebar.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import { getFirestore, collection, query, where, getDocs, doc, setDoc, deleteDoc, updateDoc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
@@ -160,8 +161,9 @@ const firebaseConfig = {
   messagingSenderId: "21079628309",
   appId: "1:21079628309:web:8958a334f5cd5a69ae4c1c"
 };
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
 const COLORS = [
   "#7B1FA2","#1565C0","#2E7D32","#C62828","#E65100",
@@ -470,7 +472,16 @@ function init() {
   });
 }
 
-init();
+// Wait for Firebase Auth to restore the session before doing anything.
+// Without this, Firestore writes go out with no auth token and the
+// isCoach() rule always returns false → "Missing or insufficient permissions".
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+  init();
+});
 </script>
 </body>
 </html>

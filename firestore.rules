@@ -2,45 +2,62 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Coach = role:'coach' OR admin:true on the user doc
     function isCoach() {
-      return request.auth != null
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'coach';
+      let u = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      return isSignedIn() && (u.role == 'coach' || u.admin == true);
     }
 
     // ── Swimmers ─────────────────────────────────────────────────────────────
-    // Public read — leaderboard, swimmer profiles, and dashboard all need this
-    // without requiring login. Scraper writes via Admin SDK (bypasses rules).
+    // Public read (leaderboard / roster / swimmer profile pages, no login needed).
+    // Coach write (group assignment, times entry, etc.).
+    // Authenticated users may update only birthYear + gender on their own record
+    // (the My Profile tab on the dashboard).
     match /swimmers/{id} {
-      allow read: if true;
+      allow read:   if true;
+      allow write:  if isCoach();
+      allow update: if isSignedIn()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['birthYear', 'gender']);
+    }
+
+    // ── Groups ───────────────────────────────────────────────────────────────
+    // Public read (groups page doesn't require login).
+    match /groups/{id} {
+      allow read:  if true;
       allow write: if isCoach();
     }
 
     // ── Attendance ───────────────────────────────────────────────────────────
-    // Kept as public read/write to preserve existing behavior.
     match /attendance/{date} {
       allow read, write: if true;
     }
 
-    // ── Groups ───────────────────────────────────────────────────────────────
-    // Public read (groups page is accessible without login).
-    match /groups/{id} {
-      allow read: if true;
-      allow write: if isCoach();
-    }
-
     // ── Meets ────────────────────────────────────────────────────────────────
-    // New collection — authenticated read, coach write.
     match /meets/{meetId} {
-      allow read:  if request.auth != null;
+      allow read:  if isSignedIn();
       allow write: if isCoach();
     }
 
     // ── Users ────────────────────────────────────────────────────────────────
-    // Users can read/write their own profile doc.
-    // Coaches can additionally read any user doc (members table on dashboard).
+    // Users read/write their own doc (profile, swimcloudId, birthYear, etc.).
+    // Coaches can read all user docs (members table) and write (remove member).
     match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
-      allow read:        if isCoach();
+      allow read, write: if isSignedIn() && request.auth.uid == uid;
+      allow read, write: if isCoach();
     }
+
+    // ── Invites ──────────────────────────────────────────────────────────────
+    // Anyone can read an invite token (needed during registration to validate).
+    // Only coaches can create tokens.
+    match /invites/{token} {
+      allow read:  if true;
+      allow write: if isCoach();
+    }
+
   }
 }
