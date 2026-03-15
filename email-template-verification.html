@@ -1,0 +1,79 @@
+<!--
+  FIREBASE EMAIL VERIFICATION TEMPLATE
+  ─────────────────────────────────────
+  Where to paste this:
+    Firebase Console → Authentication → Templates → Email address verification
+    → Edit (pencil icon) → paste into the "Message" body field
+
+  Subject line (paste separately into the Subject field):
+    Verify your Purple Group account
+
+  Sender name (optional, set in the From field):
+    Purple Group · SSF Aquatics
+
+  NOTE: %LINK% is the Firebase magic placeholder — do NOT change it.
+        It becomes the real verification URL automatically.
+-->
+
+<div style="background:#071429;padding:40px 20px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div style="max-width:480px;margin:0 auto;">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:28px;font-weight:900;letter-spacing:3px;color:#F0F6FF;text-transform:uppercase;">
+        PURPLE GROUP
+      </div>
+      <div style="font-size:10px;letter-spacing:4px;color:#8BA3C0;text-transform:uppercase;margin-top:4px;">
+        SSF AQUATICS · MEMBER PORTAL
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div style="background:linear-gradient(135deg,rgba(33,150,243,0.08),rgba(33,150,243,0.02));border:1px solid rgba(33,150,243,0.2);border-radius:4px;padding:32px;position:relative;">
+
+      <!-- Left accent bar -->
+      <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,#2196F3,rgba(33,150,243,0.1));border-radius:4px 0 0 4px;"></div>
+
+      <!-- Icon -->
+      <div style="text-align:center;font-size:36px;margin-bottom:16px;">📬</div>
+
+      <!-- Title -->
+      <h1 style="font-size:22px;font-weight:900;letter-spacing:2px;color:#F0F6FF;text-transform:uppercase;text-align:center;margin:0 0 12px 0;">
+        Verify Your Email
+      </h1>
+
+      <!-- Body -->
+      <p style="font-size:14px;color:#8BA3C0;line-height:1.7;text-align:center;margin:0 0 28px 0;">
+        Thanks for joining the team. Click the button below to verify your email address and activate your Purple Group account.
+      </p>
+
+      <!-- CTA Button -->
+      <div style="text-align:center;margin-bottom:28px;">
+        <a href="%LINK%"
+           style="display:inline-block;background:#2196F3;color:#ffffff;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:14px 36px;border-radius:3px;">
+          Verify Email Address
+        </a>
+      </div>
+
+      <!-- Divider -->
+      <div style="border-top:1px solid rgba(255,255,255,0.06);margin:0 0 20px 0;"></div>
+
+      <!-- Fallback link -->
+      <p style="font-size:11px;color:#8BA3C0;line-height:1.6;text-align:center;margin:0;">
+        Button not working? Copy and paste this link into your browser:<br>
+        <a href="%LINK%" style="color:#64B5F6;word-break:break-all;">%LINK%</a>
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align:center;margin-top:24px;">
+      <p style="font-size:10px;letter-spacing:2px;color:rgba(139,163,192,0.5);text-transform:uppercase;margin:0;">
+        SSF Aquatics · Purple Group Training
+      </p>
+      <p style="font-size:10px;color:rgba(139,163,192,0.4);margin:6px 0 0 0;">
+        If you didn't create an account, you can safely ignore this email.
+      </p>
+    </div>
+
+  </div>
+</div>
